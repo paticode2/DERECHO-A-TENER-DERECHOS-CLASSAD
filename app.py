@@ -5,4 +5,4 @@ opcion = st.selectbox(
  ["Educación","Salud","Vivienda"]
 )
 if opcion == "Educación":
- st.write("Aquí va el resumen."
+ st.write("Aquí va el resumen.")
