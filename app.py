@@ -30,8 +30,8 @@ st.markdown(
 
 # --------------------------------------------------
 # Prototipo: Línea de Defensa
-# Toda la experiencia (pantallas, contenido en español
-# e inglés, puntos y navegación) vive en este HTML.
+# Toda la experiencia (pantallas, contenido, puntos
+# y navegación) vive en este HTML.
 # Contenido demostrativo: casos inventados, enlaces de
 # videos y PDF pendientes, teléfonos por verificar.
 # --------------------------------------------------
@@ -117,7 +117,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.brand { font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.01em; margin-right: auto; display: flex; align-items: center; gap: 8px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.01em; margin-right: auto; display: flex; align-items: center; gap: 8px;
+  color: var(--ink); background: none; border: 0; padding: 4px 0; cursor: pointer; min-height: 40px; text-align: left; }
 .shield { width: 22px; height: 26px; flex: none; }
 .chip {
   font-family: var(--font-mono); font-size: 0.85rem; font-variant-numeric: tabular-nums;
@@ -128,9 +129,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; min-height: 34px;
 }
 .tbtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
-.lang { display: flex; }
-.lang .tbtn:first-child { border-radius: 999px 0 0 999px; }
-.lang .tbtn:last-child { border-radius: 0 999px 999px 0; border-left: 0; }
 
 .screen {
   flex: 1;
@@ -376,7 +374,6 @@ p { margin: 0; }
 
   // ---------- Textos de la interfaz ----------
   const T = {
-    es: {
       brand: "Línea de Defensa", help: "Ayuda", jump: "Pantallas",
       presents: "Espacios Abiertos presenta", tagline: "Derechos. Son tuyos. Defiéndelos.",
       welcomeBody: "Hoy te toca atender la línea. Siete personas te escriben porque algo no anda bien. Tu misión: descubrir qué derecho está en juego y ayudarles a defenderlo.",
@@ -416,211 +413,169 @@ p { margin: 0; }
       proto: "Prototipo · contenido demostrativo",
       ranks: ["En entrenamiento", "Voz de apoyo", "Línea firme", "Defensa total"],
       screens: ["Bienvenida", "Autoevaluación (antes)", "Cómo funciona", "Bandeja de casos", "Caso · Pistas (hotspot)", "Caso · ¿Qué derecho?", "Caso · ¿Qué haces?", "Caso resuelto", "Reporte + autoevaluación (después)", "Compartir", "Recursos"]
-    },
-    en: {
-      brand: "Defense Line", help: "Help", jump: "Screens",
-      presents: "Espacios Abiertos presents", tagline: "Rights. They're yours. Defend them.",
-      welcomeBody: "Today you're on the line. Seven people are reaching out because something isn't right. Your mission: figure out which right is at stake and help them defend it.",
-      fact1: "5–10 minutes", fact2: "7 cases", fact3: "We don't ask for or store any data",
-      start: "Start my shift",
-      preEyebrow: "Before you start", preTitle: "How are you feeling today?", preIntro: "Be honest. At the end you'll see how much changed. None of this is saved.",
-      q1: "I know my rights", q2: "I can tell when a right is being violated", q3: "I know where to go for help",
-      low: "Not at all", high: "A lot", cont: "Continue",
-      howEyebrow: "Your shift", howTitle: "How each case works",
-      s1t: "Read and look for clues", s1d: "Tap the objects in the scene to find out what happened.",
-      s2t: "Name the right", s2d: "Pick which right is at stake.",
-      s3t: "Decide what to do", s3d: "Recommend the best next step and see what happens.",
-      ranksTitle: "Level up", tipWrong: "If you get it wrong, you don't lose: you get a hint and try again, but you earn fewer points.",
-      seeCases: "See my cases",
-      inboxEyebrow: "Inbox", inboxTitle: "People are reaching out", solved: "solved", level: "Level",
-      new: "New", done: "Solved", finish: "End shift", resources: "Resources",
-      back: "← Inbox", step: "Step", of: "of",
-      tapScene: "Tap the scene to find clues", found: "found", noClues: "You haven't found any clues yet.",
-      next: "Next",
-      whichRight: "Which right is at stake?", check: "Check", correct: "Correct!", notQuite: "Not quite…",
-      whatDo: "What do you recommend?", decide: "Decide", good: "Good call", rethink: "Think again",
-      caseSolved: "Case solved!", points: "points", keyIdea: "Key idea",
-      episode: "Episode", watch: "Watch the episode", pendingLink: "Video link pending: for now this opens the series page",
-      material: "Educational material (PDF)", bookBW: "Black-and-white book (PDF)", whereHelp: "Where to get help",
-      backInbox: "Back to inbox", seeReport: "See my report",
-      reportEyebrow: "Shift report", reached: "You reached", casesOf: "cases out of 7",
-      afterTitle: "How do you feel now?", afterIntro: "Answer again to compare.",
-      before: "Before", now: "Now", shareRank: "Share my level", playAgain: "Play again",
-      shareEyebrow: "Share", shareTitle: "Challenge your people",
-      shareText: (r, n, p) => `I reached "${r}" on Defense Line: I solved ${n} of 7 cases and scored ${p} points. Think you can beat me? #DerechosSonTuyos`,
-      copyText: "Copy text", copyLink: "Copy link", copied: "Copied.", copyFail: "Couldn't copy. Select the text and copy it.",
-      resTitle: "Where to get help", resNote: "Prototype: phone numbers and links will be added after checking them against each organization's official sources.",
-      tbd: "Phone number to be verified", aboutSeries: "About the series",
-      credits: "“Derechos. Son tuyos. Defiéndelos.” is a 7-video series by Espacios Abiertos and the Centro de Periodismo Investigativo, supported by Open Society Foundations and the Fundación Puertorriqueña de las Humanidades. It aired on WIPR and won an Emmy Award in 2016.",
-      openSite: "Open the series page",
-      jumpTitle: "Go to a screen", jumpNote: "For the paper prototype only. Case screens use Kiara's case.",
-      proto: "Prototype · demo content",
-      ranks: ["In training", "Support voice", "Steady line", "Full defense"],
-      screens: ["Welcome", "Self-check (before)", "How it works", "Case inbox", "Case · Clues (hotspot)", "Case · Which right?", "Case · What do you do?", "Case solved", "Report + self-check (after)", "Share", "Resources"]
-    }
   };
 
   // ---------- Contenido: los 7 derechos ----------
   const RIGHTS = {
-    tener: { es: "Derecho a tener derechos", en: "The right to have rights", ep: 1 },
-    educacion: { es: "Educación", en: "Education", ep: 2 },
-    info: { es: "Acceso a la información", en: "Access to information", ep: 3 },
-    participacion: { es: "Participación política", en: "Political participation", ep: 4 },
-    justicia: { es: "Acceso a la justicia", en: "Access to justice", ep: 5 },
-    trabajo: { es: "Trabajo", en: "Work", ep: 6 },
-    dignidad: { es: "Dignidad", en: "Dignity", ep: 7 }
+    tener: { es: "Derecho a tener derechos", ep: 1 },
+    educacion: { es: "Educación", ep: 2 },
+    info: { es: "Acceso a la información", ep: 3 },
+    participacion: { es: "Participación política", ep: 4 },
+    justicia: { es: "Acceso a la justicia", ep: 5 },
+    trabajo: { es: "Trabajo", ep: 6 },
+    dignidad: { es: "Dignidad", ep: 7 }
   };
 
   // ---------- Contenido: los casos (demostrativos) ----------
   const CASES = [
     {
       id: "marco", right: "tener", name: "Marco", age: 31, color: "#B4462C",
-      place: { es: "Oficina de gobierno", en: "Government office" }, deco: ["🏢", "🪑"],
-      msg: { es: "Fui a renovar un permiso y el empleado me dijo que “gente como yo” no tiene derecho a quejarse. ¿Eso es así?", en: "I went to renew a permit and the clerk told me “people like me” have no right to complain. Is that true?" },
+      place: { es: "Oficina de gobierno" }, deco: ["🏢", "🪑"],
+      msg: { es: "Fui a renovar un permiso y el empleado me dijo que “gente como yo” no tiene derecho a quejarse. ¿Eso es así?" },
       clues: [
-        { icon: "🗣️", x: 22, y: 50, es: "“Gente como tú”: lo trataron como si valiera menos por ser de otro país.", en: "“People like you”: he was treated as worth less for being from another country." },
-        { icon: "🪪", x: 52, y: 78, es: "Tenía todos sus documentos en orden.", en: "He had all his documents in order." },
-        { icon: "📜", x: 80, y: 34, es: "Afiche en la pared: “Todas las personas son iguales ante la ley”.", en: "Poster on the wall: “All people are equal before the law.”" }
+        { icon: "🗣️", x: 22, y: 50, es: "“Gente como tú”: lo trataron como si valiera menos por ser de otro país." },
+        { icon: "🪪", x: 52, y: 78, es: "Tenía todos sus documentos en orden." },
+        { icon: "📜", x: 80, y: 34, es: "Afiche en la pared: “Todas las personas son iguales ante la ley”." }
       ],
       options: ["trabajo", "tener", "educacion", "participacion"],
-      hint: { es: "Pista: a Marco le negaron algo más básico que un trámite. ¿Qué le dijeron que no tenía?", en: "Hint: Marco was denied something more basic than a permit. What did they say he didn't have?" },
-      rightFb: { es: "Toda persona tiene derecho a tener derechos, sin importar de dónde viene.", en: "Every person has the right to have rights, no matter where they come from." },
+      hint: { es: "Pista: a Marco le negaron algo más básico que un trámite. ¿Qué le dijeron que no tenía?" },
+      rightFb: { es: "Toda persona tiene derecho a tener derechos, sin importar de dónde viene." },
       actions: [
-        { es: "Irse y no volver más", en: "Leave and never come back", ok: false, fb: { es: "Si se va sin decir nada, ese trato se repite con otras personas.", en: "If he leaves without saying anything, it will happen to other people too." } },
-        { es: "Pedir un supervisor, anotar fecha, hora y nombre, y buscar orientación legal", en: "Ask for a supervisor, write down the date, time and name, and get legal advice", ok: true, fb: { es: "Marco presentó una queja por escrito. La agencia lo atendió y le pidió disculpas.", en: "Marco filed a written complaint. The agency served him and apologized." } },
-        { es: "Gritarle al empleado", en: "Yell at the clerk", ok: false, fb: { es: "Es entendible, pero puede volverse en su contra. Documentar es más poderoso.", en: "Understandable, but it could backfire. Documenting is more powerful." } }
+        { es: "Irse y no volver más", ok: false, fb: { es: "Si se va sin decir nada, ese trato se repite con otras personas." } },
+        { es: "Pedir un supervisor, anotar fecha, hora y nombre, y buscar orientación legal", ok: true, fb: { es: "Marco presentó una queja por escrito. La agencia lo atendió y le pidió disculpas." } },
+        { es: "Gritarle al empleado", ok: false, fb: { es: "Es entendible, pero puede volverse en su contra. Documentar es más poderoso." } }
       ],
-      key: { es: "La idea de que las personas tienen derecho a tener derechos se atribuye a Hannah Arendt, filósofa alemana y una de las principales intelectuales del siglo 20.", en: "The idea that people have the right to have rights is credited to Hannah Arendt, a German philosopher and one of the leading thinkers of the 20th century." }
+      key: { es: "La idea de que las personas tienen derecho a tener derechos se atribuye a Hannah Arendt, filósofa alemana y una de las principales intelectuales del siglo 20." }
     },
     {
       id: "valeria", right: "educacion", name: "Valeria", age: 19, color: "#2F7D6B",
-      place: { es: "Universidad", en: "University" }, deco: ["🏫", "📚"],
-      msg: { es: "Me admitieron a la universidad, pero mi salón está en un tercer piso sin elevador. Uso silla de ruedas y me dicen que “lo tome el año que viene”.", en: "I got into university, but my classroom is on a third floor with no elevator. I use a wheelchair and they told me to “take it next year.”" },
+      place: { es: "Universidad" }, deco: ["🏫", "📚"],
+      msg: { es: "Me admitieron a la universidad, pero mi salón está en un tercer piso sin elevador. Uso silla de ruedas y me dicen que “lo tome el año que viene”." },
       clues: [
-        { icon: "🛗", x: 20, y: 40, es: "El elevador lleva meses fuera de servicio.", en: "The elevator has been out of service for months." },
-        { icon: "📩", x: 55, y: 70, es: "Correo de la universidad: “Espere al próximo año”.", en: "Email from the university: “Wait until next year.”" },
-        { icon: "🦽", x: 82, y: 50, es: "Valeria necesita un acomodo razonable para llegar a clase.", en: "Valeria needs a reasonable accommodation to get to class." }
+        { icon: "🛗", x: 20, y: 40, es: "El elevador lleva meses fuera de servicio." },
+        { icon: "📩", x: 55, y: 70, es: "Correo de la universidad: “Espere al próximo año”." },
+        { icon: "🦽", x: 82, y: 50, es: "Valeria necesita un acomodo razonable para llegar a clase." }
       ],
       options: ["dignidad", "info", "educacion", "justicia"],
-      hint: { es: "Pista: ¿qué es lo que Valeria no puede hacer por culpa del elevador?", en: "Hint: what can't Valeria do because of the elevator?" },
-      rightFb: { es: "La educación es un derecho, y eso incluye poder llegar al salón.", en: "Education is a right, and that includes being able to get to the classroom." },
+      hint: { es: "Pista: ¿qué es lo que Valeria no puede hacer por culpa del elevador?" },
+      rightFb: { es: "La educación es un derecho, y eso incluye poder llegar al salón." },
       actions: [
-        { es: "Solicitar por escrito un acomodo razonable y, si no responden, buscar asesoría legal", en: "Request a reasonable accommodation in writing and, if there's no answer, get legal advice", ok: true, fb: { es: "La universidad movió el curso a un salón accesible en el primer piso.", en: "The university moved the course to an accessible first-floor room." } },
-        { es: "Esperar al próximo año", en: "Wait until next year", ok: false, fb: { es: "Esperar no es su responsabilidad. La universidad tiene que buscar una solución.", en: "Waiting isn't her responsibility. The university has to find a solution." } },
-        { es: "Dejar la universidad", en: "Drop out", ok: false, fb: { es: "Perdería algo a lo que tiene derecho. Hay caminos para exigir el acomodo.", en: "She'd lose something she has a right to. There are ways to demand the accommodation." } }
+        { es: "Solicitar por escrito un acomodo razonable y, si no responden, buscar asesoría legal", ok: true, fb: { es: "La universidad movió el curso a un salón accesible en el primer piso." } },
+        { es: "Esperar al próximo año", ok: false, fb: { es: "Esperar no es su responsabilidad. La universidad tiene que buscar una solución." } },
+        { es: "Dejar la universidad", ok: false, fb: { es: "Perdería algo a lo que tiene derecho. Hay caminos para exigir el acomodo." } }
       ],
-      key: { es: "La Constitución de Puerto Rico establece que toda persona tiene derecho a una educación que fomente el pleno desarrollo de su personalidad.", en: "Puerto Rico's Constitution states that every person has the right to an education that fosters the full development of their personality." }
+      key: { es: "La Constitución de Puerto Rico establece que toda persona tiene derecho a una educación que fomente el pleno desarrollo de su personalidad." }
     },
     {
       id: "kiara", right: "info", name: "Kiara", age: 23, color: "#6A3FB5",
-      place: { es: "Municipio", en: "City hall" }, deco: ["🏛️", "🗂️"],
-      msg: { es: "Pedí al municipio el contrato del recogido de basura de mi barrio. Hace dos meses y nada. 😤", en: "I asked city hall for my neighborhood's garbage collection contract. Two months later, nothing. 😤" },
+      place: { es: "Municipio" }, deco: ["🏛️", "🗂️"],
+      msg: { es: "Pedí al municipio el contrato del recogido de basura de mi barrio. Hace dos meses y nada. 😤" },
       clues: [
-        { icon: "📄", x: 24, y: 72, es: "La carta de solicitud nunca tuvo respuesta.", en: "The request letter never got an answer." },
-        { icon: "📅", x: 50, y: 32, es: "Ya pasaron dos meses desde que la entregó.", en: "Two months have passed since she submitted it." },
-        { icon: "💰", x: 80, y: 66, es: "El contrato se paga con dinero público.", en: "The contract is paid with public money." }
+        { icon: "📄", x: 24, y: 72, es: "La carta de solicitud nunca tuvo respuesta." },
+        { icon: "📅", x: 50, y: 32, es: "Ya pasaron dos meses desde que la entregó." },
+        { icon: "💰", x: 80, y: 66, es: "El contrato se paga con dinero público." }
       ],
       options: ["educacion", "info", "trabajo", "dignidad"],
-      hint: { es: "Pista: el contrato se paga con el dinero de todo el mundo. ¿Quién tiene derecho a verlo?", en: "Hint: the contract is paid with everyone's money. Who has the right to see it?" },
-      rightFb: { es: "La información pública es tuya. El gobierno debe dártela.", en: "Public information is yours. The government must give it to you." },
+      hint: { es: "Pista: el contrato se paga con el dinero de todo el mundo. ¿Quién tiene derecho a verlo?" },
+      rightFb: { es: "La información pública es tuya. El gobierno debe dártela." },
       actions: [
-        { es: "Olvidarlo, no vale la pena", en: "Forget it, it's not worth it", ok: false, fb: { es: "Si nadie pregunta, nadie rinde cuentas.", en: "If nobody asks, nobody is held accountable." } },
-        { es: "Solo publicarlo en redes", en: "Just post about it online", ok: false, fb: { es: "Puede dar visibilidad, pero no obliga al municipio a contestar.", en: "It can raise awareness, but it doesn't force city hall to answer." } },
-        { es: "Repetir la solicitud por escrito, guardar copia y buscar ayuda legal si no contestan", en: "Resubmit the request in writing, keep a copy, and get legal help if they don't answer", ok: true, fb: { es: "Kiara recibió el contrato dos semanas después. 🙌", en: "Kiara got the contract two weeks later. 🙌" } }
+        { es: "Olvidarlo, no vale la pena", ok: false, fb: { es: "Si nadie pregunta, nadie rinde cuentas." } },
+        { es: "Solo publicarlo en redes", ok: false, fb: { es: "Puede dar visibilidad, pero no obliga al municipio a contestar." } },
+        { es: "Repetir la solicitud por escrito, guardar copia y buscar ayuda legal si no contestan", ok: true, fb: { es: "Kiara recibió el contrato dos semanas después. 🙌" } }
       ],
-      key: { es: "La información es una herramienta vital para mantener nuestra democracia. Todas las personas tienen derecho a conocer la información pública que está en manos del Gobierno.", en: "Information is a vital tool for keeping our democracy. Everyone has the right to know the public information held by the government." }
+      key: { es: "La información es una herramienta vital para mantener nuestra democracia. Todas las personas tienen derecho a conocer la información pública que está en manos del Gobierno." }
     },
     {
       id: "ana", right: "participacion", name: "Doña Ana", age: 67, color: "#B07A12",
-      place: { es: "Égida", en: "Senior housing" }, deco: ["🏠", "🪴"],
-      msg: { es: "Quiero votar en las elecciones, pero no puedo caminar hasta el colegio. Me dijeron que “eso es complicado” y ya.", en: "I want to vote in the election, but I can't walk to the polling place. They just told me “that's complicated.”" },
+      place: { es: "Égida" }, deco: ["🏠", "🪴"],
+      msg: { es: "Quiero votar en las elecciones, pero no puedo caminar hasta el colegio. Me dijeron que “eso es complicado” y ya." },
       clues: [
-        { icon: "🗳️", x: 24, y: 40, es: "Las elecciones son en tres semanas.", en: "The election is in three weeks." },
-        { icon: "🦯", x: 54, y: 74, es: "Doña Ana no puede caminar distancias largas.", en: "Doña Ana can't walk long distances." },
-        { icon: "💬", x: 80, y: 44, es: "Nadie le explicó qué opciones tiene.", en: "No one explained her options." }
+        { icon: "🗳️", x: 24, y: 40, es: "Las elecciones son en tres semanas." },
+        { icon: "🦯", x: 54, y: 74, es: "Doña Ana no puede caminar distancias largas." },
+        { icon: "💬", x: 80, y: 44, es: "Nadie le explicó qué opciones tiene." }
       ],
       options: ["participacion", "justicia", "tener", "trabajo"],
-      hint: { es: "Pista: ¿qué quiere hacer Doña Ana en tres semanas?", en: "Hint: what does Doña Ana want to do in three weeks?" },
-      rightFb: { es: "Votar es participar. Este derecho es de todas las personas, también de quienes tienen dificultad para moverse.", en: "Voting is participating. This right belongs to everyone, including people with limited mobility." },
+      hint: { es: "Pista: ¿qué quiere hacer Doña Ana en tres semanas?" },
+      rightFb: { es: "Votar es participar. Este derecho es de todas las personas, también de quienes tienen dificultad para moverse." },
       actions: [
-        { es: "No votar esta vez", en: "Skip voting this time", ok: false, fb: { es: "Su voz cuenta. Hay opciones para quienes no pueden llegar al colegio.", en: "Her voice counts. There are options for people who can't get to the polls." } },
-        { es: "Pedirle a alguien que vote por ella", en: "Ask someone to vote for her", ok: false, fb: { es: "El voto es personal. Nadie puede votar en su lugar.", en: "Voting is personal. No one can vote in her place." } },
-        { es: "Preguntar en la Comisión Estatal de Elecciones qué opciones hay para votar con acomodo", en: "Ask the State Elections Commission about options for voting with an accommodation", ok: true, fb: { es: "Doña Ana pudo votar con las opciones que le explicaron.", en: "Doña Ana was able to vote with the options they explained." } }
+        { es: "No votar esta vez", ok: false, fb: { es: "Su voz cuenta. Hay opciones para quienes no pueden llegar al colegio." } },
+        { es: "Pedirle a alguien que vote por ella", ok: false, fb: { es: "El voto es personal. Nadie puede votar en su lugar." } },
+        { es: "Preguntar en la Comisión Estatal de Elecciones qué opciones hay para votar con acomodo", ok: true, fb: { es: "Doña Ana pudo votar con las opciones que le explicaron." } }
       ],
-      key: { es: "Sin participación política no existe democracia. Este derecho debe reconocerse por igual a todas las personas, sin importar su posición social, sexo, raza u otras condiciones.", en: "Without political participation there is no democracy. This right must be recognized equally for all people, regardless of social position, sex, race, or other conditions." }
+      key: { es: "Sin participación política no existe democracia. Este derecho debe reconocerse por igual a todas las personas, sin importar su posición social, sexo, raza u otras condiciones." }
     },
     {
       id: "jose", right: "justicia", name: "José", age: 35, color: "#1F5FA8",
-      place: { es: "Apartamento", en: "Apartment" }, deco: ["🚪", "🛋️"],
-      msg: { es: "El dueño del apartamento me dejó una nota: tengo dos días para irme. No tengo dinero para un abogado. ¿Qué hago?", en: "My landlord left a note: I have two days to leave. I can't afford a lawyer. What do I do?" },
+      place: { es: "Apartamento" }, deco: ["🚪", "🛋️"],
+      msg: { es: "El dueño del apartamento me dejó una nota: tengo dos días para irme. No tengo dinero para un abogado. ¿Qué hago?" },
       clues: [
-        { icon: "📝", x: 26, y: 46, es: "Nota en la puerta: “Tienes 2 días”. No hay orden de un tribunal.", en: "Note on the door: “You have 2 days.” There's no court order." },
-        { icon: "💵", x: 54, y: 74, es: "José no puede pagar un abogado.", en: "José can't pay for a lawyer." },
-        { icon: "🔑", x: 80, y: 40, es: "El dueño amenazó con cambiar la cerradura.", en: "The landlord threatened to change the lock." }
+        { icon: "📝", x: 26, y: 46, es: "Nota en la puerta: “Tienes 2 días”. No hay orden de un tribunal." },
+        { icon: "💵", x: 54, y: 74, es: "José no puede pagar un abogado." },
+        { icon: "🔑", x: 80, y: 40, es: "El dueño amenazó con cambiar la cerradura." }
       ],
       options: ["info", "participacion", "justicia", "educacion"],
-      hint: { es: "Pista: José necesita usar la ley para protegerse, aunque no tenga dinero.", en: "Hint: José needs to use the law to protect himself, even without money." },
-      rightFb: { es: "Tener derechos no basta: también tienes derecho a usar la ley para defenderlos.", en: "Having rights isn't enough: you also have the right to use the law to defend them." },
+      hint: { es: "Pista: José necesita usar la ley para protegerse, aunque no tenga dinero." },
+      rightFb: { es: "Tener derechos no basta: también tienes derecho a usar la ley para defenderlos." },
       actions: [
-        { es: "Buscar servicios legales gratuitos: en general, para sacarte el dueño tiene que seguir un proceso legal", en: "Look for free legal services: generally, a landlord has to follow a legal process to evict you", ok: true, fb: { es: "Con ayuda legal gratuita, José supo cuáles eran sus derechos y ganó tiempo para mudarse con dignidad.", en: "With free legal help, José learned his rights and gained time to move with dignity." } },
-        { es: "Irse ya, sin preguntar", en: "Leave right away without asking", ok: false, fb: { es: "Podría estar renunciando a protecciones que la ley le da.", en: "He might be giving up protections the law gives him." } },
-        { es: "No hacer nada y esperar", en: "Do nothing and wait", ok: false, fb: { es: "Sin orientación, el problema puede crecer.", en: "Without guidance, the problem can grow." } }
+        { es: "Buscar servicios legales gratuitos: en general, para sacarte el dueño tiene que seguir un proceso legal", ok: true, fb: { es: "Con ayuda legal gratuita, José supo cuáles eran sus derechos y ganó tiempo para mudarse con dignidad." } },
+        { es: "Irse ya, sin preguntar", ok: false, fb: { es: "Podría estar renunciando a protecciones que la ley le da." } },
+        { es: "No hacer nada y esperar", ok: false, fb: { es: "Sin orientación, el problema puede crecer." } }
       ],
-      key: { es: "El acceso a la justicia es el derecho que tienen todas las personas a utilizar las herramientas y mecanismos legales para que se reconozcan y protejan sus demás derechos.", en: "Access to justice is everyone's right to use legal tools and mechanisms so their other rights are recognized and protected." }
+      key: { es: "El acceso a la justicia es el derecho que tienen todas las personas a utilizar las herramientas y mecanismos legales para que se reconozcan y protejan sus demás derechos." }
     },
     {
       id: "luis", right: "trabajo", name: "Luis", age: 27, color: "#A3326B",
-      place: { es: "Hospital", en: "Hospital" }, deco: ["🏥", "🩺"],
-      msg: { es: "Fui a una entrevista de enfermería y me dijeron que el puesto “es para mujeres”. Tengo licencia y experiencia.", en: "I went to a nursing job interview and they told me the position “is for women.” I have my license and experience." },
+      place: { es: "Hospital" }, deco: ["🏥", "🩺"],
+      msg: { es: "Fui a una entrevista de enfermería y me dijeron que el puesto “es para mujeres”. Tengo licencia y experiencia." },
       clues: [
-        { icon: "📋", x: 22, y: 44, es: "El anuncio pedía “personal de enfermería con licencia”.", en: "The ad asked for “licensed nursing staff.”" },
-        { icon: "💬", x: 52, y: 72, es: "La entrevistadora dijo: “Es para mujeres”.", en: "The interviewer said: “It's for women.”" },
-        { icon: "🎓", x: 80, y: 40, es: "Luis cumple con todos los requisitos.", en: "Luis meets every requirement." }
+        { icon: "📋", x: 22, y: 44, es: "El anuncio pedía “personal de enfermería con licencia”." },
+        { icon: "💬", x: 52, y: 72, es: "La entrevistadora dijo: “Es para mujeres”." },
+        { icon: "🎓", x: 80, y: 40, es: "Luis cumple con todos los requisitos." }
       ],
       options: ["dignidad", "tener", "info", "trabajo"],
-      hint: { es: "Pista: lo que está en juego es el empleo de Luis.", en: "Hint: what's at stake is Luis's job." },
-      rightFb: { es: "Tu género no define el trabajo que puedes hacer.", en: "Your gender doesn't define the work you can do." },
+      hint: { es: "Pista: lo que está en juego es el empleo de Luis." },
+      rightFb: { es: "Tu género no define el trabajo que puedes hacer." },
       actions: [
-        { es: "Aceptarlo porque “así son las cosas”", en: "Accept it because “that's just how it is”", ok: false, fb: { es: "Así no tienen que ser. Es discriminación.", en: "It doesn't have to be. This is discrimination." } },
-        { es: "Anotar lo que pasó y orientarse en una agencia u organización que atiende discriminación en el empleo", en: "Write down what happened and get guidance from an agency or group that handles job discrimination", ok: true, fb: { es: "Luis presentó una querella. El hospital revisó su proceso de contratación.", en: "Luis filed a complaint. The hospital reviewed its hiring process." } },
-        { es: "Cambiar de profesión", en: "Change careers", ok: false, fb: { es: "No debería renunciar a lo que estudió por un prejuicio.", en: "He shouldn't give up what he studied because of prejudice." } }
+        { es: "Aceptarlo porque “así son las cosas”", ok: false, fb: { es: "Así no tienen que ser. Es discriminación." } },
+        { es: "Anotar lo que pasó y orientarse en una agencia u organización que atiende discriminación en el empleo", ok: true, fb: { es: "Luis presentó una querella. El hospital revisó su proceso de contratación." } },
+        { es: "Cambiar de profesión", ok: false, fb: { es: "No debería renunciar a lo que estudió por un prejuicio." } }
       ],
-      key: { es: "Todas las personas tienen derecho a seleccionar libremente su trabajo: las condiciones sociales o el género no deben definir el empleo que puede desempeñar.", en: "Everyone has the right to freely choose their work: social conditions or gender must not define the job a person can do." }
+      key: { es: "Todas las personas tienen derecho a seleccionar libremente su trabajo: las condiciones sociales o el género no deben definir el empleo que puede desempeñar." }
     },
     {
       id: "carmen", right: "dignidad", name: "Doña Carmen", age: 72, color: "#4E6B1F",
-      place: { es: "Centro de salud", en: "Health center" }, deco: ["🏥", "🕐"],
-      msg: { es: "En el centro de salud me hablan gritando y me dejan horas esperando, sin silla ni agua. Como si yo no importara.", en: "At the health center they yell at me and leave me waiting for hours with no chair or water. As if I didn't matter." },
+      place: { es: "Centro de salud" }, deco: ["🏥", "🕐"],
+      msg: { es: "En el centro de salud me hablan gritando y me dejan horas esperando, sin silla ni agua. Como si yo no importara." },
       clues: [
-        { icon: "🪑", x: 22, y: 70, es: "No hay sillas suficientes en la sala de espera.", en: "There aren't enough chairs in the waiting room." },
-        { icon: "⏰", x: 52, y: 32, es: "Lleva cinco horas esperando.", en: "She has been waiting for five hours." },
-        { icon: "🗣️", x: 80, y: 62, es: "El personal le habla a gritos.", en: "The staff yell at her." }
+        { icon: "🪑", x: 22, y: 70, es: "No hay sillas suficientes en la sala de espera." },
+        { icon: "⏰", x: 52, y: 32, es: "Lleva cinco horas esperando." },
+        { icon: "🗣️", x: 80, y: 62, es: "El personal le habla a gritos." }
       ],
       options: ["trabajo", "dignidad", "participacion", "educacion"],
-      hint: { es: "Pista: Doña Carmen siente que la tratan como si no valiera. ¿Qué derecho protege ese valor?", en: "Hint: Doña Carmen feels treated as if she were worthless. Which right protects that worth?" },
-      rightFb: { es: "Mereces respeto por el simple hecho de ser persona.", en: "You deserve respect simply for being a person." },
+      hint: { es: "Pista: Doña Carmen siente que la tratan como si no valiera. ¿Qué derecho protege ese valor?" },
+      rightFb: { es: "Mereces respeto por el simple hecho de ser persona." },
       actions: [
-        { es: "Quedarse callada", en: "Stay quiet", ok: false, fb: { es: "Su malestar es válido. Callar no cambia el trato.", en: "Her discomfort is valid. Staying quiet won't change how she's treated." } },
-        { es: "Irse sin que la atiendan", en: "Leave without being seen", ok: false, fb: { es: "Su salud también es importante. Puede exigir respeto y seguir recibiendo atención.", en: "Her health matters too. She can demand respect and still get care." } },
-        { es: "Pedir respeto con calma, anotar lo ocurrido y presentar una queja formal", en: "Calmly ask for respect, write down what happened, and file a formal complaint", ok: true, fb: { es: "La administración puso más sillas y habló con el personal sobre el trato.", en: "The administration added chairs and talked with staff about how they treat people." } }
+        { es: "Quedarse callada", ok: false, fb: { es: "Su malestar es válido. Callar no cambia el trato." } },
+        { es: "Irse sin que la atiendan", ok: false, fb: { es: "Su salud también es importante. Puede exigir respeto y seguir recibiendo atención." } },
+        { es: "Pedir respeto con calma, anotar lo ocurrido y presentar una queja formal", ok: true, fb: { es: "La administración puso más sillas y habló con el personal sobre el trato." } }
       ],
-      key: { es: "La dignidad humana es el valor que tienen las personas por el simple hecho de ser personas.", en: "Human dignity is the worth people have simply for being people." }
+      key: { es: "La dignidad humana es el valor que tienen las personas por el simple hecho de ser personas." }
     }
   ];
 
   // ---------- Recursos (por verificar) ----------
   const RESOURCES = [
-    { title: { es: "Ayuda legal gratuita", en: "Free legal help" }, items: [
-      { es: "Organización de servicios legales gratuitos", en: "Free legal services organization" },
-      { es: "Clínica de asistencia legal universitaria", en: "University legal aid clinic" } ] },
-    { title: { es: "Discriminación en el empleo", en: "Job discrimination" }, items: [
-      { es: "Agencia que atiende querellas de discriminación laboral", en: "Agency that handles job discrimination complaints" } ] },
-    { title: { es: "Personas de edad avanzada", en: "Older adults" }, items: [
-      { es: "Oficina que defiende a personas de edad avanzada", en: "Office that defends older adults" } ] },
-    { title: { es: "Elecciones", en: "Elections" }, items: [
-      { es: "Comisión Estatal de Elecciones (CEE)", en: "State Elections Commission (CEE)" } ] },
-    { title: { es: "Información pública", en: "Public information" }, items: [
-      { es: "Espacios Abiertos", en: "Espacios Abiertos", url: SERIES_URL } ] }
+    { title: { es: "Ayuda legal gratuita" }, items: [
+      { es: "Organización de servicios legales gratuitos" },
+      { es: "Clínica de asistencia legal universitaria" } ] },
+    { title: { es: "Discriminación en el empleo" }, items: [
+      { es: "Agencia que atiende querellas de discriminación laboral" } ] },
+    { title: { es: "Personas de edad avanzada" }, items: [
+      { es: "Oficina que defiende a personas de edad avanzada" } ] },
+    { title: { es: "Elecciones" }, items: [
+      { es: "Comisión Estatal de Elecciones (CEE)" } ] },
+    { title: { es: "Información pública" }, items: [
+      { es: "Espacios Abiertos", url: SERIES_URL } ] }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
@@ -628,14 +583,14 @@ p { margin: 0; }
 
   // ---------- Estado ----------
   const fresh = () => ({
-    lang: "es", screen: "welcome", pre: [0, 0, 0], post: [0, 0, 0], points: 0,
+    screen: "welcome", pre: [0, 0, 0], post: [0, 0, 0], points: 0,
     progress: {}, current: null, sel: null, fb: null, sheet: false, toast: ""
   });
   let S = fresh();
   const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dOk: false, aOk: false, earned: 0, done: false });
 
-  const t = (k) => T[S.lang][k];
-  const L = (o) => o[S.lang];
+  const t = (k) => T[k];
+  const L = (o) => o.es;
   const rankIndex = (p) => RANK_MIN.reduce((acc, min, i) => (p >= min ? i : acc), 0);
   const solvedCount = () => CASES.filter((c) => P(c.id).done).length;
   const curCase = () => CASES.find((c) => c.id === S.current);
@@ -653,12 +608,8 @@ p { margin: 0; }
   function topbar() {
     const showPts = !["welcome", "pre"].includes(S.screen);
     return `<header class="topbar">
-      <div class="brand">${shield}<span>${t("brand")}</span></div>
+      <button class="brand" data-act="go" data-v="inbox" aria-label="${t("brand")}: ir a la bandeja">${shield}<span>${t("brand")}</span></button>
       ${showPts ? `<span class="chip" aria-label="${S.points} ${t("points")}">★ ${S.points}</span>` : ""}
-      <div class="lang" role="group" aria-label="Idioma / Language">
-        <button class="tbtn" data-act="lang" data-v="es" aria-pressed="${S.lang === "es"}">ES</button>
-        <button class="tbtn" data-act="lang" data-v="en" aria-pressed="${S.lang === "en"}">EN</button>
-      </div>
       ${S.screen !== "resources" ? `<button class="tbtn" data-act="go" data-v="resources">${t("help")}</button>` : ""}
     </header>`;
   }
@@ -846,7 +797,7 @@ p { margin: 0; }
         <button class="btn ghost" data-act="restart">↺ ${t("playAgain")}</button>`;
     },
     resources() {
-      return `<button class="back" data-act="go" data-v="${S.prevScreen && S.prevScreen !== "resources" ? S.prevScreen : "inbox"}">← ${S.lang === "es" ? "Volver" : "Back"}</button>
+      return `<button class="back" data-act="go" data-v="${S.prevScreen && S.prevScreen !== "resources" ? S.prevScreen : "inbox"}">← Volver</button>
         <h2>📞 ${t("resTitle")}</h2>
         <p class="note">${t("resNote")}</p>
         ${RESOURCES.map((g) => `<div class="res-group"><h3>${L(g.title)}</h3>
@@ -879,7 +830,7 @@ p { margin: 0; }
   // ---------- Render ----------
   const app = document.getElementById("app");
   function render() {
-    document.documentElement.lang = S.lang;
+    document.documentElement.lang = "es";
     app.innerHTML = topbar() + `<main class="screen">${screens[S.screen]()}</main>` +
       `<button class="jump" data-act="openSheet">☰ ${t("jump")}</button>` + sheet();
   }
@@ -894,7 +845,6 @@ p { margin: 0; }
     const c = curCase();
 
     switch (act) {
-      case "lang": S.lang = v; render(); break;
       case "go":
         if (v === "resources") S.prevScreen = S.screen;
         go(v);
@@ -943,7 +893,7 @@ p { margin: 0; }
         try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch (_) { done(false); }
         break;
       }
-      case "restart": { const lang = S.lang; S = fresh(); S.lang = lang; render(); window.scrollTo(0, 0); break; }
+      case "restart": { S = fresh(); render(); window.scrollTo(0, 0); break; }
       case "openSheet": S.sheet = true; render(); break;
       case "closeSheet": S.sheet = false; render(); break;
       case "jumpTo": demoJump(v); break;
