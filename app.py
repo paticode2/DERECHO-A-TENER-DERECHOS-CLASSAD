@@ -47,6 +47,7 @@ PROTOTIPO_HTML = r'''<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
+*, *::before, *::after { box-sizing: border-box; }
 /* Layout: una columna tipo celular centrada; barra superior fija; cada pantalla es una tarjeta que llena la columna. */
 :root {
   --bg: #EEF0F8;
@@ -361,6 +362,18 @@ p { margin: 0; }
   padding: 10px 12px; cursor: pointer; display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center;
 }
 .sheet-list .n { font-family: var(--font-mono); color: var(--accent); font-weight: 500; }
+/* Empuje para completar */
+.nudge { background: var(--surface-2); border: 1px dashed var(--accent); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; font-size: 0.92rem; }
+.nudge strong { color: var(--accent); }
+.levelup { background: var(--signal); color: var(--signal-ink); border-radius: 14px; padding: 12px 14px; font-weight: 700; text-align: center; }
+.next-case { display: grid; gap: 2px; text-align: left; }
+.next-case small { font-weight: 500; opacity: 0.85; }
+/* Confirmación */
+.dlg-wrap { position: fixed; inset: 0; z-index: 40; background: rgba(8, 10, 30, 0.55); display: grid; place-items: center; padding: 16px; }
+.dlg { background: var(--surface); border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; display: grid; gap: 12px; box-shadow: 0 12px 40px rgba(10, 12, 40, 0.35); }
+.dlg h3 { margin: 0; }
+.dlg p { margin: 0; }
+.dlg .btn-row { grid-template-columns: 1fr; }
 .proto-tag { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; }
 </style>
 
@@ -411,6 +424,20 @@ p { margin: 0; }
       openSite: "Abrir la página de la serie",
       jumpTitle: "Ir a una pantalla", jumpNote: "Solo para el prototipo en papel. Las pantallas de caso usan el caso de Kiara.",
       proto: "Prototipo · contenido demostrativo",
+      waiting: (n) => n === 1 ? "Queda 1 persona esperando tu respuesta." : `Quedan ${n} personas esperando tu respuesta.`,
+      toRank: (pts, r) => `Te faltan <strong>${pts} pts</strong> para llegar a «${r}».`,
+      maxRank: "¡Llegaste al nivel más alto! Termina los casos para completar tu turno.",
+      allDone: "¡Atendiste a todas las personas! Ya puedes ver tu reporte.",
+      levelUp: (r) => `⬆ ¡Subiste de nivel: ${r}!`,
+      nextCase: "Siguiente caso", nextWaiting: "te está esperando",
+      leftCases: (n) => `Te faltan ${n} de 7. ¡Tú puedes!`,
+      keepGoing: "Seguir atendiendo",
+      finishTitle: "¿Terminar el turno ya?",
+      finishBody: (n) => `Todavía ${n === 1 ? "hay 1 persona" : `hay ${n} personas`} esperando ayuda. Cada caso te da hasta 120 puntos.`,
+      finishAnyway: "Terminar de todos modos",
+      restartTitle: "¿Empezar de nuevo?",
+      restartBody: "Se borrarán tus puntos, tus casos resueltos y tus respuestas.",
+      restartYes: "Sí, empezar de nuevo", cancel: "Cancelar",
       ranks: ["En entrenamiento", "Voz de apoyo", "Línea firme", "Defensa total"],
       screens: ["Bienvenida", "Autoevaluación (antes)", "Cómo funciona", "Bandeja de casos", "Caso · Pistas (hotspot)", "Caso · ¿Qué derecho?", "Caso · ¿Qué haces?", "Caso resuelto", "Reporte + autoevaluación (después)", "Compartir", "Recursos"]
   };
@@ -584,10 +611,13 @@ p { margin: 0; }
   // ---------- Estado ----------
   const fresh = () => ({
     screen: "welcome", pre: [0, 0, 0], post: [0, 0, 0], points: 0,
-    progress: {}, current: null, sel: null, fb: null, sheet: false, toast: ""
+    progress: {}, current: null, sel: null, fb: null, sheet: false, toast: "", confirm: null
   });
   let S = fresh();
-  const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dOk: false, aOk: false, earned: 0, done: false });
+  const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dOk: false, aOk: false, earned: 0, done: false, startRank: null });
+  const nextOpen = () => CASES.find((c) => c.id !== S.current && !P(c.id).done);
+  // Hay datos que se perderían si la persona sale de la página
+  const hasProgress = () => S.screen !== "welcome" || S.pre.some(Boolean) || S.points > 0;
 
   const t = (k) => T[k];
   const L = (o) => o.es;
@@ -676,6 +706,7 @@ p { margin: 0; }
         <h2>${t("inboxTitle")}</h2>
         <div class="status"><span><strong>${n}</strong> ${t("of")} 7 ${t("solved")}</span><span class="muted small">${t("level")}: <strong>${t("ranks")[rankIndex(S.points)]}</strong></span></div>
         <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><div style="width:${(n / 7) * 100}%"></div></div>
+        ${nudge(n)}
         <div class="inbox">
           ${CASES.map((c) => {
             const done = P(c.id).done;
@@ -688,7 +719,7 @@ p { margin: 0; }
         </div>
         <div class="btn-row">
           <button class="btn ghost" data-act="go" data-v="resources">${t("resources")}</button>
-          <button class="btn ghost" data-act="go" data-v="report">${t("finish")}</button>
+          <button class="btn ${n === 7 ? "" : "ghost"}" data-act="finish">${n === 7 ? t("seeReport") : t("finish")}</button>
         </div>`;
     },
     clues() {
@@ -740,12 +771,15 @@ p { margin: 0; }
     },
     solved() {
       const c = curCase(), p = P(c.id), r = RIGHTS[c.right];
-      const all = solvedCount() === 7;
-      return `<div class="celebrate">
+      const all = solvedCount() === 7, nx = nextOpen(), ri = rankIndex(S.points);
+      const up = p.startRank !== null && ri > p.startRank;
+      return `${up ? `<div class="levelup" role="status">${t("levelUp")(t("ranks")[ri])}</div>` : ""}
+        <div class="celebrate">
           <span class="eyebrow">${L(r)}</span>
           <h2>${t("caseSolved")} 🎉</h2>
           <span class="big-pts">+${p.earned}</span>
           <span class="muted">${t("points")}</span>
+          ${all ? "" : `<span class="muted small">${t("leftCases")(7 - solvedCount())}</span>`}
         </div>
         <div class="keyidea"><span class="eyebrow">${t("keyIdea")}</span><p>${L(c.key)}</p></div>
         <a class="video" href="${SERIES_URL}" target="_blank" rel="noopener">
@@ -757,7 +791,9 @@ p { margin: 0; }
           <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
           <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
         </div>
-        ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>` : `<button class="btn" data-act="go" data-v="inbox">← ${t("backInbox")}</button>`}`;
+        ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
+          : `<button class="btn next-case" data-act="open" data-v="${nx.id}"><span>${t("nextCase")}: ${nx.name} →</span><small>${t("nextWaiting")}</small></button>
+             <button class="btn ghost" data-act="go" data-v="inbox">← ${t("backInbox")}</button>`}`;
     },
     report() {
       const ri = rankIndex(S.points), n = solvedCount();
@@ -776,7 +812,8 @@ p { margin: 0; }
             <div class="cmp-row"><span>${t("before")}</span><div class="bar"><div style="width:${(S.pre[i] || 0) * 20}%"></div></div><b>${S.pre[i] || "–"}</b></div>
             <div class="cmp-row"><span>${t("now")}</span><div class="bar now"><div style="width:${S.post[i] * 20}%"></div></div><b>${S.post[i]}</b></div>
           </div>`).join("")}</div>` : ""}
-        <button class="btn" data-act="go" data-v="share" ${ready ? "" : "disabled"}>${t("shareRank")} →</button>`;
+        <button class="btn" data-act="go" data-v="share" ${ready ? "" : "disabled"}>${t("shareRank")} →</button>
+        ${n < 7 ? `<button class="btn ghost" data-act="go" data-v="inbox">← ${t("keepGoing")} (${7 - n})</button>` : ""}`;
     },
     share() {
       const txt = t("shareText")(t("ranks")[rankIndex(S.points)], solvedCount(), S.points);
@@ -810,6 +847,29 @@ p { margin: 0; }
     }
   };
 
+  function nudge(n) {
+    if (n === 7) return `<div class="nudge">${t("allDone")}</div>`;
+    const ri = rankIndex(S.points);
+    const rankLine = ri < RANK_MIN.length - 1 ? t("toRank")(RANK_MIN[ri + 1] - S.points, t("ranks")[ri + 1]) : t("maxRank");
+    return `<div class="nudge"><span>${t("waiting")(7 - n)}</span><span>${rankLine}</span></div>`;
+  }
+
+  // Ventana de confirmación dentro de la app
+  function dialog() {
+    const d = S.confirm;
+    if (!d) return "";
+    return `<div class="dlg-wrap" data-act="cancelConfirm">
+      <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlg-t">
+        <h3 id="dlg-t">${d.title}</h3>
+        <p class="muted">${d.body}</p>
+        <div class="btn-row">
+          <button class="btn" data-act="cancelConfirm" autofocus>${d.stay}</button>
+          <button class="btn ghost" data-act="${d.act}">${d.leave}</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
   function feedbackBox() {
     if (!S.fb) return "";
     return `<div class="feedback ${S.fb.ok ? "ok" : "no"}" role="status"><strong>${S.fb.title}</strong><p>${S.fb.text}</p></div>`;
@@ -832,7 +892,8 @@ p { margin: 0; }
   function render() {
     document.documentElement.lang = "es";
     app.innerHTML = topbar() + `<main class="screen">${screens[S.screen]()}</main>` +
-      `<button class="jump" data-act="openSheet">☰ ${t("jump")}</button>` + sheet();
+      `<button class="jump" data-act="openSheet">☰ ${t("jump")}</button>` + sheet() + dialog();
+    if (S.confirm) { const b = app.querySelector(".dlg .btn"); if (b) b.focus(); }
   }
 
   // ---------- Interacciones ----------
@@ -841,7 +902,8 @@ p { margin: 0; }
     if (!el) return;
     const act = el.dataset.act, v = el.dataset.v;
     if (act === "rate") return; // lo maneja "change"
-    if (act === "closeSheet" && e.target !== el) return;
+    // Clic en el fondo oscuro cierra; clic dentro de la ventana no
+    if ((el.classList.contains("sheet-wrap") || el.classList.contains("dlg-wrap")) && e.target !== el) return;
     const c = curCase();
 
     switch (act) {
@@ -849,7 +911,21 @@ p { margin: 0; }
         if (v === "resources") S.prevScreen = S.screen;
         go(v);
         break;
-      case "open": go("clues", { current: v }); break;
+      case "open": {
+        const p = P(v);
+        if (p.startRank === null) p.startRank = rankIndex(S.points);
+        go(p.done ? "solved" : "clues", { current: v });
+        break;
+      }
+      case "finish": {
+        const left = 7 - solvedCount();
+        if (left === 0) { go("report"); break; }
+        S.confirm = { title: t("finishTitle"), body: t("finishBody")(left), stay: t("keepGoing"), leave: t("finishAnyway"), act: "finishYes" };
+        render();
+        break;
+      }
+      case "finishYes": S.confirm = null; go("report"); break;
+      case "cancelConfirm": S.confirm = null; render(); break;
       case "clue": {
         const p = P(c.id), i = +v;
         if (!p.clues.includes(i)) { p.clues.push(i); p.earned += 10; S.points += 10; }
@@ -893,7 +969,11 @@ p { margin: 0; }
         try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch (_) { done(false); }
         break;
       }
-      case "restart": { S = fresh(); render(); window.scrollTo(0, 0); break; }
+      case "restart":
+        S.confirm = { title: t("restartTitle"), body: t("restartBody"), stay: t("cancel"), leave: t("restartYes"), act: "restartYes" };
+        render();
+        break;
+      case "restartYes": { S = fresh(); render(); window.scrollTo(0, 0); break; }
       case "openSheet": S.sheet = true; render(); break;
       case "closeSheet": S.sheet = false; render(); break;
       case "jumpTo": demoJump(v); break;
@@ -911,7 +991,31 @@ p { margin: 0; }
     if (again) again.focus({ preventScroll: true });
   });
 
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && S.sheet) { S.sheet = false; render(); } });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (S.confirm) { S.confirm = null; render(); }
+    else if (S.sheet) { S.sheet = false; render(); }
+  });
+
+  // ---------- Avisar antes de salir de la página ----------
+  // Nada se guarda: si la persona cierra o recarga, pierde su progreso.
+  // El navegador muestra su propio mensaje ("¿Salir del sitio? Es posible que no se guarden los cambios").
+  function warnBeforeLeave(e) {
+    if (!hasProgress()) return;
+    e.preventDefault();
+    e.returnValue = "";
+    return "";
+  }
+  window.addEventListener("beforeunload", warnBeforeLeave);
+  // Streamlit muestra esto dentro de un iframe: también escuchamos en la página que lo contiene.
+  try {
+    const top = window.parent;
+    if (top && top !== window) {
+      if (top.__lineaDefensaLeave) top.removeEventListener("beforeunload", top.__lineaDefensaLeave);
+      top.__lineaDefensaLeave = warnBeforeLeave;
+      top.addEventListener("beforeunload", warnBeforeLeave);
+    }
+  } catch (_) { /* página contenedora de otro origen: basta con el aviso del iframe */ }
 
   // Salta a cualquier pantalla con datos de ejemplo (caso de Kiara)
   function demoJump(id) {
