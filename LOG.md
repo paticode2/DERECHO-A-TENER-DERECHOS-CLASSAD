@@ -5,7 +5,7 @@ La persona atiende una “línea de ayuda”: resuelve 7 casos, uno por cada der
 nombrando el derecho y recomendando qué hacer.
 
 - **Código:** todo vive en `app.py` (Streamlit muestra un HTML con CSS y JavaScript dentro de `PROTOTIPO_HTML`).
-- **Tema:** `.streamlit/config.toml` fija el modo claro.
+- **Tema:** `.streamlit/config.toml` fija el modo oscuro.
 - **Publicación:** Streamlit Community Cloud, rama `main`. Tras cambiar `.streamlit/config.toml`, usar “Reboot app”.
 
 ---
@@ -106,6 +106,18 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 ### Pruebas
 - Se jugaron los 7 casos en un navegador sin interfaz, con respuestas incorrectas incluidas: sin errores.
 - Se probó dentro de Streamlit: al recargar la página vuelve a la misma pantalla.
+
+---
+
+## Modo oscuro y logo de Espacios Abiertos (5 de noviembre de 2026, tercera parte)
+- La app es **siempre oscura**, con los colores de la marca: azul `#003C69` y rosado `#E6007E`
+  (botones principales en rosado). `.streamlit/config.toml` también quedó en oscuro.
+- **Logo “¡ea!” arriba:** completo (“¡ea! espacios abiertos”) en la portada y en las pantallas de inicio,
+  y solo “¡ea!” durante el juego para que quepan los puntos. Al tocarlo se vuelve a la bandeja.
+- El logo se tomó de espaciosabiertos.org (`wp-content/uploads/logo.png` y el ícono del sitio). Para que se
+  vea sobre fondo oscuro, el “ea” azul se pasó a blanco y los signos ¡ ! se quedaron en su rosado original.
+  Va dentro de `app.py` (no depende de que el sitio esté arriba).
+- La tarjeta de “Nuevo mensaje” ahora es rosada para que resalte sobre el fondo oscuro.
 
 ---
 
