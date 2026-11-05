@@ -113,6 +113,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding-block: 10px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -368,6 +369,28 @@ p { margin: 0; }
 .levelup { background: var(--signal); color: var(--signal-ink); border-radius: 14px; padding: 12px 14px; font-weight: 700; text-align: center; }
 .next-case { display: grid; gap: 2px; text-align: left; }
 .next-case small { font-weight: 500; opacity: 0.85; }
+/* Las 7 personas: progreso siempre a la vista */
+.crew { flex-basis: 100%; display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 2px 0 0; }
+.crew li { position: relative; }
+.crew .avatar { width: 30px; height: 30px; font-size: 0.8rem; opacity: 0.35; filter: grayscale(0.6); transition: opacity .3s, filter .3s; }
+.crew .done .avatar { opacity: 1; filter: none; }
+.crew .now .avatar { opacity: 1; filter: none; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.crew .done::after {
+  content: "✓"; position: absolute; right: -3px; bottom: -3px; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--ok); color: #fff; font-size: 0.6rem; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--surface);
+}
+.crew .count { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .crew .avatar { transition: none; } }
+/* Gancho al próximo caso */
+.teaser { border: 2px solid var(--accent); border-radius: 18px; padding: 14px; display: grid; gap: 10px; background: var(--surface); }
+.teaser .eyebrow { color: var(--accent); }
+/* Aprende más (plegado) */
+.more { border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
+.more > summary { cursor: pointer; padding: 14px 16px; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+.more > summary::-webkit-details-marker { display: none; }
+.more > summary::after { content: "+"; color: var(--accent); font-size: 1.2rem; line-height: 1; }
+.more[open] > summary::after { content: "–"; }
+.more-body { display: grid; gap: 12px; padding: 0 12px 12px; }
 /* Confirmación */
 .dlg-wrap { position: fixed; inset: 0; z-index: 40; background: rgba(8, 10, 30, 0.55); display: grid; place-items: center; padding: 16px; }
 .dlg { background: var(--surface); border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; display: grid; gap: 12px; box-shadow: 0 12px 40px rgba(10, 12, 40, 0.35); }
@@ -432,6 +455,8 @@ p { margin: 0; }
       nextCase: "Siguiente caso", nextWaiting: "te está esperando",
       leftCases: (n) => `Te faltan ${n} de 7. ¡Tú puedes!`,
       keepGoing: "Seguir atendiendo",
+      newMsg: "Nuevo mensaje", replyTo: "Responderle a", learnMore: "Aprende más sobre este derecho",
+      learnAll: "Aprende más: los 7 episodios", helped: "ayudadas", crewLabel: "Personas que has ayudado",
       finishTitle: "¿Terminar el turno ya?",
       finishBody: (n) => `Todavía ${n === 1 ? "hay 1 persona" : `hay ${n} personas`} esperando ayuda. Cada caso te da hasta 120 puntos.`,
       finishAnyway: "Terminar de todos modos",
@@ -642,7 +667,19 @@ p { margin: 0; }
       <button class="brand" data-act="go" data-v="inbox" aria-label="${t("brand")}: ir a la bandeja">${shield}<span>${t("brand")}</span></button>
       ${showPts ? `<span class="chip" aria-label="${S.points} ${t("points")}">★ ${S.points}</span>` : ""}
       ${S.screen !== "resources" ? `<button class="tbtn" data-act="go" data-v="resources">${t("help")}</button>` : ""}
+      ${["inbox", "clues", "right", "action", "solved"].includes(S.screen) ? crew() : ""}
     </header>`;
+  }
+
+  function crew() {
+    const n = solvedCount();
+    return `<ul class="crew" aria-label="${t("crewLabel")}: ${n} ${t("of")} 7">
+      ${CASES.map((c) => {
+        const cls = P(c.id).done ? "done" : (c.id === S.current && S.screen !== "inbox" ? "now" : "");
+        return `<li class="${cls}" title="${c.name}"><span class="avatar" style="background:${c.color}" aria-hidden="true">${initials(c.name)}</span></li>`;
+      }).join("")}
+      <li class="count" aria-hidden="true">${n}/7 ${t("helped")}</li>
+    </ul>`;
   }
 
   function scaleQ(name, idx, arr) {
@@ -785,17 +822,22 @@ p { margin: 0; }
         </div>
         ${bannerBox()}
         <div class="keyidea"><span class="eyebrow">${t("keyIdea")}</span><p>${L(c.key)}</p></div>
-        <a class="video" href="${SERIES_URL}" target="_blank" rel="noopener">
-          <span class="thumb"><span class="play"></span><span class="ep">${t("episode").toUpperCase()} ${r.ep} · ${L(r).toUpperCase()}</span></span>
-          <span class="cap"><strong>▶ ${t("watch")}</strong><span class="muted small">${t("pendingLink")}</span></span>
-        </a>
-        <div class="links">
-          <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
-          <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
-          <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
-        </div>
         ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
-          : `<button class="btn next-case" data-act="open" data-v="${nx.id}"><span>${t("nextCase")}: ${nx.name} →</span><small>${t("nextWaiting")}</small></button>`}`;
+          : `<div class="teaser">
+              <span class="eyebrow">💬 ${t("newMsg")}</span>
+              ${chat(nx)}
+              <button class="btn" data-act="open" data-v="${nx.id}">${t("replyTo")} ${nx.name} →</button>
+            </div>`}
+        <details class="more">
+          <summary>📚 ${t("learnMore")}</summary>
+          <div class="more-body">
+            <a class="video" href="${SERIES_URL}" target="_blank" rel="noopener">
+              <span class="thumb"><span class="play"></span><span class="ep">${t("episode").toUpperCase()} ${r.ep} · ${L(r).toUpperCase()}</span></span>
+              <span class="cap"><strong>▶ ${t("watch")}</strong><span class="muted small">${t("pendingLink")}</span></span>
+            </a>
+            ${learnLinks()}
+          </div>
+        </details>`;
     },
     report() {
       const ri = rankIndex(S.points), n = solvedCount();
@@ -815,7 +857,14 @@ p { margin: 0; }
             <div class="cmp-row"><span>${t("now")}</span><div class="bar now"><div style="width:${S.post[i] * 20}%"></div></div><b>${S.post[i]}</b></div>
           </div>`).join("")}</div>` : ""}
         <button class="btn" data-act="go" data-v="share" ${ready ? "" : "disabled"}>${t("shareRank")} →</button>
-        ${n < 7 ? `<button class="btn ghost" data-act="go" data-v="inbox">← ${t("keepGoing")} (${7 - n})</button>` : ""}`;
+        ${n < 7 ? `<button class="btn ghost" data-act="go" data-v="inbox">← ${t("keepGoing")} (${7 - n})</button>` : ""}
+        <details class="more">
+          <summary>📚 ${t("learnAll")}</summary>
+          <div class="more-body">
+            <div class="links">${Object.values(RIGHTS).map((r) => `<a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">▶</span><span>${t("episode")} ${r.ep} · ${L(r)}</span><span class="arrow">↗</span></a>`).join("")}</div>
+            ${learnLinks()}
+          </div>
+        </details>`;
     },
     share() {
       const txt = t("shareText")(t("ranks")[rankIndex(S.points)], solvedCount(), S.points);
@@ -869,6 +918,14 @@ p { margin: 0; }
           <button class="btn ghost" data-act="${d.act}">${d.leave}</button>
         </div>
       </div>
+    </div>`;
+  }
+
+  function learnLinks() {
+    return `<div class="links">
+      <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
+      <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
+      <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
     </div>`;
   }
 
