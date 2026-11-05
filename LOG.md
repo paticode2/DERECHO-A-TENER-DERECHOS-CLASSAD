@@ -119,6 +119,10 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
   Va dentro de `app.py` (no depende de que el sitio esté arriba).
 - La tarjeta de “Nuevo mensaje” ahora es rosada para que resalte sobre el fondo oscuro.
 
+### Arreglo: al pasar de pantalla vuelve arriba
+- En el iPad se baja la página de Streamlit, no el recuadro (iframe) donde vive la app, así que al cambiar
+  de pantalla se quedaba abajo. Ahora `toTop()` sube las dos. Probado dentro de Streamlit con una pantalla baja.
+
 ---
 
 ## Pendiente / ideas

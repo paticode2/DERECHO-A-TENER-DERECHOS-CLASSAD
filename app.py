@@ -1004,12 +1004,22 @@ p { margin: 0; }
     } catch (_) { S = fresh(); }
   }
 
+  // Sube al inicio de la pantalla. La app vive dentro de un recuadro (iframe) de Streamlit:
+  // hay que subir el recuadro por dentro y también la página que lo contiene.
+  function toTop() {
+    window.scrollTo(0, 0);
+    try {
+      const fe = window.frameElement;
+      if (fe && fe.getBoundingClientRect().top < 0) fe.scrollIntoView({ block: "start" });
+    } catch (_) { /* página contenedora de otro origen */ }
+  }
+
   function go(screen, extra) {
     Object.assign(S, { screen, toast: "", banner: null, sheet: null }, extra || {});
     S.enter = true;
     render();
     S.enter = false;
-    window.scrollTo(0, 0);
+    toTop();
   }
 
   // ---------- Piezas ----------
@@ -1481,7 +1491,7 @@ p { margin: 0; }
         break;
       case "restartYes": {
         try { localStorage.removeItem(STORE_KEY); } catch (_) {}
-        S = fresh(); render(); window.scrollTo(0, 0);
+        S = fresh(); render(); toTop();
         break;
       }
     }
