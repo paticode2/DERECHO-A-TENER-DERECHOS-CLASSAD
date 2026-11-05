@@ -400,7 +400,7 @@ p { margin: 0; }
       s2t: "Nombra el derecho", s2d: "Escoge qué derecho está en juego.",
       s3t: "Decide qué hacer", s3d: "Recomienda el mejor próximo paso y mira qué pasa.",
       ranksTitle: "Sube de nivel", tipWrong: "Si te equivocas, no pierdes: recibes una pista y lo intentas otra vez, pero ganas menos puntos.",
-      seeCases: "Ver mis casos",
+      seeCases: "Atender el primer caso", allFound: "¡Encontraste todas las pistas!", skipClues: "Seguir sin más pistas",
       inboxEyebrow: "Bandeja de entrada", inboxTitle: "Te están escribiendo", solved: "resueltos", level: "Nivel",
       new: "Nuevo", done: "Resuelto", finish: "Terminar turno", resources: "Recursos",
       back: "← Bandeja", step: "Paso", of: "de",
@@ -611,10 +611,11 @@ p { margin: 0; }
   // ---------- Estado ----------
   const fresh = () => ({
     screen: "welcome", pre: [0, 0, 0], post: [0, 0, 0], points: 0,
-    progress: {}, current: null, sel: null, fb: null, sheet: false, toast: "", confirm: null
+    progress: {}, current: null, sel: null, fb: null, sheet: false, toast: "", confirm: null, banner: null
   });
   let S = fresh();
   const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dOk: false, aOk: false, earned: 0, done: false, startRank: null });
+  const firstOpen = () => CASES.find((c) => !P(c.id).done);
   const nextOpen = () => CASES.find((c) => c.id !== S.current && !P(c.id).done);
   // Hay datos que se perderían si la persona sale de la página
   const hasProgress = () => S.screen !== "welcome" || S.pre.some(Boolean) || S.points > 0;
@@ -627,7 +628,7 @@ p { margin: 0; }
   const initials = (n) => n.replace("Doña ", "").slice(0, 1);
 
   function go(screen, extra) {
-    Object.assign(S, { screen, sel: null, fb: null, toast: "" }, extra || {});
+    Object.assign(S, { screen, sel: null, fb: null, toast: "", banner: null }, extra || {});
     render();
     window.scrollTo(0, 0);
   }
@@ -698,7 +699,7 @@ p { margin: 0; }
         <h3>${t("ranksTitle")}</h3>
         <div class="ranks">${t("ranks").map((r, i) => `<div class="rank-row"><span>${i + 1}. ${r}</span><span class="pts">${RANK_MIN[i]}+ pts</span></div>`).join("")}</div>
         <p class="note">${t("tipWrong")}</p>
-        <button class="btn" data-act="go" data-v="inbox">${t("seeCases")} →</button>`;
+        <button class="btn" data-act="open" data-v="${firstOpen().id}">${t("seeCases")} →</button>`;
     },
     inbox() {
       const n = solvedCount();
@@ -736,38 +737,40 @@ p { margin: 0; }
         <ul class="clues" aria-live="polite">
           ${p.clues.length ? p.clues.map((i) => `<li><span>${c.clues[i].icon}</span><span>${L(c.clues[i])}</span><span class="plus">+10</span></li>`).join("") : `<li class="empty">${t("noClues")}</li>`}
         </ul>
-        <button class="btn" data-act="go" data-v="right">${t("next")} →</button>`;
+        ${p.clues.length === 3 ? `<p class="toast">${t("allFound")}</p>` : ""}
+        <button class="btn ${p.clues.length === 3 ? "" : "ghost"}" data-act="go" data-v="right">${p.clues.length === 3 ? t("next") : t("skipClues")} →</button>`;
     },
     right() {
       const c = curCase(), p = P(c.id);
       return `${caseHead(2)}
         <h2>${t("whichRight")}</h2>
-        <div class="options" role="radiogroup">
+        <div class="options">
           ${c.options.map((r) => {
             let cls = "";
             if (p.dOk && r === c.right) cls = "right";
             else if (S.fb && S.fb.wrong && S.fb.wrong.includes(r)) cls = "wrong";
-            return `<button class="opt ${cls}" role="radio" aria-checked="${S.sel === r}" data-act="sel" data-v="${r}" ${p.dOk ? "disabled" : ""}><span class="dot">${cls === "right" ? "✓" : cls === "wrong" ? "✕" : ""}</span><span>${L(RIGHTS[r])}</span></button>`;
+            return `<button class="opt ${cls}" data-act="answerRight" data-v="${r}" ${p.dOk || cls === "wrong" ? "disabled" : ""}><span class="dot">${cls === "right" ? "✓" : cls === "wrong" ? "✕" : ""}</span><span>${L(RIGHTS[r])}</span></button>`;
           }).join("")}
         </div>
         ${feedbackBox()}
-        ${p.dOk ? `<button class="btn" data-act="go" data-v="action">${t("next")} →</button>` : `<button class="btn" data-act="checkRight" ${S.sel ? "" : "disabled"}>${t("check")}</button>`}`;
+        ${p.dOk ? `<button class="btn" data-act="go" data-v="action">${t("next")} →</button>` : ""}`;
     },
     action() {
       const c = curCase(), p = P(c.id);
       return `${caseHead(3)}
+        ${bannerBox()}
         ${chat(c)}
         <h2>${t("whatDo")}</h2>
-        <div class="options" role="radiogroup">
+        <div class="options">
           ${c.actions.map((a, i) => {
             let cls = "";
             if (p.aOk && a.ok) cls = "right";
             else if (S.fb && S.fb.wrong && S.fb.wrong.includes(i)) cls = "wrong";
-            return `<button class="opt ${cls}" role="radio" aria-checked="${S.sel === i}" data-act="sel" data-v="${i}" ${p.aOk ? "disabled" : ""}><span class="dot">${cls === "right" ? "✓" : cls === "wrong" ? "✕" : ""}</span><span>${L(a)}</span></button>`;
+            return `<button class="opt ${cls}" data-act="answerAction" data-v="${i}" ${p.aOk || cls === "wrong" ? "disabled" : ""}><span class="dot">${cls === "right" ? "✓" : cls === "wrong" ? "✕" : ""}</span><span>${L(a)}</span></button>`;
           }).join("")}
         </div>
         ${feedbackBox()}
-        ${p.aOk ? `<button class="btn" data-act="go" data-v="solved">${t("next")} →</button>` : `<button class="btn" data-act="checkAction" ${S.sel !== null ? "" : "disabled"}>${t("decide")}</button>`}`;
+        ${p.aOk ? `<button class="btn" data-act="go" data-v="solved">${t("next")} →</button>` : ""}`;
     },
     solved() {
       const c = curCase(), p = P(c.id), r = RIGHTS[c.right];
@@ -781,6 +784,7 @@ p { margin: 0; }
           <span class="muted">${t("points")}</span>
           ${all ? "" : `<span class="muted small">${t("leftCases")(7 - solvedCount())}</span>`}
         </div>
+        ${bannerBox()}
         <div class="keyidea"><span class="eyebrow">${t("keyIdea")}</span><p>${L(c.key)}</p></div>
         <a class="video" href="${SERIES_URL}" target="_blank" rel="noopener">
           <span class="thumb"><span class="play"></span><span class="ep">${t("episode").toUpperCase()} ${r.ep} · ${L(r).toUpperCase()}</span></span>
@@ -792,8 +796,7 @@ p { margin: 0; }
           <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
         </div>
         ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
-          : `<button class="btn next-case" data-act="open" data-v="${nx.id}"><span>${t("nextCase")}: ${nx.name} →</span><small>${t("nextWaiting")}</small></button>
-             <button class="btn ghost" data-act="go" data-v="inbox">← ${t("backInbox")}</button>`}`;
+          : `<button class="btn next-case" data-act="open" data-v="${nx.id}"><span>${t("nextCase")}: ${nx.name} →</span><small>${t("nextWaiting")}</small></button>`}`;
     },
     report() {
       const ri = rankIndex(S.points), n = solvedCount();
@@ -870,6 +873,11 @@ p { margin: 0; }
     </div>`;
   }
 
+  function bannerBox() {
+    const b = S.banner;
+    return b ? `<div class="feedback ok" role="status"><strong>${b.title}</strong><p>${b.text}</p></div>` : "";
+  }
+
   function feedbackBox() {
     if (!S.fb) return "";
     return `<div class="feedback ${S.fb.ok ? "ok" : "no"}" role="status"><strong>${S.fb.title}</strong><p>${S.fb.text}</p></div>`;
@@ -930,37 +938,36 @@ p { margin: 0; }
         const p = P(c.id), i = +v;
         if (!p.clues.includes(i)) { p.clues.push(i); p.earned += 10; S.points += 10; }
         render();
+        // Con las 3 pistas, pasa sola a la pregunta
+        if (p.clues.length === 3) setTimeout(() => { if (S.screen === "clues" && S.current === c.id) go("right"); }, 1100);
         break;
       }
-      case "sel": S.sel = S.screen === "action" ? +v : v; render(); break;
-      case "checkRight": {
+      case "answerRight": {
         const p = P(c.id);
-        if (S.sel === c.right) {
+        if (p.dOk) break;
+        if (v === c.right) {
           const pts = [50, 20][p.dTries] ?? 10;
           p.dOk = true; p.earned += pts; S.points += pts;
-          S.fb = { ok: true, title: `${t("correct")} +${pts}`, text: L(c.rightFb), wrong: S.fb?.wrong };
+          go("action", { banner: { title: `${t("correct")} +${pts}`, text: L(c.rightFb) } });
         } else {
           p.dTries++;
-          const wrong = [...(S.fb?.wrong || []), S.sel];
-          S.fb = { ok: false, title: t("notQuite"), text: L(c.hint), wrong };
-          S.sel = null;
+          S.fb = { ok: false, title: t("notQuite"), text: L(c.hint), wrong: [...(S.fb?.wrong || []), v] };
+          render();
         }
-        render();
         break;
       }
-      case "checkAction": {
-        const p = P(c.id), a = c.actions[S.sel];
+      case "answerAction": {
+        const p = P(c.id), a = c.actions[+v];
+        if (p.aOk) break;
         if (a.ok) {
           const pts = [40, 15][p.aTries] ?? 5;
           p.aOk = true; p.done = true; p.earned += pts; S.points += pts;
-          S.fb = { ok: true, title: `${t("good")} +${pts}`, text: L(a.fb), wrong: S.fb?.wrong };
+          go("solved", { banner: { title: `${t("good")} +${pts}`, text: L(a.fb) } });
         } else {
           p.aTries++;
-          const wrong = [...(S.fb?.wrong || []), S.sel];
-          S.fb = { ok: false, title: t("rethink"), text: L(a.fb), wrong };
-          S.sel = null;
+          S.fb = { ok: false, title: t("rethink"), text: L(a.fb), wrong: [...(S.fb?.wrong || []), +v] };
+          render();
         }
-        render();
         break;
       }
       case "copy": {
