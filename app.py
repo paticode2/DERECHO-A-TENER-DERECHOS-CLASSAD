@@ -277,6 +277,40 @@ p { margin: 0; }
 .spot.just { animation: spot-pop 0.5s cubic-bezier(0.2, 1.8, 0.4, 1); }
 @keyframes spot-pop { 0% { transform: translate(-50%, -50%) scale(0.6); } 100% { transform: translate(-50%, -50%) scale(1); } }
 @keyframes pulse { from { transform: scale(0.85); opacity: 0.9; } to { transform: scale(1.35); opacity: 0; } }
+/* Mini escena entre las dos partes */
+.scene.playing .spot { visibility: hidden; }
+.scene.spots-in .spot { animation: spot-pop 0.5s cubic-bezier(0.2, 1.8, 0.4, 1) both; }
+.scene.spots-in .spot:nth-of-type(2) { animation-delay: 0.12s; }
+.scene.spots-in .spot:nth-of-type(3) { animation-delay: 0.24s; }
+.scene-tag.replay { border: 0; font: inherit; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; }
+.intro { position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, rgba(6, 13, 32, 0.15), rgba(6, 13, 32, 0.45));
+  animation: intro-out 0.5s ease-in calc(5.6s - var(--el)) forwards; }
+@keyframes intro-out { to { opacity: 0; visibility: hidden; } }
+.actor { position: absolute; bottom: -6%; width: 34%; aspect-ratio: 1; }
+.actor .ava { width: 100%; height: 100%; background: transparent; border-radius: 0; overflow: visible; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.35)); }
+.actor.l { left: 3%; animation: in-l 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) calc(0s - var(--el)) both; }
+.actor.r { right: 3%; animation: in-r 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) calc(0.2s - var(--el)) both; }
+@keyframes in-l { from { transform: translateX(-140%); } }
+@keyframes in-r { from { transform: translateX(140%); } }
+.actor.r .ava { animation: talk 0.2s ease-in-out calc(0.9s - var(--el)) 8 alternate; }
+.actor.l .ava { animation: talk 0.2s ease-in-out calc(2.9s - var(--el)) 8 alternate; }
+@keyframes talk { to { transform: translateY(-5%) rotate(-3deg); } }
+.say {
+  position: absolute; max-width: 60%; margin: 0; background: #fff; color: #151936; border-radius: 14px; padding: 7px 11px;
+  font-size: 0.82rem; line-height: 1.3; font-weight: 700; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+  animation: say-in 0.4s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.say small { display: block; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; color: #6A6F8F; font-weight: 500; }
+.say::after { content: ""; position: absolute; bottom: -8px; border: 8px solid transparent; border-bottom: 0; border-top-color: inherit; }
+.say.r { right: 4%; top: 7%; border-bottom-right-radius: 3px; animation-delay: calc(0.8s - var(--el)); }
+.say.r::after { right: 18px; border-top-color: #fff; }
+.say.l { left: 4%; top: 33%; background: #FFE0F0; border-bottom-left-radius: 3px; animation-delay: calc(2.8s - var(--el)); }
+.say.l::after { left: 18px; border-top-color: #FFE0F0; }
+@keyframes say-in { from { opacity: 0; transform: scale(0.3) translateY(12px); } }
+.skip {
+  position: absolute; right: 8px; bottom: 8px; z-index: 4; font: inherit; font-size: 0.78rem; font-weight: 700; border: 0; border-radius: 999px;
+  padding: 5px 11px; background: rgba(6, 13, 32, 0.75); color: #fff; cursor: pointer;
+}
 .tip { text-align: center; color: var(--muted); font-size: 0.92rem; }
 .clues { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .clues li { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start; background: var(--surface-2); border-radius: 14px; padding: 9px 12px; font-size: 0.95rem; }
@@ -547,6 +581,7 @@ p { margin: 0; }
     levelUp: (r) => `⬆ ¡Subiste de nivel: ${r}!`,
     keepGoing: "Seguir atendiendo",
     newMsg: "Nuevo mensaje", nowTxt: "ahora", replyTo: "Responderle a",
+    skip: "Saltar", replay: "Ver la escena otra vez", replayShort: "Ver escena",
     resumeCase: "Caso en curso", resumeGo: (n) => `Seguir con ${n}`, nextMsg: "Te escribieron", nextGo: (n) => `Responderle a ${n}`,
     allSeven: "¡Atendiste a las 7 personas!", allSevenSub: "Gracias por defender sus derechos. Mira cómo te fue.",
     streak: (n) => `🔥 ${n} seguidas`,
@@ -603,6 +638,8 @@ p { margin: 0; }
     {
       id: "marco", right: "tener", name: "Marco", age: 31, color: "#B4462C", scene: "office",
       look: { skin: "#C68A5E", hair: "short", hairColor: "#2B1B12", shirt: "#B4462C", extra: ["stubble"] },
+      other: { name: "Empleado", color: "#5A6378", look: { skin: "#E8C3A0", hair: "short", hairColor: "#6B4A2B", shirt: "#5A6378", extra: ["glasses"] },
+        says: "Gente como tú no tiene derecho a quejarse.", reply: "¿Cómo que no? Tengo todos mis papeles en orden." },
       place: { es: "Oficina de gobierno" },
       msg: { es: "Fui a renovar un permiso y el empleado me dijo que “gente como yo” no tiene derecho a quejarse. ¿Eso es así?" },
       clues: [
@@ -628,6 +665,8 @@ p { margin: 0; }
     {
       id: "valeria", right: "educacion", name: "Valeria", age: 19, color: "#2F7D6B", scene: "university",
       look: { skin: "#E0A880", hair: "long", hairColor: "#5A3420", shirt: "#2F7D6B", extra: [] },
+      other: { name: "Oficina de matrícula", color: "#7A5C99", look: { skin: "#F0C9A8", hair: "bun", hairColor: "#3B2A1E", shirt: "#7A5C99", extra: [] },
+        says: "El elevador sigue roto. Tome el curso el año que viene.", reply: "¿Y por qué tengo que esperar yo un año entero?" },
       place: { es: "Universidad" },
       msg: { es: "Me admitieron a la universidad, pero mi salón está en un tercer piso sin elevador. Uso silla de ruedas y me dicen que “lo tome el año que viene”." },
       clues: [
@@ -653,6 +692,8 @@ p { margin: 0; }
     {
       id: "kiara", right: "info", name: "Kiara", age: 23, color: "#6A3FB5", scene: "townhall",
       look: { skin: "#8D5A3B", hair: "curly", hairColor: "#1E120C", shirt: "#6A3FB5", extra: ["earrings"] },
+      other: { name: "Funcionario", color: "#4A5568", look: { skin: "#B07A55", hair: "buzz", hairColor: "#222222", shirt: "#4A5568", extra: ["stubble"] },
+        says: "Eso está en trámite… vuelva otro día.", reply: "¡Ya van dos meses! Es información pública." },
       place: { es: "Municipio" },
       msg: { es: "Pedí al municipio el contrato del recogido de basura de mi barrio. Hace dos meses y nada. 😤" },
       clues: [
@@ -678,6 +719,8 @@ p { margin: 0; }
     {
       id: "ana", right: "participacion", name: "Doña Ana", age: 67, color: "#B07A12", scene: "home",
       look: { skin: "#E8B996", hair: "bun", hairColor: "#CFCFD6", shirt: "#B07A12", extra: ["glasses"] },
+      other: { name: "Empleada", color: "#3D7EA6", look: { skin: "#D9A27A", hair: "long", hairColor: "#2A1A12", shirt: "#3D7EA6", extra: [] },
+        says: "¿Votar desde aquí? Ay, eso es complicado.", reply: "Pero yo quiero votar, mija. Mi voz cuenta." },
       place: { es: "Égida" },
       msg: { es: "Quiero votar en las elecciones, pero no puedo caminar hasta el colegio. Me dijeron que “eso es complicado” y ya." },
       clues: [
@@ -703,6 +746,8 @@ p { margin: 0; }
     {
       id: "jose", right: "justicia", name: "José", age: 35, color: "#1F5FA8", scene: "apartment",
       look: { skin: "#A86E48", hair: "short", hairColor: "#141414", shirt: "#1F5FA8", extra: ["beard"] },
+      other: { name: "Dueño", color: "#7A3E2E", look: { skin: "#E2B48C", hair: "buzz", hairColor: "#9A9AA2", shirt: "#7A3E2E", extra: ["stubble"] },
+        says: "Tienes dos días para irte. Si no, cambio la cerradura.", reply: "¿Dos días? ¿Y para dónde me voy?" },
       place: { es: "Apartamento" },
       msg: { es: "El dueño del apartamento me dejó una nota: tengo dos días para irme. No tengo dinero para un abogado. ¿Qué hago?" },
       clues: [
@@ -728,6 +773,8 @@ p { margin: 0; }
     {
       id: "luis", right: "trabajo", name: "Luis", age: 27, color: "#A3326B", scene: "hospital",
       look: { skin: "#D69C72", hair: "buzz", hairColor: "#3A2414", shirt: "#3FA7A0", extra: [] },
+      other: { name: "Entrevistadora", color: "#5B6B8C", look: { skin: "#C48B63", hair: "long", hairColor: "#4A2C1A", shirt: "#5B6B8C", extra: ["glasses"] },
+        says: "Lo siento, este puesto es para mujeres.", reply: "Pero tengo licencia y experiencia…" },
       place: { es: "Hospital" },
       msg: { es: "Fui a una entrevista de enfermería y me dijeron que el puesto “es para mujeres”. Tengo licencia y experiencia." },
       clues: [
@@ -753,6 +800,8 @@ p { margin: 0; }
     {
       id: "carmen", right: "dignidad", name: "Doña Carmen", age: 72, color: "#4E6B1F", scene: "clinic",
       look: { skin: "#7A4A2E", hair: "curly", hairColor: "#E4E4EA", shirt: "#4E6B1F", extra: ["glasses"] },
+      other: { name: "Recepción", color: "#3FA7A0", look: { skin: "#F1CDB0", hair: "curly", hairColor: "#7A3B1E", shirt: "#3FA7A0", extra: [] },
+        says: "¡SIÉNTESE Y ESPERE SU TURNO!", reply: "Llevo cinco horas… y no hay ni una silla." },
       place: { es: "Centro de salud" },
       msg: { es: "En el centro de salud me hablan gritando y me dejan horas esperando, sin silla ni agua. Como si yo no importara." },
       clues: [
@@ -793,6 +842,7 @@ p { margin: 0; }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
+  const INTRO_MS = 6200;       // mini escena entre las dos partes al abrir el caso
   const CLUE_WAIT_MS = 5000;   // tiempo para leer las 3 pistas antes de pasar a la pregunta
   const NEXT_WAIT_MS = 1000;   // pausa para ver la respuesta correcta en verde antes de seguir
   const MAX_POINTS = 120 * CASES.length;
@@ -811,8 +861,11 @@ p { margin: 0; }
       bun: `<circle cx="32" cy="11" r="6" fill="${hc}"/><path d="M19 27c0-12 26-12 26 0-3-5-8-7.5-13-7.5S22 22 19 27z" fill="${hc}"/>`,
       buzz: `<path d="M19.4 26c.6-11 24.6-11 25.2 0-3.5-4.5-7.5-5.6-12.6-5.6S22.9 21.5 19.4 26z" fill="${hc}"/>`
     }[k.hair];
-    const brows = happy ? "M23.5 25.4q2.5-2 5 0M35.5 25.4q2.5-2 5 0" : "M23.5 26.6l5-1.9M40.5 26.6l-5-1.9";
-    const mouth = happy
+    const stern = mood === "stern";
+    const brows = happy ? "M23.5 25.4q2.5-2 5 0M35.5 25.4q2.5-2 5 0" : stern ? "M23.5 24.4l5 2M40.5 24.4l-5 2" : "M23.5 26.6l5-1.9M40.5 26.6l-5-1.9";
+    const mouth = stern
+      ? `<path d="M28.4 37.6h7.2" fill="none" stroke="#3A1F1A" stroke-width="1.7" stroke-linecap="round"/>`
+      : happy
       ? `<path d="M26.8 36.2q5.2 5.6 10.4 0z" fill="#fff" stroke="#3A1F1A" stroke-width="1.5" stroke-linejoin="round"/>`
       : `<path d="M28.6 38.6q3.4-2.6 6.8 0" fill="none" stroke="#3A1F1A" stroke-width="1.6" stroke-linecap="round"/>`;
     const ex = k.extra || [];
@@ -915,6 +968,7 @@ p { margin: 0; }
   }
   const SFX = {
     tap: () => tone(560, 0, 0.06, "sine", 0.06),
+    talk: (hi) => [0, 0.09, 0.18, 0.3].forEach((d, i) => tone((hi ? 420 : 250) + ((i * 53) % 90), d, 0.07, "square", 0.035)),
     clue: () => { tone(784, 0, 0.09, "triangle", 0.14); tone(1175, 0.07, 0.15, "triangle", 0.12); },
     right: () => { tone(659, 0, 0.12, "triangle", 0.17); tone(988, 0.1, 0.25, "triangle", 0.17); },
     wrong: () => { tone(220, 0, 0.16, "square", 0.06, 165); tone(165, 0.14, 0.26, "square", 0.06, 110); },
@@ -969,7 +1023,7 @@ p { margin: 0; }
     sheet: null, toast: "", confirm: null, welcomeBack: false
   });
   let S = fresh();
-  const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dWrong: [], aWrong: [], dOk: false, aOk: false, earned: 0, done: false, startRank: null });
+  const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dWrong: [], aWrong: [], dOk: false, aOk: false, earned: 0, done: false, startRank: null, introSeen: false });
   const firstOpen = () => CASES.find((c) => !P(c.id).done);
   const nextOpen = () => CASES.find((c) => c.id !== S.current && !P(c.id).done);
   const hasProgress = () => S.screen !== "welcome" || S.pre.some(Boolean) || S.points > 0;
@@ -1067,6 +1121,19 @@ p { margin: 0; }
 
   function streakTxt() { return S.streak >= 2 ? ` · ${t("streak")(S.streak)}` : ""; }
 
+  // Mini escena: la persona del caso (izquierda) y la otra parte (derecha) hablan
+  function intro(c) {
+    const el = introStart ? Date.now() - introStart : 0; // si se redibuja, sigue donde iba
+    const o = c.other;
+    return `<div class="intro" style="--el:${el}ms" aria-live="polite">
+      <span class="actor l">${avatar(c)}</span>
+      <span class="actor r">${avatar(o, "stern")}</span>
+      <p class="say r"><small>${o.name}</small>${o.says}</p>
+      <p class="say l"><small>${c.name}</small>${o.reply}</p>
+      <button class="skip" data-act="skipIntro">${t("skip")} ⏭</button>
+    </div>`;
+  }
+
   // ---------- Pantallas ----------
   const screens = {
     welcome() {
@@ -1133,9 +1200,10 @@ p { margin: 0; }
       const c = curCase(), p = P(c.id), all = p.clues.length === 3;
       return `${caseHead(1, c)}
         <div class="bubble">${L(c.msg)}</div>
-        <div class="scene" role="group" aria-label="${L(c.place)}">
+        <div class="scene ${p.introSeen ? (S.spotsIn ? "spots-in" : "") : "playing"}" role="group" aria-label="${L(c.place)}">
           ${sceneArt(c)}
           <span class="scene-tag l">🔍 ${p.clues.length}/3 ${t("found")}</span>
+          ${p.introSeen ? `<button class="scene-tag r replay" data-act="replay" aria-label="${t("replay")}">▶ ${t("replayShort")}</button>` : intro(c)}
           ${c.clues.map((cl, i) => `<button class="spot ${p.clues.includes(i) ? "found" : ""} ${S.justClue === i ? "just" : ""}" style="left:${cl.x}%;top:${cl.y}%" data-act="clue" data-v="${i}" aria-label="${p.clues.includes(i) ? L(cl) : t("tapScene")}">${cl.icon}</button>`).join("")}
         </div>
         ${p.clues.length ? "" : `<p class="tip">👆 ${t("tapScene")}</p>`}
@@ -1336,6 +1404,24 @@ p { margin: 0; }
       <button class="wb-x" data-act="dismissWb" aria-label="${t("close")}">✕</button></div>` : "";
   }
 
+  // Controla la mini escena: sonidos, y al terminar deja buscar las pistas
+  let introTimers = [], introFor = null, introStart = 0;
+  function stopIntro() { introTimers.forEach(clearTimeout); introTimers = []; introFor = null; introStart = 0; }
+  function maybeIntro() {
+    const c = curCase();
+    if (S.screen !== "clues" || !c || P(c.id).introSeen) { if (introFor) stopIntro(); return; }
+    if (introFor === c.id) return;
+    stopIntro();
+    introFor = c.id; introStart = Date.now();
+    introTimers.push(setTimeout(() => SFX.talk(false), 900));
+    introTimers.push(setTimeout(() => SFX.talk(true), 2900));
+    introTimers.push(setTimeout(() => {
+      stopIntro();
+      P(c.id).introSeen = true;
+      if (S.screen === "clues" && S.current === c.id) { S.spotsIn = true; render(); }
+    }, INTRO_MS));
+  }
+
   // ---------- Render ----------
   const app = document.getElementById("app");
   let lastPts = null;
@@ -1344,7 +1430,8 @@ p { margin: 0; }
     lastPts = S.points;
     app.innerHTML = topbar() + `<main class="screen${S.enter ? " enter" : ""}">${welcomeBackBar()}${screens[S.screen]()}</main>` + rightSheet() + dialog();
     if (S.confirm) { const b = app.querySelector(".dlg .btn"); if (b) b.focus(); }
-    S.justUnlocked = null; S.justClue = null; S.shake = null;
+    S.justUnlocked = null; S.justClue = null; S.shake = null; S.spotsIn = false;
+    maybeIntro();
     save();
   }
 
@@ -1381,6 +1468,8 @@ p { margin: 0; }
         break;
       }
       case "info": SFX.tap(); S.sheet = v; render(); break;
+      case "skipIntro": stopIntro(); P(c.id).introSeen = true; S.spotsIn = true; render(); break;
+      case "replay": stopIntro(); P(c.id).introSeen = false; render(); break;
       case "closeSheet": S.sheet = null; render(); break;
       case "sound":
         SOUND = !SOUND;

@@ -123,6 +123,14 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - En el iPad se baja la página de Streamlit, no el recuadro (iframe) donde vive la app, así que al cambiar
   de pantalla se quedaba abajo. Ahora `toTop()` sube las dos. Probado dentro de Streamlit con una pantalla baja.
 
+### Mini escena al abrir cada caso
+- Antes de buscar pistas, la persona del caso entra por la izquierda y la otra parte por la derecha
+  (empleado, oficina de matrícula, funcionario, empleada, dueño, entrevistadora, recepción).
+- La otra parte dice su frase (con cara seria), la persona contesta, y ambos “hablan” con un sonidito.
+  Dura unos 6 segundos; luego aparecen las pistas con un rebote. Tiene “Saltar” y “▶ Ver escena” para repetirla.
+- Los textos están en `other` de cada caso (`name`, `says`, `reply`, `look`). Duración en `INTRO_MS`.
+- Solo sale la primera vez que se abre cada caso.
+
 ---
 
 ## Pendiente / ideas
