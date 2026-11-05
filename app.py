@@ -286,6 +286,8 @@ p { margin: 0; }
 .video .play { width: 64px; height: 64px; border-radius: 50%; background: var(--signal); display: grid; place-items: center; }
 .video .play::before { content: ""; border-left: 20px solid var(--signal-ink); border-top: 12px solid transparent; border-bottom: 12px solid transparent; margin-left: 5px; }
 .video .ep { position: absolute; left: 12px; bottom: 10px; font-family: var(--font-mono); font-size: 0.75rem; color: #fff; letter-spacing: 0.05em; }
+.video-embed { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--ink); }
+.video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .video .cap { padding: 12px 14px; background: var(--surface-2); color: var(--ink); display: grid; gap: 2px; }
 .links { display: grid; gap: 8px; }
 .link-row {
@@ -403,6 +405,28 @@ p { margin: 0; }
 <script>
 (function () {
   const SERIES_URL = "https://espaciosabiertos.org/derecho-a-tener-derechos-2/";
+
+  // ---------- ENLACES REALES: pegar aquí los de espaciosabiertos.org ----------
+  // video: enlace del episodio (si es de YouTube, se reproduce dentro de la app)
+  // pdf:   material educativo de ese episodio
+  // Si un campo queda vacío (""), el botón abre la página de la serie.
+  const LINKS = {
+    tener:         { video: "", pdf: "" },  // Episodio 1 · Derecho a tener derechos
+    educacion:     { video: "", pdf: "" },  // Episodio 2 · Educación
+    info:          { video: "", pdf: "" },  // Episodio 3 · Acceso a la información
+    participacion: { video: "", pdf: "" },  // Episodio 4 · Participación política
+    justicia:      { video: "", pdf: "" },  // Episodio 5 · Acceso a la justicia
+    trabajo:       { video: "", pdf: "" },  // Episodio 6 · Trabajo
+    dignidad:      { video: "", pdf: "" }   // Episodio 7 · Dignidad
+  };
+  const BOOK_BW_PDF = "";  // Libro en blanco y negro (PDF), uno para toda la serie
+  const orSeries = (u) => u || SERIES_URL;
+
+  // Saca el código de un video de YouTube (youtube.com/watch?v=, youtu.be/, /embed/, /shorts/)
+  function youtubeId(url) {
+    const m = (url || "").match(/(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/);
+    return m ? m[1] : null;
+  }
 
   // ---------- Textos de la interfaz ----------
   const T = {
@@ -827,11 +851,8 @@ p { margin: 0; }
         <details class="more">
           <summary>📚 ${t("learnMore")}</summary>
           <div class="more-body">
-            <a class="video" href="${SERIES_URL}" target="_blank" rel="noopener">
-              <span class="thumb"><span class="play"></span><span class="ep">${t("episode").toUpperCase()} ${r.ep} · ${L(r).toUpperCase()}</span></span>
-              <span class="cap"><strong>▶ ${t("watch")}</strong><span class="muted small">${t("pendingLink")}</span></span>
-            </a>
-            ${learnLinks()}
+            ${videoBlock(c.right)}
+            ${learnLinks(c.right)}
           </div>
         </details>
         ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
@@ -863,8 +884,8 @@ p { margin: 0; }
         <details class="more">
           <summary>📚 ${t("learnAll")}</summary>
           <div class="more-body">
-            <div class="links">${Object.values(RIGHTS).map((r) => `<a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">▶</span><span>${t("episode")} ${r.ep} · ${L(r)}</span><span class="arrow">↗</span></a>`).join("")}</div>
-            ${learnLinks()}
+            <div class="links">${Object.entries(RIGHTS).map(([id, r]) => `<a class="link-row" href="${orSeries(LINKS[id].video)}" target="_blank" rel="noopener"><span class="ico">▶</span><span>${t("episode")} ${r.ep} · ${L(r)}</span><span class="arrow">↗</span></a>`).join("")}</div>
+            ${learnLinks(null)}
           </div>
         </details>`;
     },
@@ -923,10 +944,26 @@ p { margin: 0; }
     </div>`;
   }
 
-  function learnLinks() {
+  // Video del episodio: dentro de la app si es YouTube; si no, enlace
+  function videoBlock(id) {
+    const r = RIGHTS[id], url = LINKS[id].video, yt = youtubeId(url);
+    const label = `${t("episode")} ${r.ep} · ${L(r)}`;
+    if (yt) {
+      return `<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${yt}?rel=0" title="${label}" loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    }
+    return `<a class="video" href="${orSeries(url)}" target="_blank" rel="noopener">
+      <span class="thumb"><span class="play"></span><span class="ep">${label.toUpperCase()}</span></span>
+      <span class="cap"><strong>▶ ${t("watch")}</strong>${url ? "" : `<span class="muted small">${t("pendingLink")}</span>`}</span>
+    </a>`;
+  }
+
+  // id = derecho del caso (su PDF); null = material general de la serie
+  function learnLinks(id) {
+    const pdf = id ? LINKS[id].pdf : "";
     return `<div class="links">
-      <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
-      <a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
+      <a class="link-row" href="${orSeries(pdf)}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
+      <a class="link-row" href="${orSeries(BOOK_BW_PDF)}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
       <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
     </div>`;
   }
