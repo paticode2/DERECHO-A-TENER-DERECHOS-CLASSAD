@@ -30,10 +30,10 @@ st.markdown(
 
 # --------------------------------------------------
 # Prototipo: Línea de Defensa
-# Toda la experiencia (pantallas, contenido, puntos
-# y navegación) vive en este HTML.
-# Contenido demostrativo: casos inventados, enlaces de
-# videos y PDF pendientes, teléfonos por verificar.
+# Toda la experiencia (pantallas, contenido, puntos,
+# sonidos y navegación) vive en este HTML.
+# Contenido demostrativo: casos inventados y
+# teléfonos por verificar.
 # --------------------------------------------------
 
 PROTOTIPO_HTML = r'''<!doctype html>
@@ -42,364 +42,420 @@ PROTOTIPO_HTML = r'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Línea de Defensa</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-/* Layout: una columna tipo celular centrada; barra superior fija; cada pantalla es una tarjeta que llena la columna. */
 :root {
   --bg: #EEF0F8;
   --surface: #FFFFFF;
-  --surface-2: #F6F7FC;
+  --surface-2: #F4F5FB;
   --ink: #151936;
   --muted: #565B7C;
-  --line: #D6D9EC;
+  --line: #D9DCEC;
   --accent: #2B37D1;
+  --accent-dark: #1A239A;
   --accent-ink: #FFFFFF;
   --signal: #FFC23D;
+  --signal-dark: #C98F12;
   --signal-ink: #2A2100;
   --bubble: #E4E7FF;
   --ok: #17734A;
   --ok-bg: #E2F4EA;
   --bad: #A8202F;
-  --bad-bg: #FBE6E8;
-  --scene-a: #DCE1FF;
-  --scene-b: #F3E9D7;
+  --bad-bg: #FDECEE;
+  --hero: linear-gradient(140deg, #2B37D1 0%, #4B2BC9 55%, #9A2A9E 100%);
   --font-display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  color-scheme: light; /* siempre claro, aunque el teléfono esté en modo oscuro */
+  color-scheme: light; /* siempre claro, aunque el dispositivo esté en modo oscuro */
 }
 html, body { min-height: 100%; }
 body {
-  background: var(--bg);
+  margin: 0;
+  background:
+    radial-gradient(circle at 0% 0%, #DCE1FF 0, transparent 45%),
+    radial-gradient(circle at 100% 35%, #FFE7C2 0, transparent 40%),
+    var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.5;
 }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
-
 .app {
-  max-width: 440px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background: var(--surface);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 0 0 1px var(--line);
+  max-width: 440px; margin: 0 auto; min-height: 100vh; background: var(--surface);
+  display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(21, 25, 54, 0.12);
 }
-.topbar {
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  z-index: 5;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding-block: 10px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.brand { font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.01em; margin-right: auto; display: flex; align-items: center; gap: 8px;
-  color: var(--ink); background: none; border: 0; padding: 4px 0; cursor: pointer; min-height: 40px; text-align: left; }
-.shield { width: 22px; height: 26px; flex: none; }
-.chip {
-  font-family: var(--font-mono); font-size: 0.85rem; font-variant-numeric: tabular-nums;
-  background: var(--signal); color: var(--signal-ink); border-radius: 999px; padding: 3px 10px; font-weight: 500; white-space: nowrap;
-}
-.tbtn {
-  font: inherit; font-size: 0.85rem; font-weight: 700; color: var(--ink); background: var(--surface-2);
-  border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; min-height: 34px;
-}
-.tbtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
-
-.screen {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding-block: 22px 96px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
-h1 { font-size: 2.6rem; line-height: 1; font-weight: 800; }
-h2 { font-size: 1.6rem; line-height: 1.1; font-weight: 800; }
+h1 { font-size: 2.5rem; line-height: 1; font-weight: 800; }
+h2 { font-size: 1.5rem; line-height: 1.12; font-weight: 800; }
 h3 { font-size: 1.1rem; font-weight: 600; }
 p { margin: 0; }
 .muted { color: var(--muted); }
 .small { font-size: 0.9rem; }
-
-.btn {
-  font: inherit; font-weight: 700; font-size: 1.05rem; width: 100%; min-height: 54px; border-radius: 14px;
-  border: 2px solid var(--accent); background: var(--accent); color: var(--accent-ink); cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 0 18px;
-}
-.btn.ghost { background: transparent; color: var(--accent); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
 
-/* Bienvenida */
-.hero-band {
-  background: var(--accent); color: var(--accent-ink); border-radius: 22px; padding: 26px 22px; display: grid; gap: 14px;
-  position: relative; overflow: hidden;
-}
-.hero-band .eyebrow { color: inherit; opacity: 0.8; }
-.hero-band .tag { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
-.hero-band::after {
-  content: "7"; position: absolute; right: -10px; bottom: -40px; font-family: var(--font-display); font-weight: 800;
-  font-size: 11rem; line-height: 1; opacity: 0.14;
-}
-.facts { display: flex; flex-wrap: wrap; gap: 8px; }
-.fact { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 0.88rem; color: var(--muted); }
+/* ---------- Íconos ---------- */
+.ricon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: block; }
+.ava { display: block; border-radius: 50%; overflow: hidden; background: color-mix(in srgb, var(--c) 24%, #fff); flex: none; }
+.ava svg { width: 100%; height: 100%; display: block; }
 
-/* Autoevaluación */
-.q { display: grid; gap: 10px; border: 0; padding: 0; margin: 0; }
-.q legend { font-weight: 700; padding: 0; margin-bottom: 10px; }
+/* ---------- Barra superior tipo juego ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 5; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line); padding: 6px 16px 0;
+}
+.hud { display: flex; align-items: center; gap: 8px; min-height: 46px; }
+.brand {
+  font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.01em; margin-right: auto;
+  display: flex; align-items: center; gap: 8px; color: var(--ink); background: none; border: 0; padding: 4px 0; cursor: pointer; min-height: 40px; text-align: left;
+}
+.shield { width: 24px; height: 28px; flex: none; }
+.lvl { font-family: var(--font-mono); font-size: 0.74rem; background: var(--ink); color: #fff; border-radius: 8px; padding: 4px 8px; white-space: nowrap; }
+.chip {
+  font-family: var(--font-mono); font-size: 0.86rem; font-variant-numeric: tabular-nums; background: var(--signal); color: var(--signal-ink);
+  border-radius: 999px; padding: 4px 11px; white-space: nowrap; box-shadow: 0 2px 0 var(--signal-dark);
+}
+.chip.bump { animation: bump 0.55s ease; }
+@keyframes bump { 30% { transform: scale(1.28); } }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); font-size: 1.05rem;
+  cursor: pointer; display: grid; place-items: center; padding: 0; flex: none; color: var(--ink);
+}
+.badges-row { display: flex; align-items: center; gap: 6px; padding: 4px 0 8px; }
+.rb {
+  --c: #888; width: 36px; height: 36px; border-radius: 11px; border: 0; padding: 0; display: grid; place-items: center; cursor: pointer;
+  background: #ECEEF6; color: #A6ABC6; position: relative; font-size: 20px; transition: transform 0.15s;
+}
+.rb.on { background: var(--c); color: #fff; box-shadow: 0 3px 0 color-mix(in srgb, var(--c) 65%, #000); }
+.rb.on::after {
+  content: "✓"; position: absolute; right: -4px; bottom: -4px; width: 15px; height: 15px; border-radius: 50%; background: var(--ok);
+  color: #fff; font-size: 0.58rem; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff;
+}
+.rb:active { transform: translateY(2px); }
+.rb.pop { animation: unlock 0.9s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes unlock { 0% { transform: scale(0.2) rotate(-40deg); } 100% { transform: none; } }
+.badges-row .count { margin-left: auto; font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); white-space: nowrap; }
+.xp { height: 5px; margin: 0 -16px; background: var(--surface-2); }
+.xp i { display: block; height: 100%; background: linear-gradient(90deg, var(--signal), #FF7A3D); transition: width 0.7s ease; }
+
+/* ---------- Pantalla ---------- */
+.screen { flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 18px 16px 48px; }
+.screen.enter { animation: enter 0.42s ease-out; }
+@keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.btn {
+  font: inherit; font-weight: 700; font-size: 1.05rem; width: 100%; min-height: 54px; border-radius: 16px; border: 2px solid var(--accent);
+  background: var(--accent); color: var(--accent-ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none; padding: 0 18px; box-shadow: 0 4px 0 var(--accent-dark); transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--accent-dark); }
+.btn.ghost { background: transparent; color: var(--accent); box-shadow: none; }
+.btn.signal { background: var(--signal); border-color: var(--signal); color: var(--signal-ink); box-shadow: 0 4px 0 var(--signal-dark); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ---------- Bienvenida ---------- */
+.hero {
+  background: var(--hero); color: #fff; border-radius: 26px; padding: 14px 18px 22px; display: grid; gap: 6px; justify-items: center;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0; opacity: 0.35;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1.6px); background-size: 20px 20px;
+}
+.hero > * { position: relative; }
+.hero .eyebrow { color: #fff; opacity: 0.8; }
+.hero .tag { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; }
+.orbit { width: 230px; height: 230px; position: relative; }
+.orb {
+  position: absolute; width: 58px; height: 58px; margin: -29px 0 0 -29px; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  animation: float 3.2s ease-in-out infinite; animation-delay: calc(var(--i) * -0.45s);
+}
+.orb .ava { width: 100%; height: 100%; }
+@keyframes float { 50% { transform: translateY(-7px); } }
+.hero-shield { position: absolute; left: 50%; top: 50%; width: 86px; height: 100px; transform: translate(-50%, -50%); filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3)); }
+.hero-shield svg { width: 100%; height: 100%; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.fact { border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 0.88rem; color: var(--muted); background: var(--surface-2); }
+.proto-tag { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; }
+
+/* ---------- Autoevaluación ---------- */
+.q { display: grid; gap: 8px; border: 0; padding: 0; margin: 0; }
+.q legend { font-weight: 700; padding: 0; margin-bottom: 8px; }
 .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .scale label { position: relative; }
 .scale input { position: absolute; opacity: 0; inset: 0; }
 .scale span {
-  display: grid; place-items: center; min-height: 48px; border: 2px solid var(--line); border-radius: 12px;
-  font-family: var(--font-mono); font-size: 1.05rem; cursor: pointer; background: var(--surface-2);
+  display: grid; place-items: center; min-height: 48px; border: 2px solid var(--line); border-radius: 12px; font-family: var(--font-mono);
+  font-size: 1.05rem; cursor: pointer; background: var(--surface-2); box-shadow: 0 3px 0 var(--line);
 }
-.scale input:checked + span { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.scale input:checked + span { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 3px 0 var(--accent-dark); }
 .scale input:focus-visible + span { outline: 3px solid var(--signal); outline-offset: 2px; }
 .scale-ends { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
 
-/* Cómo funciona */
-.steps { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-.steps li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
-.num {
-  width: 40px; height: 40px; border-radius: 12px; background: var(--bubble); display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 800; color: var(--accent);
-}
-.ranks { display: grid; gap: 6px; }
-.rank-row { display: flex; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--surface-2); }
-.rank-row .pts { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* ---------- Cómo funciona ---------- */
+.steps { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 48px 1fr; gap: 12px; align-items: center; background: var(--surface-2); border-radius: 16px; padding: 10px 12px; }
+.step-ico { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; background: #fff; box-shadow: 0 3px 0 var(--line); }
+.ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.rung { background: var(--surface-2); border-radius: 14px; padding: 10px 4px; text-align: center; display: grid; gap: 2px; font-size: 0.78rem; line-height: 1.2; }
+.rung b { font-size: 1.5rem; }
+.rung .pts { font-family: var(--font-mono); color: var(--muted); font-size: 0.7rem; }
+.note { background: var(--surface-2); border-radius: 14px; padding: 12px 14px; font-size: 0.9rem; color: var(--muted); }
 
-/* Bandeja */
-.progress { height: 10px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
-.progress > div { height: 100%; background: var(--accent); border-radius: 999px; transition: width .4s ease; }
+/* ---------- Bandeja ---------- */
+.resume {
+  font: inherit; color: #fff; text-align: left; border: 0; cursor: pointer; background: var(--hero); border-radius: 20px; padding: 14px;
+  display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; box-shadow: 0 5px 0 #23207A;
+}
+.resume .ava { width: 56px; height: 56px; border: 3px solid #fff; }
+.resume small { display: block; opacity: 0.8; font-size: 0.8rem; }
+.resume strong { font-family: var(--font-display); font-size: 1.15rem; }
+.resume .go { width: 42px; height: 42px; border-radius: 50%; background: var(--signal); color: var(--signal-ink); display: grid; place-items: center; font-size: 1rem; }
 .status { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .status strong { font-family: var(--font-display); }
-.inbox { display: grid; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.inbox { display: grid; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
 .msg {
   font: inherit; color: inherit; text-align: left; background: var(--surface); border: 0; border-bottom: 1px solid var(--line);
-  display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; cursor: pointer; min-height: 72px;
+  display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; cursor: pointer; min-height: 68px;
 }
 .msg:last-child { border-bottom: 0; }
 .msg:hover { background: var(--surface-2); }
-.avatar {
-  width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display);
-  font-weight: 800; color: #fff; font-size: 1.05rem;
-}
+.msg .ava { width: 46px; height: 46px; }
 .msg-body { min-width: 0; }
 .msg-name { font-weight: 700; display: block; }
-.msg-prev { display: block; color: var(--muted); font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pill { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
-.pill.new { background: var(--bad-bg); color: var(--bad); }
-.pill.done { background: var(--ok-bg); color: var(--ok); }
-.msg.is-done .msg-prev { text-decoration: line-through; }
+.msg-prev { display: block; color: var(--muted); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pill { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; white-space: nowrap; background: #FFE1E5; color: var(--bad); }
+.msg .rb { width: 32px; height: 32px; font-size: 17px; cursor: inherit; }
+.nudge { background: var(--surface-2); border: 1px dashed var(--accent); border-radius: 14px; padding: 10px 14px; display: grid; gap: 2px; font-size: 0.9rem; }
+.nudge strong { color: var(--accent); }
 
-/* Caso */
-.case-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.back { font: inherit; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 6px 0; cursor: pointer; min-height: 40px; }
-.stepper { display: flex; gap: 6px; }
-.stepper i { width: 28px; height: 6px; border-radius: 99px; background: var(--line); display: block; }
+/* ---------- Caso ---------- */
+.case-head { display: flex; align-items: center; gap: 10px; }
+.back { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); font: inherit; font-weight: 700; color: var(--accent); cursor: pointer; padding: 0; flex: none; }
+.case-head .ava { width: 46px; height: 46px; }
+.ch-name { display: grid; line-height: 1.2; margin-right: auto; min-width: 0; }
+.ch-name small { color: var(--muted); font-size: 0.8rem; }
+.stepper { display: flex; gap: 4px; flex: none; }
+.stepper i { width: 22px; height: 7px; border-radius: 99px; background: var(--line); display: block; }
 .stepper i.on { background: var(--accent); }
-.chat { display: grid; gap: 6px; }
-.bubble { background: var(--bubble); border-radius: 18px 18px 18px 4px; padding: 12px 16px; max-width: 92%; }
-.who { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
-.who .avatar { width: 26px; height: 26px; font-size: 0.75rem; }
+.bubble { background: var(--bubble); border-radius: 4px 20px 20px 20px; padding: 12px 16px; position: relative; }
+.bubble.mini { font-size: 0.92rem; padding: 9px 14px; color: #3A3F66; }
+.screen.enter .bubble { animation: pop 0.4s 0.1s both; }
+@keyframes pop { from { opacity: 0; transform: scale(0.92); transform-origin: 0 0; } to { opacity: 1; transform: none; } }
 
 .scene {
-  position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 11; border-radius: 18px; overflow: hidden;
-  background:
-    linear-gradient(180deg, transparent 68%, color-mix(in srgb, var(--scene-b) 100%, transparent) 68%),
-    linear-gradient(160deg, var(--scene-a), color-mix(in srgb, var(--scene-a) 70%, var(--surface)));
-  border: 1px solid var(--line);
+  position: relative; width: 100%; aspect-ratio: 16 / 11; border-radius: 20px; overflow: hidden; border: 3px solid var(--ink);
+  box-shadow: 0 5px 0 var(--ink); background: #E7EAF7;
 }
-.scene-label {
-  position: absolute; left: 12px; top: 12px; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em;
-  text-transform: uppercase; background: var(--surface); color: var(--ink); border-radius: 999px; padding: 4px 10px;
+.scene-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scene-tag {
+  position: absolute; top: 10px; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; background: rgba(255, 255, 255, 0.94);
+  color: var(--ink); border-radius: 999px; padding: 4px 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
-.scene-deco { position: absolute; font-size: 2.2rem; opacity: 0.35; pointer-events: none; }
+.scene-tag.l { left: 10px; } .scene-tag.r { right: 10px; }
 .spot {
-  position: absolute; transform: translate(-50%, -50%); width: 62px; height: 62px; border-radius: 50%;
-  border: 3px solid var(--surface); background: var(--signal); font-size: 1.7rem; cursor: pointer;
-  display: grid; place-items: center; box-shadow: 0 4px 14px rgba(10, 12, 40, 0.25);
+  position: absolute; transform: translate(-50%, -50%); width: 58px; height: 58px; border-radius: 50%; border: 3px solid #fff;
+  background: var(--signal); font-size: 1.6rem; cursor: pointer; display: grid; place-items: center; box-shadow: 0 5px 14px rgba(10, 12, 40, 0.3); padding: 0;
 }
-.spot::after {
-  content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 3px solid var(--signal); animation: pulse 1.8s ease-out infinite;
-}
-.spot.found { background: var(--surface); border-color: var(--ok); }
+.spot::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 3px solid var(--signal); animation: pulse 1.8s ease-out infinite; }
+.spot.found { background: #fff; border-color: var(--ok); }
 .spot.found::after { display: none; }
 .spot.found::before {
-  content: "✓"; position: absolute; right: -6px; top: -6px; width: 24px; height: 24px; border-radius: 50%; background: var(--ok);
-  color: var(--surface); font-size: 0.85rem; font-weight: 700; display: grid; place-items: center;
+  content: "✓"; position: absolute; right: -6px; top: -6px; width: 22px; height: 22px; border-radius: 50%; background: var(--ok);
+  color: #fff; font-size: 0.8rem; font-weight: 700; display: grid; place-items: center;
 }
+.spot.just { animation: spot-pop 0.5s cubic-bezier(0.2, 1.8, 0.4, 1); }
+@keyframes spot-pop { 0% { transform: translate(-50%, -50%) scale(0.6); } 100% { transform: translate(-50%, -50%) scale(1); } }
 @keyframes pulse { from { transform: scale(0.85); opacity: 0.9; } to { transform: scale(1.35); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .spot::after { animation: none; opacity: 0.6; } .progress > div { transition: none; } }
+.tip { text-align: center; color: var(--muted); font-size: 0.92rem; }
 .clues { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.clues li { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: start; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+.clues li { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start; background: var(--surface-2); border-radius: 14px; padding: 9px 12px; font-size: 0.95rem; }
+.clues li.just { animation: slide 0.4s ease-out; background: #FFF6DE; }
+@keyframes slide { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
 .clues .plus { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ok); }
-.clues .empty { color: var(--muted); font-style: italic; grid-template-columns: 1fr; }
+.wait { display: grid; gap: 6px; }
+.wait p { color: var(--ok); font-weight: 700; font-size: 0.95rem; }
+.wait-bar { height: 7px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.wait-bar > i { display: block; height: 100%; width: 0; background: var(--ok); animation: fill var(--wait) linear forwards; }
+@keyframes fill { to { width: 100%; } }
 
+.q-title { font-size: 1.35rem; }
 .options { display: grid; gap: 10px; }
 .opt {
-  font: inherit; color: inherit; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 14px;
-  padding: 14px 16px; cursor: pointer; display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: center; min-height: 56px;
+  font: inherit; color: inherit; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 10px 12px;
+  cursor: pointer; display: grid; grid-template-columns: 40px 1fr 24px; gap: 12px; align-items: center; min-height: 60px; box-shadow: 0 3px 0 var(--line);
 }
-.opt .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; }
-.opt[aria-checked="true"] { border-color: var(--accent); background: var(--bubble); }
-.opt[aria-checked="true"] .dot { background: var(--accent); border-color: var(--accent); }
-.opt.right { border-color: var(--ok); background: var(--ok-bg); }
-.opt.right .dot { background: var(--ok); border-color: var(--ok); color: var(--surface); }
-.opt.wrong { border-color: var(--bad); background: var(--bad-bg); opacity: 0.85; }
-.opt.wrong .dot { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
 .opt:disabled { cursor: default; }
-
-.feedback { border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px; }
-.feedback.ok { background: var(--ok-bg); color: var(--ink); border-left: 5px solid var(--ok); }
-.feedback.no { background: var(--bad-bg); color: var(--ink); border-left: 5px solid var(--bad); }
-.feedback strong { font-family: var(--font-display); }
-
-/* Caso resuelto */
-.celebrate { text-align: center; display: grid; gap: 6px; justify-items: center; }
-.big-pts { font-family: var(--font-display); font-weight: 800; font-size: 3.4rem; line-height: 1; color: var(--accent); }
-.keyidea { background: var(--surface-2); border-radius: 16px; padding: 16px; display: grid; gap: 6px; }
-.video {
-  display: grid; text-decoration: none; color: var(--accent-ink); border-radius: 16px; overflow: hidden; background: var(--ink);
+.screen.enter .opt { animation: rise 0.36s both; animation-delay: calc(var(--n) * 70ms + 0.1s); }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.opt-ico {
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px;
+  background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--c); font-family: var(--font-display); font-weight: 800;
 }
-.video .thumb {
-  aspect-ratio: 16 / 9; max-width: 100%; display: grid; place-items: center; position: relative;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, var(--ink)));
+.opt-txt { display: grid; gap: 4px; }
+.why { font-size: 0.86rem; color: var(--bad); line-height: 1.35; }
+.mark { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.8rem; border: 2px solid var(--line); }
+.opt.right { border-color: var(--ok); background: var(--ok-bg); box-shadow: 0 3px 0 var(--ok); animation: correct 0.5s ease; }
+.opt.right .mark { background: var(--ok); border-color: var(--ok); color: #fff; }
+.opt.wrong { border-color: #F2BCC3; background: var(--bad-bg); box-shadow: none; }
+.opt.wrong .mark { background: var(--bad); border-color: var(--bad); color: #fff; }
+.opt.wrong .opt-txt > span:first-child { text-decoration: line-through; color: var(--muted); }
+.opt.wrong .opt-ico { filter: grayscale(1); opacity: 0.5; }
+.opt.shake { animation: shake 0.45s; }
+@keyframes shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+@keyframes correct { 40% { transform: scale(1.04); } }
+.hint { background: #FFF6DE; border-radius: 14px; padding: 10px 14px; font-size: 0.92rem; }
+.okbar { background: var(--ok-bg); border-left: 5px solid var(--ok); border-radius: 14px; padding: 10px 14px; display: grid; gap: 2px; font-size: 0.93rem; }
+.okbar strong { font-family: var(--font-display); color: var(--ok); }
+
+/* ---------- Caso resuelto ---------- */
+.win {
+  --c: var(--accent); position: relative; border-radius: 24px; padding: 18px 16px 16px; text-align: center; display: grid; gap: 6px;
+  justify-items: center; color: #fff; overflow: hidden; background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--c) 55%, #fff) 0, var(--c) 62%);
 }
-.video .play { width: 64px; height: 64px; border-radius: 50%; background: var(--signal); display: grid; place-items: center; }
-.video .play::before { content: ""; border-left: 20px solid var(--signal-ink); border-top: 12px solid transparent; border-bottom: 12px solid transparent; margin-left: 5px; }
-.video .ep { position: absolute; left: 12px; bottom: 10px; font-family: var(--font-mono); font-size: 0.75rem; color: #fff; letter-spacing: 0.05em; }
+.win::before {
+  content: ""; position: absolute; inset: -60%; animation: spin 22s linear infinite;
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.14) 0 10deg, transparent 10deg 30deg);
+}
+@keyframes spin { to { transform: rotate(1turn); } }
+.win > * { position: relative; }
+.win .eyebrow { color: #fff; opacity: 0.85; }
+.win h2 { color: #fff; }
+.win-top { display: flex; align-items: flex-end; justify-content: center; }
+.win-top .ava { width: 74px; height: 74px; border: 3px solid #fff; }
+.win-badge {
+  width: 56px; height: 56px; border-radius: 16px; background: #fff; color: var(--c); display: grid; place-items: center; font-size: 30px;
+  margin-left: -14px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25); animation: unlock 0.9s 0.25s both cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+.win-pts b { font-family: var(--font-display); font-size: 2.3rem; line-height: 1; }
+.win-story { background: rgba(255, 255, 255, 0.16); border-radius: 14px; padding: 10px 12px; font-size: 0.95rem; text-align: left; width: 100%; }
+.levelup { background: var(--signal); color: var(--signal-ink); border-radius: 14px; padding: 10px 14px; font-weight: 700; text-align: center; animation: bump 0.7s 0.4s both; }
+.keyidea { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; display: grid; gap: 4px; }
+.learn-btn {
+  font: inherit; color: inherit; text-align: left; cursor: pointer; width: 100%; border: 2px solid var(--line); background: #fff; border-radius: 16px;
+  padding: 10px 14px; display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; box-shadow: 0 3px 0 var(--line);
+}
+.learn-btn .play { width: 46px; height: 46px; border-radius: 14px; background: #E03E3E; display: grid; place-items: center; }
+.learn-btn .play::before { content: ""; border-left: 14px solid #fff; border-top: 9px solid transparent; border-bottom: 9px solid transparent; margin-left: 4px; }
+.learn-btn small { display: block; color: var(--muted); font-size: 0.84rem; }
+.learn-btn .arrow { color: var(--accent); font-weight: 700; }
+
+/* Nuevo mensaje: entra con rebote, suena y brilla */
+.notif {
+  background: var(--ink); color: #fff; border-radius: 24px; padding: 14px; display: grid; gap: 12px; position: relative;
+  animation: notif-in 0.75s cubic-bezier(0.2, 1.5, 0.4, 1) 1s both, glow 1.6s ease-out 1.7s 3;
+  box-shadow: 0 14px 30px rgba(21, 25, 54, 0.35);
+}
+@keyframes notif-in { from { opacity: 0; transform: translateY(46px) scale(0.9); } to { opacity: 1; transform: none; } }
+@keyframes glow {
+  0% { box-shadow: 0 14px 30px rgba(21, 25, 54, 0.35), 0 0 0 0 rgba(255, 194, 61, 0.8); }
+  100% { box-shadow: 0 14px 30px rgba(21, 25, 54, 0.35), 0 0 0 18px rgba(255, 194, 61, 0); }
+}
+.notif-head { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--signal); }
+.ring { display: inline-block; font-size: 1.1rem; animation: ring 0.9s ease-in-out 1.6s 3; }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-20deg); } 40% { transform: rotate(18deg); } 60% { transform: rotate(-12deg); } 80% { transform: rotate(8deg); } }
+.notif-time { margin-left: auto; color: rgba(255, 255, 255, 0.6); text-transform: none; letter-spacing: 0; }
+.notif-dot { position: absolute; top: -6px; right: -6px; min-width: 26px; height: 26px; border-radius: 99px; background: #FF4D5E; color: #fff; font-weight: 700; font-size: 0.85rem; display: grid; place-items: center; border: 3px solid #fff; }
+.notif-body { display: grid; grid-template-columns: 54px 1fr; gap: 12px; align-items: start; }
+.notif-body .ava { width: 54px; height: 54px; border: 2px solid #fff; }
+.notif-body p { color: rgba(255, 255, 255, 0.9); font-size: 0.95rem; margin-top: 2px; }
+.final { background: var(--hero); color: #fff; border-radius: 24px; padding: 18px; display: grid; gap: 10px; text-align: center; }
+.final b { font-size: 2.6rem; line-height: 1; }
+
+/* ---------- Ficha del derecho (al tocar un ícono) ---------- */
+.sheet-wrap { position: fixed; inset: 0; z-index: 30; background: rgba(8, 10, 30, 0.55); display: grid; place-items: center; padding: 14px; }
+.sheet {
+  --c: var(--accent); background: #fff; width: 100%; max-width: 420px; max-height: calc(100vh - 28px); overflow: auto; border-radius: 22px;
+  display: grid; gap: 12px; padding: 16px; box-shadow: 0 12px 40px rgba(10, 12, 40, 0.35); animation: pop 0.3s ease-out;
+}
+.sheet-head { display: flex; align-items: center; gap: 12px; }
+.sheet-head .rb { width: 52px; height: 52px; font-size: 28px; border-radius: 15px; cursor: default; }
+.sheet-head h3 { font-size: 1.25rem; }
+.sheet-head > div { margin-right: auto; }
+.locked { background: var(--surface-2); border-radius: 14px; padding: 14px; display: grid; gap: 6px; text-align: center; }
+.locked b { font-size: 2rem; }
 .video-embed { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--ink); }
 .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.video .cap { padding: 12px 14px; background: var(--surface-2); color: var(--ink); display: grid; gap: 2px; }
+.video { display: grid; text-decoration: none; color: #fff; border-radius: 16px; overflow: hidden; background: var(--ink); padding: 14px; }
 .links { display: grid; gap: 8px; }
 .link-row {
-  display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line);
-  border-radius: 14px; text-decoration: none; color: inherit; background: var(--surface); font: inherit; text-align: left; cursor: pointer; width: 100%;
+  display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; border: 1px solid var(--line);
+  border-radius: 14px; text-decoration: none; color: inherit; background: #fff; font: inherit; text-align: left; cursor: pointer; width: 100%;
 }
 .link-row .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--bubble); display: grid; place-items: center; font-size: 1.2rem; }
 .link-row .arrow { color: var(--accent); font-weight: 700; }
 
-/* Reporte */
-.medal {
-  background: var(--ink); color: var(--surface); border-radius: 22px; padding: 22px; display: grid; gap: 4px; text-align: center; justify-items: center;
-}
-.medal .eyebrow { color: inherit; opacity: 0.7; }
-.medal .rank { font-family: var(--font-display); font-weight: 800; font-size: 2rem; line-height: 1.05; }
+/* ---------- Reporte ---------- */
+.medal { background: var(--hero); color: #fff; border-radius: 24px; padding: 20px; display: grid; gap: 4px; text-align: center; justify-items: center; position: relative; overflow: hidden; }
+.medal::before { content: ""; position: absolute; inset: -60%; background: repeating-conic-gradient(rgba(255, 255, 255, 0.1) 0 10deg, transparent 10deg 30deg); animation: spin 26s linear infinite; }
+.medal > * { position: relative; }
+.medal .eyebrow { color: #fff; opacity: 0.8; }
+.medal .trophy { font-size: 3rem; line-height: 1; }
+.medal .rank { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; line-height: 1.05; }
 .medal .score { font-family: var(--font-mono); color: var(--signal); }
-.compare { display: grid; gap: 14px; }
+.badge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 6px; }
+.bg-item { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: grid; justify-items: center; gap: 4px; font-size: 0.72rem; line-height: 1.2; text-align: center; }
+.bg-item .rb { width: 48px; height: 48px; font-size: 26px; border-radius: 14px; }
+.compare { display: grid; gap: 12px; }
 .cmp { display: grid; gap: 6px; }
-.cmp-row { display: grid; grid-template-columns: 64px 1fr 22px; gap: 10px; align-items: center; font-size: 0.85rem; color: var(--muted); }
+.cmp-row { display: grid; grid-template-columns: 56px 1fr 22px; gap: 10px; align-items: center; font-size: 0.85rem; color: var(--muted); }
 .bar { height: 12px; background: var(--surface-2); border-radius: 99px; overflow: hidden; border: 1px solid var(--line); }
 .bar > div { height: 100%; border-radius: 99px; background: var(--muted); }
 .bar.now > div { background: var(--accent); }
 .cmp-row b { font-family: var(--font-mono); color: var(--ink); font-weight: 500; text-align: right; }
 
-/* Compartir */
+/* ---------- Compartir ---------- */
+.tones { display: flex; gap: 8px; flex-wrap: wrap; }
+.tone { font: inherit; font-size: 0.9rem; font-weight: 700; border: 2px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; cursor: pointer; color: var(--ink); }
+.tone[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 .share-card {
-  border: 2px dashed var(--accent); border-radius: 18px; padding: 18px; background: var(--bubble); font-size: 1.05rem;
+  width: 100%; min-height: 150px; border: 2px dashed var(--accent); border-radius: 18px; padding: 14px; background: var(--bubble);
+  font: inherit; font-size: 1rem; line-height: 1.45; color: var(--ink); resize: vertical;
 }
 .socials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.socials a {
-  display: grid; place-items: center; min-height: 50px; border-radius: 12px; border: 1px solid var(--line); text-decoration: none;
-  color: var(--ink); font-weight: 700; background: var(--surface-2); font-size: 0.95rem;
-}
+.socials button { font: inherit; min-height: 50px; border-radius: 14px; border: 0; color: #fff; font-weight: 700; cursor: pointer; font-size: 0.95rem; }
 .toast { font-size: 0.9rem; color: var(--ok); min-height: 1.4em; }
 
-/* Recursos */
+/* ---------- Recursos ---------- */
 .res-group { display: grid; gap: 8px; }
-.res {
-  border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; background: var(--surface);
-}
+.res { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; background: #fff; }
 .res .name { font-weight: 700; }
 .res .tbd { font-family: var(--font-mono); font-size: 0.75rem; color: var(--bad); }
-.note { background: var(--surface-2); border-radius: 14px; padding: 14px; font-size: 0.9rem; color: var(--muted); }
 .credits { font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
+.back-row { display: flex; }
+.back-txt { font: inherit; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 6px 0; cursor: pointer; min-height: 40px; }
 
-/* Selector de pantallas (solo prototipo) */
-.jump {
-  position: fixed; z-index: 20; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  font: inherit; font-weight: 700; font-size: 0.85rem; background: var(--ink); color: var(--surface); border: 0; border-radius: 999px;
-  padding: 10px 16px; cursor: pointer; box-shadow: 0 6px 20px rgba(10, 12, 40, 0.3);
-}
-.sheet-wrap { position: fixed; inset: 0; z-index: 30; background: rgba(8, 10, 30, 0.5); display: flex; align-items: flex-end; justify-content: center; }
-.sheet {
-  background: var(--surface); width: 100%; max-width: 440px; border-radius: 20px 20px 0 0; display: grid; gap: 10px; max-height: 80vh; overflow: auto;
-  padding-block: 18px calc(18px + env(safe-area-inset-bottom, 0px));
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.sheet-list { display: grid; gap: 6px; }
-.sheet-list button {
-  font: inherit; color: inherit; text-align: left; border: 1px solid var(--line); background: var(--surface-2); border-radius: 12px;
-  padding: 10px 12px; cursor: pointer; display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center;
-}
-.sheet-list .n { font-family: var(--font-mono); color: var(--accent); font-weight: 500; }
-/* Empuje para completar */
-.nudge { background: var(--surface-2); border: 1px dashed var(--accent); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; font-size: 0.92rem; }
-.nudge strong { color: var(--accent); }
-.levelup { background: var(--signal); color: var(--signal-ink); border-radius: 14px; padding: 12px 14px; font-weight: 700; text-align: center; }
-.next-case { display: grid; gap: 2px; text-align: left; }
-.next-case small { font-weight: 500; opacity: 0.85; }
-/* Las 7 personas: progreso siempre a la vista */
-.crew { flex-basis: 100%; display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 2px 0 0; }
-.crew li { position: relative; }
-.crew .avatar { width: 30px; height: 30px; font-size: 0.8rem; opacity: 0.35; filter: grayscale(0.6); transition: opacity .3s, filter .3s; }
-.crew .done .avatar { opacity: 1; filter: none; }
-.crew .now .avatar { opacity: 1; filter: none; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
-.crew .done::after {
-  content: "✓"; position: absolute; right: -3px; bottom: -3px; width: 15px; height: 15px; border-radius: 50%;
-  background: var(--ok); color: #fff; font-size: 0.6rem; font-weight: 700; display: grid; place-items: center; border: 2px solid var(--surface);
-}
-.crew .count { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
-@media (prefers-reduced-motion: reduce) { .crew .avatar { transition: none; } }
-/* Gancho al próximo caso */
-.teaser { border: 2px solid var(--accent); border-radius: 18px; padding: 14px; display: grid; gap: 10px; background: var(--surface); }
-.teaser .eyebrow { color: var(--accent); }
-/* Aprende más (plegado) */
-.more { border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
-.more > summary { cursor: pointer; padding: 14px 16px; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
-.more > summary::-webkit-details-marker { display: none; }
-.more > summary::after { content: "+"; color: var(--accent); font-size: 1.2rem; line-height: 1; }
-.more[open] > summary::after { content: "–"; }
-.more-body { display: grid; gap: 12px; padding: 0 12px 12px; }
-/* Pausa antes de pasar de las pistas a la pregunta */
-.wait { display: grid; gap: 6px; }
-.wait .toast { margin: 0; }
-.wait-bar { height: 6px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
-.wait-bar > i { display: block; height: 100%; width: 0; background: var(--ok); animation: fill var(--wait) linear forwards; }
-@keyframes fill { to { width: 100%; } }
-/* Entrada suave de cada pantalla */
-.screen.enter { animation: enter .45s ease-out; }
-@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .screen.enter { animation: none; } }
-/* Confirmación */
+/* ---------- De vuelta ---------- */
+.wb { display: flex; align-items: center; gap: 8px; background: #FFF6DE; border: 1px solid #F4D58A; border-radius: 14px; padding: 8px 10px 8px 14px; font-size: 0.92rem; animation: pop 0.4s; }
+.wb span { margin-right: auto; }
+.wb-link { font: inherit; font-size: 0.85rem; font-weight: 700; color: var(--accent); background: none; border: 0; cursor: pointer; padding: 4px; }
+.wb-x { font: inherit; background: none; border: 0; cursor: pointer; color: var(--muted); padding: 4px 6px; }
+
+/* ---------- Confirmación ---------- */
 .dlg-wrap { position: fixed; inset: 0; z-index: 40; background: rgba(8, 10, 30, 0.55); display: grid; place-items: center; padding: 16px; }
-.dlg { background: var(--surface); border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; display: grid; gap: 12px; box-shadow: 0 12px 40px rgba(10, 12, 40, 0.35); }
-.dlg h3 { margin: 0; }
-.dlg p { margin: 0; }
+.dlg { background: #fff; border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; display: grid; gap: 12px; box-shadow: 0 12px 40px rgba(10, 12, 40, 0.35); animation: pop 0.25s; }
 .dlg .btn-row { grid-template-columns: 1fr; }
-.proto-tag { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: center; }
-</style>
 
+/* ---------- Efectos ---------- */
+.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
+.floatpts {
+  position: fixed; z-index: 55; transform: translate(-50%, -50%); pointer-events: none; font-family: var(--font-display); font-weight: 800;
+  font-size: 1.4rem; color: var(--ok); text-shadow: 0 2px 0 #fff, 0 0 8px #fff; animation: float-up 1.1s ease-out forwards;
+}
+@keyframes float-up { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -60px; } }
+
+@media (max-width: 390px) { .brand span { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+}
+</style>
 </head>
-<body style="margin:0">
+<body>
 <div class="app" id="app"></div>
 
 <script>
@@ -437,79 +493,111 @@ p { margin: 0; }
 
   // ---------- Textos de la interfaz ----------
   const T = {
-      brand: "Línea de Defensa", help: "Ayuda", jump: "Pantallas",
-      presents: "Espacios Abiertos presenta", tagline: "Derechos. Son tuyos. Defiéndelos.",
-      welcomeBody: "Hoy te toca atender la línea. Siete personas te escriben porque algo no anda bien. Tu misión: descubrir qué derecho está en juego y ayudarles a defenderlo.",
-      fact1: "5–10 minutos", fact2: "7 casos", fact3: "No pedimos ni guardamos datos",
-      start: "Empezar mi turno",
-      preEyebrow: "Antes de empezar", preTitle: "¿Cómo llegas hoy?", preIntro: "Contesta con honestidad. Al final verás cuánto cambió. Nada de esto se guarda.",
-      q1: "Conozco mis derechos", q2: "Reconozco cuando violan un derecho", q3: "Sé a dónde acudir por ayuda",
-      low: "Nada", high: "Mucho", cont: "Continuar",
-      howEyebrow: "Tu turno", howTitle: "Así funciona cada caso",
-      s1t: "Lee y busca pistas", s1d: "Toca los objetos de la escena para descubrir qué pasó.",
-      s2t: "Nombra el derecho", s2d: "Escoge qué derecho está en juego.",
-      s3t: "Decide qué hacer", s3d: "Recomienda el mejor próximo paso y mira qué pasa.",
-      ranksTitle: "Sube de nivel", tipWrong: "Si te equivocas, no pierdes: recibes una pista y lo intentas otra vez, pero ganas menos puntos.",
-      seeCases: "Atender el primer caso", allFound: "¡Encontraste todas las pistas!", goingQ: "Pasando a la pregunta…",
-      inboxEyebrow: "Bandeja de entrada", inboxTitle: "Te están escribiendo", solved: "resueltos", level: "Nivel",
-      new: "Nuevo", done: "Resuelto", finish: "Terminar turno", resources: "Recursos",
-      back: "← Bandeja", step: "Paso", of: "de",
-      tapScene: "Toca la escena y busca pistas", found: "encontradas", noClues: "Todavía no has encontrado pistas.",
-      next: "Siguiente",
-      whichRight: "¿Qué derecho está en juego?", check: "Comprobar", correct: "¡Correcto!", notQuite: "Casi…",
-      whatDo: "¿Qué le recomiendas?", decide: "Decidir", good: "Buena jugada", rethink: "Piénsalo otra vez",
-      caseSolved: "¡Caso resuelto!", points: "puntos", keyIdea: "Idea clave",
-      episode: "Episodio", watch: "Ver el episodio", pendingLink: "Enlace al video pendiente: por ahora abre la página de la serie",
-      material: "Material educativo (PDF)", bookBW: "Libro en blanco y negro (PDF)", allMaterials: "Material educativo y libros de los 7 episodios", whereHelp: "Dónde pedir ayuda",
-      backInbox: "Volver a la bandeja", seeReport: "Ver mi reporte",
-      reportEyebrow: "Reporte de turno", reached: "Llegaste a", casesOf: "casos de 7",
-      afterTitle: "¿Y ahora cómo te sientes?", afterIntro: "Contesta otra vez para comparar.",
-      before: "Antes", now: "Ahora", shareRank: "Compartir mi nivel", playAgain: "Jugar otra vez",
-      shareEyebrow: "Comparte", shareTitle: "Reta a tu gente",
-      shareText: (r, n, p) => `Llegué a "${r}" en Línea de Defensa: resolví ${n} de 7 casos y sumé ${p} puntos. ¿Te atreves? #DerechosSonTuyos`,
-      copyText: "Copiar texto", copyLink: "Copiar enlace", copied: "Copiado.", copyFail: "No se pudo copiar. Selecciona el texto y cópialo.",
-      resTitle: "Dónde pedir ayuda", resNote: "Prototipo: los teléfonos y enlaces se añadirán después de verificarlos en las fuentes oficiales de cada organización.",
-      tbd: "Teléfono por verificar", aboutSeries: "Sobre la serie",
-      credits: "“Derechos. Son tuyos. Defiéndelos.” es una serie de 7 videos de Espacios Abiertos y el Centro de Periodismo Investigativo, con el apoyo de Open Society Foundations y la Fundación Puertorriqueña de las Humanidades. Se presentó por WIPR y recibió un premio Emmy en 2016.",
-      openSite: "Abrir la página de la serie",
-      jumpTitle: "Ir a una pantalla", jumpNote: "Solo para el prototipo en papel. Las pantallas de caso usan el caso de Kiara.",
-      proto: "Prototipo · contenido demostrativo",
-      waiting: (n) => n === 1 ? "Queda 1 persona esperando tu respuesta." : `Quedan ${n} personas esperando tu respuesta.`,
-      toRank: (pts, r) => `Te faltan <strong>${pts} pts</strong> para llegar a «${r}».`,
-      maxRank: "¡Llegaste al nivel más alto! Termina los casos para completar tu turno.",
-      allDone: "¡Atendiste a todas las personas! Ya puedes ver tu reporte.",
-      levelUp: (r) => `⬆ ¡Subiste de nivel: ${r}!`,
-      nextCase: "Siguiente caso", nextWaiting: "te está esperando",
-      leftCases: (n) => `Te faltan ${n} de 7. ¡Tú puedes!`,
-      keepGoing: "Seguir atendiendo",
-      newMsg: "Nuevo mensaje", replyTo: "Responderle a", learnMore: "Aprende más sobre este derecho",
-      learnAll: "Aprende más: los 7 episodios", helped: "ayudadas", crewLabel: "Personas que has ayudado",
-      finishTitle: "¿Terminar el turno ya?",
-      finishBody: (n) => `Todavía ${n === 1 ? "hay 1 persona" : `hay ${n} personas`} esperando ayuda. Cada caso te da hasta 120 puntos.`,
-      finishAnyway: "Terminar de todos modos",
-      restartTitle: "¿Empezar de nuevo?",
-      restartBody: "Se borrarán tus puntos, tus casos resueltos y tus respuestas.",
-      restartYes: "Sí, empezar de nuevo", cancel: "Cancelar",
-      ranks: ["En entrenamiento", "Voz de apoyo", "Línea firme", "Defensa total"],
-      screens: ["Bienvenida", "Autoevaluación (antes)", "Cómo funciona", "Bandeja de casos", "Caso · Pistas (hotspot)", "Caso · ¿Qué derecho?", "Caso · ¿Qué haces?", "Caso resuelto", "Reporte + autoevaluación (después)", "Compartir", "Recursos"]
+    brand: "Línea de Defensa", help: "Ayuda",
+    presents: "Espacios Abiertos presenta", tagline: "Derechos. Son tuyos. Defiéndelos.",
+    welcomeBody: "Hoy te toca atender la línea. Siete personas te escriben porque algo no anda bien. Tu misión: descubrir qué derecho está en juego y ayudarles a defenderlo.",
+    fact1: "⏱ 5–10 minutos", fact2: "💬 7 casos", fact3: "🔒 Tu avance se guarda solo en este dispositivo",
+    start: "Empezar mi turno",
+    preEyebrow: "Antes de empezar", preTitle: "¿Cómo llegas hoy?", preIntro: "Contesta con honestidad. Al final verás cuánto cambió.",
+    q1: "Conozco mis derechos", q2: "Reconozco cuando violan un derecho", q3: "Sé a dónde acudir por ayuda",
+    low: "Nada", high: "Mucho", cont: "Continuar",
+    howEyebrow: "Tu turno", howTitle: "Así funciona cada caso",
+    steps: [
+      ["🔍", "Busca pistas", "Toca los objetos que brillan en la escena."],
+      ["⚖️", "Nombra el derecho", "Escoge qué derecho está en juego."],
+      ["🧭", "Decide qué hacer", "Recomienda el mejor próximo paso."]
+    ],
+    ranksTitle: "Sube de nivel y gana insignias",
+    tipWrong: "Si te equivocas, no pierdes: te explicamos por qué y lo intentas otra vez (con menos puntos).",
+    seeCases: "Atender el primer caso", allFound: "¡Encontraste las 3 pistas!", goingQ: "Lee con calma… ahora viene la pregunta.",
+    inboxEyebrow: "Bandeja de entrada", inboxTitle: "Te están escribiendo", solved: "resueltos", level: "Nivel",
+    new: "Nuevo", finish: "Terminar turno", resources: "Dónde pedir ayuda",
+    step: "Paso", of: "de",
+    tapScene: "Toca la escena y busca pistas", found: "pistas",
+    whichRight: "¿Qué derecho está en juego?", correct: "¡Correcto!",
+    whatDo: "¿Qué le recomiendas?", good: "¡Buena jugada!",
+    unlocked: "Insignia desbloqueada", points: "puntos", keyIdea: "💡 Idea clave", whatHappened: "Lo que pasó:",
+    perfect: "⭐ ¡Perfecto, a la primera!",
+    learnMore: "Aprende más sobre este derecho", learnSub: (n) => `Video del episodio ${n} y material educativo`,
+    episode: "Episodio", watch: "Ver el episodio",
+    material: "Material educativo (PDF)", bookBW: "Libro en blanco y negro (PDF)", allMaterials: "Material de los 7 episodios", whereHelp: "Dónde pedir ayuda",
+    seeReport: "Ver mi reporte",
+    reportEyebrow: "Reporte de turno", reached: "Llegaste a", casesOf: "casos de 7", myBadges: "Tus insignias",
+    afterTitle: "¿Y ahora cómo te sientes?", afterIntro: "Contesta otra vez para comparar.",
+    before: "Antes", now: "Ahora", shareRank: "Invitar a más gente", playAgain: "Jugar otra vez",
+    shareEyebrow: "Comparte", shareTitle: "Invita a tu gente",
+    shareIntro: "Escoge un mensaje, cámbialo a tu manera y envíalo.",
+    tones: { warm: "💛 De corazón", dare: "😉 Un reto", learn: "✍️ Lo que aprendí" },
+    copyText: "Copiar mensaje", copyLink: "Copiar enlace", copied: "¡Copiado! Ya lo puedes pegar donde quieras.", copyFail: "No se pudo copiar. Selecciona el texto y cópialo.",
+    resTitle: "Dónde pedir ayuda", resNote: "Prototipo: los teléfonos y enlaces se añadirán después de verificarlos en las fuentes oficiales de cada organización.",
+    tbd: "Teléfono por verificar", aboutSeries: "Sobre la serie",
+    credits: "“Derechos. Son tuyos. Defiéndelos.” es una serie de 7 videos de Espacios Abiertos y el Centro de Periodismo Investigativo, con el apoyo de Open Society Foundations y la Fundación Puertorriqueña de las Humanidades. Se presentó por WIPR y recibió un premio Emmy en 2016.",
+    openSite: "Abrir la página de la serie",
+    proto: "Prototipo · contenido demostrativo",
+    waiting: (n) => n === 1 ? "Queda 1 persona esperando tu respuesta." : `Quedan ${n} personas esperando tu respuesta.`,
+    toRank: (pts, r) => `Te faltan <strong>${pts} pts</strong> para llegar a «${r}».`,
+    maxRank: "¡Llegaste al nivel más alto! Termina los casos para completar tu turno.",
+    allDone: "¡Atendiste a todas las personas! Ya puedes ver tu reporte.",
+    levelUp: (r) => `⬆ ¡Subiste de nivel: ${r}!`,
+    keepGoing: "Seguir atendiendo",
+    newMsg: "Nuevo mensaje", nowTxt: "ahora", replyTo: "Responderle a",
+    resumeCase: "Caso en curso", resumeGo: (n) => `Seguir con ${n}`, nextMsg: "Te escribieron", nextGo: (n) => `Responderle a ${n}`,
+    allSeven: "¡Atendiste a las 7 personas!", allSevenSub: "Gracias por defender sus derechos. Mira cómo te fue.",
+    streak: (n) => `🔥 ${n} seguidas`,
+    lockedTitle: "Todavía está bloqueada", lockedBody: "Resuelve el caso de este derecho y aquí verás su video y su material educativo.",
+    lockedNow: "¡Lo estás resolviendo ahora mismo! Termina el caso para desbloquear esta ficha.",
+    close: "Cerrar", sound: "Sonido",
+    welcomeBack: "¡Qué bueno verte! Seguimos donde lo dejaste.", startOver: "Empezar de nuevo",
+    finishTitle: "¿Terminar el turno ya?",
+    finishBody: (n) => `Todavía ${n === 1 ? "hay 1 persona" : `hay ${n} personas`} esperando ayuda. Cada caso te da hasta 120 puntos.`,
+    finishAnyway: "Terminar de todos modos",
+    restartTitle: "¿Empezar de nuevo?",
+    restartBody: "Se borrarán tus puntos, tus insignias y tus respuestas.",
+    restartYes: "Sí, empezar de nuevo", cancel: "Cancelar",
+    ranks: ["En entrenamiento", "Voz de apoyo", "Línea firme", "Defensa total"],
+    rankIcons: ["🎧", "📣", "🛡️", "🏆"]
   };
+
+  // Mensajes para invitar a más gente (la persona los puede editar)
+  const SHARE = {
+    warm: (r, n) => n === 7
+      ? "Hoy me tocó atender la Línea de Defensa 🛡️ y ayudé a 7 personas a defender sus derechos: una estudiante que no podía llegar a su salón, una señora que solo quería votar, un enfermero al que no querían contratar… Me quedé pensando en cuántas veces nos pasa algo así y no sabemos qué hacer. Terminé como «" + r + "». Son 10 minutitos y de verdad vale la pena 💛"
+      : "Hoy me tocó atender la Línea de Defensa 🛡️ y ya ayudé a " + n + " de 7 personas a defender sus derechos. Me quedé pensando en cuántas veces nos pasa algo así y no sabemos qué hacer. Son 10 minutitos y de verdad vale la pena 💛",
+    dare: (r, n, p) => "¿Sabrías qué hacer si te niegan un derecho? 🤔 Yo creía que sí… hasta que jugué Línea de Defensa. Llegué a «" + r + "» con " + p + " puntos. ¿Te atreves a ganarme? 😉",
+    learn: () => "Algo que aprendí hoy: tener derechos no basta, también hay que saber defenderlos ✊ Y casi siempre el primer paso es el mismo: anotar lo que pasó y pedir ayuda. Lo aprendí jugando Línea de Defensa, de la serie “Derechos. Son tuyos. Defiéndelos.”"
+  };
+
+  // ---------- Íconos de los 7 derechos (líneas, 24×24) ----------
+  const ICONS = {
+    tener: '<circle cx="12" cy="7.5" r="3.2"/><path d="M5.5 20.5c.6-4.2 3.2-6.7 6.5-6.7s5.9 2.5 6.5 6.7"/><path d="M19.2 2.6l.8 1.6 1.7.3-1.2 1.2.3 1.7-1.6-.8-1.5.8.3-1.7-1.2-1.2 1.7-.3z" fill="currentColor" stroke-width="1"/>',
+    educacion: '<path d="M2 9.5 12 5l10 4.5-10 4.5z"/><path d="M6 11.6V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.4"/><path d="M22 9.5V15"/>',
+    info: '<path d="M13 21H6V3h8l4 4v5"/><path d="M14 3v4h4"/><path d="M9 10h5M9 13.5h3"/><circle cx="16.5" cy="16.5" r="3"/><path d="m18.7 18.7 2.6 2.6"/>',
+    participacion: '<path d="M3.5 12h17v8.5h-17z"/><path d="M8 12V4h8v8"/><path d="m10 8.2 1.6 1.6 2.8-3"/><path d="M8 16h8"/>',
+    justicia: '<path d="M12 4v16M7.5 20h9M4.5 7h15"/><path d="M4.5 7 2 12.5a2.6 2.6 0 0 0 5 0z"/><path d="M19.5 7 17 12.5a2.6 2.6 0 0 0 5 0z"/>',
+    trabajo: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5.2c0-.7.5-1.2 1.2-1.2h3.6c.7 0 1.2.5 1.2 1.2V7"/><path d="M3 12.5h18"/><path d="M11 11.5h2v2.2h-2z"/>',
+    dignidad: '<path d="M12 20.5s-8-4.8-8-10.6A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 8 2.6c0 5.8-8 10.6-8 10.6z"/>'
+  };
+  const rIcon = (id) => `<svg class="ricon" viewBox="0 0 24 24" aria-hidden="true">${ICONS[id]}</svg>`;
 
   // ---------- Contenido: los 7 derechos ----------
   const RIGHTS = {
-    tener: { es: "Derecho a tener derechos", ep: 1 },
-    educacion: { es: "Educación", ep: 2 },
-    info: { es: "Acceso a la información", ep: 3 },
-    participacion: { es: "Participación política", ep: 4 },
-    justicia: { es: "Acceso a la justicia", ep: 5 },
-    trabajo: { es: "Trabajo", ep: 6 },
-    dignidad: { es: "Dignidad", ep: 7 }
+    tener: { es: "Derecho a tener derechos", ep: 1, color: "#4B3CC9" },
+    educacion: { es: "Educación", ep: 2, color: "#137A52" },
+    info: { es: "Acceso a la información", ep: 3, color: "#1565B5" },
+    participacion: { es: "Participación política", ep: 4, color: "#A65507" },
+    justicia: { es: "Acceso a la justicia", ep: 5, color: "#6A3DB0" },
+    trabajo: { es: "Trabajo", ep: 6, color: "#B3245A" },
+    dignidad: { es: "Dignidad", ep: 7, color: "#C02E2E" }
   };
 
   // ---------- Contenido: los casos (demostrativos) ----------
+  // look: cómo se dibuja el avatar · scene: qué escena se dibuja detrás de las pistas
+  // why: por qué cada respuesta incorrecta no es el derecho en juego
   const CASES = [
     {
-      id: "marco", right: "tener", name: "Marco", age: 31, color: "#B4462C",
-      place: { es: "Oficina de gobierno" }, deco: ["🏢", "🪑"],
+      id: "marco", right: "tener", name: "Marco", age: 31, color: "#B4462C", scene: "office",
+      look: { skin: "#C68A5E", hair: "short", hairColor: "#2B1B12", shirt: "#B4462C", extra: ["stubble"] },
+      place: { es: "Oficina de gobierno" },
       msg: { es: "Fui a renovar un permiso y el empleado me dijo que “gente como yo” no tiene derecho a quejarse. ¿Eso es así?" },
       clues: [
         { icon: "🗣️", x: 22, y: 50, es: "“Gente como tú”: lo trataron como si valiera menos por ser de otro país." },
@@ -517,6 +605,11 @@ p { margin: 0; }
         { icon: "📜", x: 80, y: 34, es: "Afiche en la pared: “Todas las personas son iguales ante la ley”." }
       ],
       options: ["trabajo", "tener", "educacion", "participacion"],
+      why: {
+        trabajo: { es: "Marco no fue a buscar empleo: fue a renovar un permiso. Lo grave es que le dijeron que no tenía derecho a reclamar." },
+        educacion: { es: "Aquí no hay escuela ni estudios de por medio. Le negaron algo más básico: que lo traten como una persona con derechos." },
+        participacion: { es: "No se trata de votar ni de opinar sobre política. A Marco le dijeron que sus derechos no cuentan." }
+      },
       hint: { es: "Pista: a Marco le negaron algo más básico que un trámite. ¿Qué le dijeron que no tenía?" },
       rightFb: { es: "Toda persona tiene derecho a tener derechos, sin importar de dónde viene." },
       actions: [
@@ -527,8 +620,9 @@ p { margin: 0; }
       key: { es: "La idea de que las personas tienen derecho a tener derechos se atribuye a Hannah Arendt, filósofa alemana y una de las principales intelectuales del siglo 20." }
     },
     {
-      id: "valeria", right: "educacion", name: "Valeria", age: 19, color: "#2F7D6B",
-      place: { es: "Universidad" }, deco: ["🏫", "📚"],
+      id: "valeria", right: "educacion", name: "Valeria", age: 19, color: "#2F7D6B", scene: "university",
+      look: { skin: "#E0A880", hair: "long", hairColor: "#5A3420", shirt: "#2F7D6B", extra: [] },
+      place: { es: "Universidad" },
       msg: { es: "Me admitieron a la universidad, pero mi salón está en un tercer piso sin elevador. Uso silla de ruedas y me dicen que “lo tome el año que viene”." },
       clues: [
         { icon: "🛗", x: 20, y: 40, es: "El elevador lleva meses fuera de servicio." },
@@ -536,6 +630,11 @@ p { margin: 0; }
         { icon: "🦽", x: 82, y: 50, es: "Valeria necesita un acomodo razonable para llegar a clase." }
       ],
       options: ["dignidad", "info", "educacion", "justicia"],
+      why: {
+        dignidad: { es: "El trato es injusto, sí, pero lo que se le está negando directamente es poder tomar sus clases." },
+        info: { es: "Valeria no está pidiendo documentos: ya sabe lo que pasa. Lo que no puede es llegar a su salón." },
+        justicia: { es: "Más adelante podría acudir a la justicia, pero el derecho que le están afectando ahora es el de estudiar." }
+      },
       hint: { es: "Pista: ¿qué es lo que Valeria no puede hacer por culpa del elevador?" },
       rightFb: { es: "La educación es un derecho, y eso incluye poder llegar al salón." },
       actions: [
@@ -546,8 +645,9 @@ p { margin: 0; }
       key: { es: "La Constitución de Puerto Rico establece que toda persona tiene derecho a una educación que fomente el pleno desarrollo de su personalidad." }
     },
     {
-      id: "kiara", right: "info", name: "Kiara", age: 23, color: "#6A3FB5",
-      place: { es: "Municipio" }, deco: ["🏛️", "🗂️"],
+      id: "kiara", right: "info", name: "Kiara", age: 23, color: "#6A3FB5", scene: "townhall",
+      look: { skin: "#8D5A3B", hair: "curly", hairColor: "#1E120C", shirt: "#6A3FB5", extra: ["earrings"] },
+      place: { es: "Municipio" },
       msg: { es: "Pedí al municipio el contrato del recogido de basura de mi barrio. Hace dos meses y nada. 😤" },
       clues: [
         { icon: "📄", x: 24, y: 72, es: "La carta de solicitud nunca tuvo respuesta." },
@@ -555,6 +655,11 @@ p { margin: 0; }
         { icon: "💰", x: 80, y: 66, es: "El contrato se paga con dinero público." }
       ],
       options: ["educacion", "info", "trabajo", "dignidad"],
+      why: {
+        educacion: { es: "Kiara no está estudiando ni pidiendo clases: pidió un documento público." },
+        trabajo: { es: "El contrato es de una empresa, pero Kiara no busca empleo: quiere saber cómo se usa el dinero de todos." },
+        dignidad: { es: "Nadie la maltrató. El problema es que el municipio no le entrega información que es pública." }
+      },
       hint: { es: "Pista: el contrato se paga con el dinero de todo el mundo. ¿Quién tiene derecho a verlo?" },
       rightFb: { es: "La información pública es tuya. El gobierno debe dártela." },
       actions: [
@@ -565,8 +670,9 @@ p { margin: 0; }
       key: { es: "La información es una herramienta vital para mantener nuestra democracia. Todas las personas tienen derecho a conocer la información pública que está en manos del Gobierno." }
     },
     {
-      id: "ana", right: "participacion", name: "Doña Ana", age: 67, color: "#B07A12",
-      place: { es: "Égida" }, deco: ["🏠", "🪴"],
+      id: "ana", right: "participacion", name: "Doña Ana", age: 67, color: "#B07A12", scene: "home",
+      look: { skin: "#E8B996", hair: "bun", hairColor: "#CFCFD6", shirt: "#B07A12", extra: ["glasses"] },
+      place: { es: "Égida" },
       msg: { es: "Quiero votar en las elecciones, pero no puedo caminar hasta el colegio. Me dijeron que “eso es complicado” y ya." },
       clues: [
         { icon: "🗳️", x: 24, y: 40, es: "Las elecciones son en tres semanas." },
@@ -574,6 +680,11 @@ p { margin: 0; }
         { icon: "💬", x: 80, y: 44, es: "Nadie le explicó qué opciones tiene." }
       ],
       options: ["participacion", "justicia", "tener", "trabajo"],
+      why: {
+        justicia: { es: "Doña Ana no tiene un caso en el tribunal. Lo que quiere es votar." },
+        tener: { es: "Nadie le dijo que no tiene derechos. Lo que le están poniendo difícil es votar, que es una forma de participar." },
+        trabajo: { es: "Doña Ana no está buscando empleo. Quiere participar en las elecciones." }
+      },
       hint: { es: "Pista: ¿qué quiere hacer Doña Ana en tres semanas?" },
       rightFb: { es: "Votar es participar. Este derecho es de todas las personas, también de quienes tienen dificultad para moverse." },
       actions: [
@@ -584,8 +695,9 @@ p { margin: 0; }
       key: { es: "Sin participación política no existe democracia. Este derecho debe reconocerse por igual a todas las personas, sin importar su posición social, sexo, raza u otras condiciones." }
     },
     {
-      id: "jose", right: "justicia", name: "José", age: 35, color: "#1F5FA8",
-      place: { es: "Apartamento" }, deco: ["🚪", "🛋️"],
+      id: "jose", right: "justicia", name: "José", age: 35, color: "#1F5FA8", scene: "apartment",
+      look: { skin: "#A86E48", hair: "short", hairColor: "#141414", shirt: "#1F5FA8", extra: ["beard"] },
+      place: { es: "Apartamento" },
       msg: { es: "El dueño del apartamento me dejó una nota: tengo dos días para irme. No tengo dinero para un abogado. ¿Qué hago?" },
       clues: [
         { icon: "📝", x: 26, y: 46, es: "Nota en la puerta: “Tienes 2 días”. No hay orden de un tribunal." },
@@ -593,6 +705,11 @@ p { margin: 0; }
         { icon: "🔑", x: 80, y: 40, es: "El dueño amenazó con cambiar la cerradura." }
       ],
       options: ["info", "participacion", "justicia", "educacion"],
+      why: {
+        info: { es: "José ya sabe lo que le está pasando. Lo que necesita es usar la ley para defenderse, aunque no tenga dinero." },
+        participacion: { es: "No se trata de votar ni de política: José necesita protección legal frente al desalojo." },
+        educacion: { es: "No hay estudios de por medio. José necesita poder llegar a la ayuda legal." }
+      },
       hint: { es: "Pista: José necesita usar la ley para protegerse, aunque no tenga dinero." },
       rightFb: { es: "Tener derechos no basta: también tienes derecho a usar la ley para defenderlos." },
       actions: [
@@ -603,8 +720,9 @@ p { margin: 0; }
       key: { es: "El acceso a la justicia es el derecho que tienen todas las personas a utilizar las herramientas y mecanismos legales para que se reconozcan y protejan sus demás derechos." }
     },
     {
-      id: "luis", right: "trabajo", name: "Luis", age: 27, color: "#A3326B",
-      place: { es: "Hospital" }, deco: ["🏥", "🩺"],
+      id: "luis", right: "trabajo", name: "Luis", age: 27, color: "#A3326B", scene: "hospital",
+      look: { skin: "#D69C72", hair: "buzz", hairColor: "#3A2414", shirt: "#3FA7A0", extra: [] },
+      place: { es: "Hospital" },
       msg: { es: "Fui a una entrevista de enfermería y me dijeron que el puesto “es para mujeres”. Tengo licencia y experiencia." },
       clues: [
         { icon: "📋", x: 22, y: 44, es: "El anuncio pedía “personal de enfermería con licencia”." },
@@ -612,6 +730,11 @@ p { margin: 0; }
         { icon: "🎓", x: 80, y: 40, es: "Luis cumple con todos los requisitos." }
       ],
       options: ["dignidad", "tener", "info", "trabajo"],
+      why: {
+        dignidad: { es: "Lo trataron con prejuicio, sí, pero lo que le negaron fue un empleo por ser hombre." },
+        tener: { es: "Nadie le dijo que no tiene derechos. Le cerraron la puerta a un trabajo para el que está preparado." },
+        info: { es: "Luis no pidió documentos. Le negaron un puesto por su género." }
+      },
       hint: { es: "Pista: lo que está en juego es el empleo de Luis." },
       rightFb: { es: "Tu género no define el trabajo que puedes hacer." },
       actions: [
@@ -622,8 +745,9 @@ p { margin: 0; }
       key: { es: "Todas las personas tienen derecho a seleccionar libremente su trabajo: las condiciones sociales o el género no deben definir el empleo que puede desempeñar." }
     },
     {
-      id: "carmen", right: "dignidad", name: "Doña Carmen", age: 72, color: "#4E6B1F",
-      place: { es: "Centro de salud" }, deco: ["🏥", "🕐"],
+      id: "carmen", right: "dignidad", name: "Doña Carmen", age: 72, color: "#4E6B1F", scene: "clinic",
+      look: { skin: "#7A4A2E", hair: "curly", hairColor: "#E4E4EA", shirt: "#4E6B1F", extra: ["glasses"] },
+      place: { es: "Centro de salud" },
       msg: { es: "En el centro de salud me hablan gritando y me dejan horas esperando, sin silla ni agua. Como si yo no importara." },
       clues: [
         { icon: "🪑", x: 22, y: 70, es: "No hay sillas suficientes en la sala de espera." },
@@ -631,6 +755,11 @@ p { margin: 0; }
         { icon: "🗣️", x: 80, y: 62, es: "El personal le habla a gritos." }
       ],
       options: ["trabajo", "dignidad", "participacion", "educacion"],
+      why: {
+        trabajo: { es: "Doña Carmen no está buscando trabajo: es paciente y la están tratando sin respeto." },
+        participacion: { es: "No se trata de votar ni de opinar sobre política. El problema es cómo la tratan." },
+        educacion: { es: "No hay escuela de por medio. Lo que falta es respeto por ella como persona." }
+      },
       hint: { es: "Pista: Doña Carmen siente que la tratan como si no valiera. ¿Qué derecho protege ese valor?" },
       rightFb: { es: "Mereces respeto por el simple hecho de ser persona." },
       actions: [
@@ -658,19 +787,181 @@ p { margin: 0; }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
-  const CLUE_WAIT_MS = 5000; // tiempo para leer las pistas antes de pasar a la pregunta
+  const CLUE_WAIT_MS = 5000;   // tiempo para leer las 3 pistas antes de pasar a la pregunta
+  const NEXT_WAIT_MS = 1000;   // pausa para ver la respuesta correcta en verde antes de seguir
   const MAX_POINTS = 120 * CASES.length;
+  const STORE_KEY = "lineaDefensa.v2";
+  const SOUND_KEY = "lineaDefensa.sound";
+
+  // ---------- Dibujos: avatares ----------
+  function avatar(c, mood) {
+    const k = c.look, hc = k.hairColor, sk = k.skin, happy = mood === "happy";
+    const back = k.hair === "long" ? `<path d="M15 30C14 11 50 11 49 30l1 22c-6 3-30 3-36 0z" fill="${hc}"/>` : "";
+    const curls = [[20, 24, 5.5], [24, 17, 6], [32, 14, 6.5], [40, 17, 6], [44, 24, 5.5], [18, 31, 4.2], [46, 31, 4.2]];
+    const top = {
+      short: `<path d="M18.6 28C17.5 12 46.5 12 45.4 28c-2-6.5-7-9.5-13.4-9.5S20.6 21.5 18.6 28z" fill="${hc}"/>`,
+      long: `<path d="M18 30C16.5 12 47.5 12 46 30c-3-7-9-11-15-10.5-5 .4-9.5 4-13 10.5z" fill="${hc}"/>`,
+      curly: curls.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hc}"/>`).join(""),
+      bun: `<circle cx="32" cy="11" r="6" fill="${hc}"/><path d="M19 27c0-12 26-12 26 0-3-5-8-7.5-13-7.5S22 22 19 27z" fill="${hc}"/>`,
+      buzz: `<path d="M19.4 26c.6-11 24.6-11 25.2 0-3.5-4.5-7.5-5.6-12.6-5.6S22.9 21.5 19.4 26z" fill="${hc}"/>`
+    }[k.hair];
+    const brows = happy ? "M23.5 25.4q2.5-2 5 0M35.5 25.4q2.5-2 5 0" : "M23.5 26.6l5-1.9M40.5 26.6l-5-1.9";
+    const mouth = happy
+      ? `<path d="M26.8 36.2q5.2 5.6 10.4 0z" fill="#fff" stroke="#3A1F1A" stroke-width="1.5" stroke-linejoin="round"/>`
+      : `<path d="M28.6 38.6q3.4-2.6 6.8 0" fill="none" stroke="#3A1F1A" stroke-width="1.6" stroke-linecap="round"/>`;
+    const ex = k.extra || [];
+    return `<span class="ava" style="--c:${c.color}"><svg viewBox="0 0 64 64" aria-hidden="true">
+      ${back}
+      <path d="M7 64c1-11 11-16.5 25-16.5S56 53 57 64z" fill="${k.shirt}"/>
+      <path d="M27 47.5l5 6 5-6" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
+      <path d="M27.5 40h9v8.5h-9z" fill="${sk}"/><path d="M27.5 40h9v4c-3 1.4-6 1.4-9 0z" fill="rgba(0,0,0,.12)"/>
+      <circle cx="19.3" cy="31.5" r="3" fill="${sk}"/><circle cx="44.7" cy="31.5" r="3" fill="${sk}"/>
+      <ellipse cx="32" cy="30" rx="13" ry="14.6" fill="${sk}"/>
+      ${ex.includes("beard") ? `<path d="M19.5 32c1 9 6 13.5 12.5 13.5S43.5 41 44.5 32c-2 4-5 6-7 6.4-1.5-1.4-3.2-1.9-5.5-1.9s-4 .5-5.5 1.9c-2-.4-5-2.4-7-6.4z" fill="${hc}"/>` : ""}
+      ${ex.includes("stubble") ? `<path d="M21 34c1.5 7 5.5 10 11 10s9.5-3 11-10c-2 3.5-6 5.5-11 5.5S23 37.5 21 34z" fill="${hc}" opacity=".22"/>` : ""}
+      ${top}
+      <path d="${brows}" fill="none" stroke="${hc === "#CFCFD6" || hc === "#E4E4EA" ? "#8A8A96" : hc}" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="27" cy="31" r="1.9" fill="#1D1B2B"/><circle cx="37" cy="31" r="1.9" fill="#1D1B2B"/>
+      <circle cx="23.6" cy="36" r="2.6" fill="#FF7A8A" opacity="${happy ? ".45" : ".22"}"/><circle cx="40.4" cy="36" r="2.6" fill="#FF7A8A" opacity="${happy ? ".45" : ".22"}"/>
+      ${ex.includes("glasses") ? `<g fill="none" stroke="#2A2A3A" stroke-width="1.4"><circle cx="27" cy="31" r="4.2"/><circle cx="37" cy="31" r="4.2"/><path d="M31.2 31h1.6"/></g>` : ""}
+      ${ex.includes("earrings") ? `<circle cx="19" cy="36" r="1.7" fill="#FFC23D"/><circle cx="45" cy="36" r="1.7" fill="#FFC23D"/>` : ""}
+      ${mouth}
+    </svg></span>`;
+  }
+
+  // ---------- Dibujos: escenas (detrás de las pistas) ----------
+  const windowArt = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="${w - 4}" height="${h - 4}" fill="#BFE3FF"/><circle cx="${x + w * 0.7}" cy="${y + h * 0.35}" r="${h * 0.12}" fill="#FFE08A"/><path d="M${x + 2} ${y + h - 6}q${w * 0.3} -7 ${w * 0.55} 0t${w * 0.45 - 4} 0V${y + h - 2}H${x + 2}z" fill="#9BD39B"/><path d="M${x + w / 2} ${y + 2}v${h - 4}" stroke="#fff" stroke-width="1.5"/>`;
+  const chair = (x, col) => `<g fill="${col}"><rect x="${x}" y="58" width="14" height="4" rx="1"/><rect x="${x}" y="45" width="3" height="17" rx="1"/><rect x="${x + 1}" y="62" width="2" height="14"/><rect x="${x + 11}" y="62" width="2" height="14"/></g>`;
+  const plant = (x) => `<rect x="${x}" y="64" width="11" height="12" rx="1" fill="#C8693C"/><circle cx="${x + 5.5}" cy="58" r="7" fill="#3E9B5A"/><circle cx="${x + 1}" cy="61" r="4" fill="#4FB06A"/><circle cx="${x + 10}" cy="61" r="4" fill="#4FB06A"/>`;
+  const txt = (x, y, s, t, col) => `<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" fill="${col || "#fff"}" font-family="Arial, sans-serif" font-weight="700">${t}</text>`;
+  const SCENES = {
+    office: { wall: "#E7EAF7", floor: "#CDB99C", art: windowArt(8, 14, 34, 28) +
+      `<rect x="60" y="11" width="42" height="12" rx="2" fill="#2B37D1"/>${txt(81, 19.4, 6, "TURNOS")}` +
+      `<rect x="62" y="36" width="18" height="13" rx="1" fill="#2D3142"/><rect x="69" y="49" width="4" height="3" fill="#2D3142"/>` +
+      `<rect x="50" y="54" width="68" height="22" fill="#8C6A4A"/><rect x="47" y="51" width="74" height="5" rx="1" fill="#A88563"/>` +
+      `<rect x="124" y="16" width="26" height="34" rx="1" fill="#fff" stroke="#C9CDE3"/><path d="M128 23h18M128 28h18M128 33h13M128 38h16" stroke="#9AA0C3" stroke-width="1.6"/>` + plant(138) },
+    university: { wall: "#E8F3EE", floor: "#B9C2CF", art:
+      `<rect x="6" y="24" width="30" height="52" fill="#A9B4C2"/><path d="M21 24v52" stroke="#8592A3"/><rect x="9" y="15" width="24" height="8" rx="1" fill="#E03E3E"/>${txt(21, 21, 4.6, "AVERIADO")}` +
+      `<rect x="48" y="14" width="58" height="34" rx="2" fill="#8C6A4A"/><rect x="51" y="17" width="52" height="28" fill="#2F5D4A"/><path d="M56 24h24M56 30h32M56 36h18" stroke="#E8F3EC" stroke-width="1.4" opacity=".8"/>` +
+      `<path d="M116 76V70h7v-6h7v-6h7v-6h7v-6h7v-6h9v36z" fill="#D5DBE5" stroke="#9AA4B5" stroke-width=".8"/>${txt(150, 36, 7, "3", "#2B37D1")}` },
+    townhall: { wall: "#D7E8FF", floor: "#D2C8B5", art:
+      `<g fill="#fff" opacity=".9"><ellipse cx="18" cy="16" rx="11" ry="4"/><ellipse cx="146" cy="9" rx="9" ry="3"/></g>` +
+      `<path d="M34 34 80 13l46 21z" fill="#E6DAC0"/><rect x="38" y="34" width="84" height="42" fill="#F3ECDD"/>${txt(80, 30, 5.5, "MUNICIPIO", "#7A6A4A")}` +
+      `<g fill="#DCCFB4">${[42, 54, 92, 104, 116].map((x) => `<rect x="${x}" y="38" width="5" height="38"/>`).join("")}</g>` +
+      `<rect x="70" y="50" width="18" height="26" rx="1" fill="#8C6A4A"/><path d="M79 50v26" stroke="#6E4E32"/>` +
+      `<path d="M140 76V18" stroke="#777" stroke-width="1.5"/><path d="M140 19h17l-3.5 5.5 3.5 5.5h-17z" fill="#2B37D1"/>` },
+    home: { wall: "#FCEBDD", floor: "#C8A27C", art: windowArt(58, 12, 40, 28) +
+      `<path d="M54 10h8v34c-3-6-5-6-8-8zM102 10h-8v34c3-6 5-6 8-8z" fill="#D9485F" opacity=".85"/>` +
+      `<rect x="12" y="46" width="42" height="12" rx="4" fill="#6E8AF0"/><rect x="10" y="56" width="46" height="18" rx="4" fill="#5C7AEA"/><rect x="6" y="52" width="10" height="22" rx="4" fill="#4A66D6"/><rect x="50" y="52" width="10" height="22" rx="4" fill="#4A66D6"/>` +
+      `<rect x="114" y="16" width="24" height="26" rx="2" fill="#fff" stroke="#D6D9EC"/><rect x="114" y="16" width="24" height="7" fill="#E03E3E"/><g fill="#9AA0C3">${[0, 1, 2, 3].map((i) => [0, 1, 2].map((j) => `<rect x="${117 + i * 5}" y="${26 + j * 5}" width="3" height="3"/>`).join("")).join("")}</g>` + plant(132) },
+    apartment: { wall: "#F4F0E6", floor: "#A57B55", art:
+      `<path d="M18 76V42" stroke="#555" stroke-width="1.6"/><path d="M9 42h18l-4.5-11h-9z" fill="#FFC23D"/><rect x="13" y="74" width="10" height="2" fill="#555"/>` +
+      `<rect x="56" y="20" width="36" height="56" rx="1" fill="#8C5A3C"/><rect x="60" y="25" width="28" height="21" fill="none" stroke="#6E4630" stroke-width="1.5"/><rect x="60" y="50" width="28" height="22" fill="none" stroke="#6E4630" stroke-width="1.5"/><circle cx="87" cy="50" r="2.2" fill="#FFC23D"/>` +
+      `<rect x="64" y="29" width="13" height="11" fill="#FFF3A3" transform="rotate(-6 70 34)"/>` +
+      `<rect x="112" y="16" width="30" height="22" rx="1" fill="#fff" stroke="#C9B48F" stroke-width="2"/><path d="M115 34l8-9 6 6 4-4 6 7z" fill="#7FB3D5"/>` +
+      `<rect x="108" y="54" width="46" height="20" rx="4" fill="#A3326B" opacity=".85"/><rect x="104" y="50" width="10" height="24" rx="4" fill="#8A2A5A"/><rect x="148" y="50" width="10" height="24" rx="4" fill="#8A2A5A"/>` },
+    hospital: { wall: "#E3F4F4", floor: "#BFD0D6", art:
+      `<rect x="10" y="12" width="24" height="24" rx="5" fill="#fff"/><path d="M19.5 16h5v6.5H31v5h-6.5V34h-5v-6.5H13v-5h6.5z" fill="#E03E3E"/>` +
+      `<rect x="44" y="14" width="44" height="30" rx="2" fill="#C89B6A"/><rect x="48" y="18" width="18" height="22" fill="#fff"/><path d="M51 23h12M51 27h12M51 31h8" stroke="#9AA0C3" stroke-width="1.3"/><rect x="70" y="18" width="14" height="13" fill="#FFF3A3"/>` +
+      `<rect x="96" y="54" width="58" height="22" fill="#7FA7B5"/><rect x="94" y="51" width="62" height="5" rx="1" fill="#9CC0CC"/>` +
+      `<rect x="112" y="38" width="18" height="13" rx="1" fill="#2D3142"/>` + chair(54, "#3FA7A0") + chair(74, "#3FA7A0") },
+    clinic: { wall: "#F1EFFA", floor: "#C9C3B4", art:
+      `<circle cx="80" cy="24" r="13" fill="#fff" stroke="#2D3142" stroke-width="2"/><path d="M80 24v-8M80 24l6 3.5" stroke="#2D3142" stroke-width="1.9" stroke-linecap="round"/>` +
+      chair(8, "#E8890C") + chair(26, "#E8890C") +
+      `<g opacity=".35">${chair(44, "#9AA0C3")}</g>` +
+      `<rect x="92" y="56" width="11" height="20" fill="#D6D9EC"/><rect x="93" y="43" width="9" height="13" rx="3" fill="#F1F7FF" stroke="#B5C6DA"/>` +
+      `<rect x="112" y="18" width="42" height="30" fill="#BFE3FF" stroke="#fff" stroke-width="3"/><rect x="108" y="48" width="50" height="28" fill="#9AA0C3"/>${txt(133, 63, 5.5, "RECEPCIÓN")}` }
+  };
+  function sceneArt(c) {
+    const s = SCENES[c.scene];
+    return `<svg class="scene-art" viewBox="0 0 160 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="160" height="110" fill="${s.wall}"/><rect y="76" width="160" height="34" fill="${s.floor}"/><rect y="74" width="160" height="3" fill="rgba(0,0,0,.12)"/>
+      <g stroke="rgba(0,0,0,.07)" stroke-width=".7"><path d="M0 89H160M0 101H160M40 76 28 110M80 76v34M120 76l12 34"/></g>
+      ${s.art}
+    </svg>`;
+  }
+
+  const shieldSvg = (w, h) => `<svg class="shield" viewBox="0 0 22 26" ${w ? `style="width:${w};height:${h}"` : ""} aria-hidden="true"><path d="M11 1 2 4.5v7.2C2 18 6 23 11 25c5-2 9-7 9-13.3V4.5Z" fill="var(--accent)" stroke="#fff" stroke-width="${w ? 1.2 : 0}"/><path d="m6.5 13 3.2 3.2L15.8 10" fill="none" stroke="var(--signal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  // ---------- Sonidos (se generan en el navegador, sin archivos) ----------
+  let SOUND = true;
+  try { SOUND = localStorage.getItem(SOUND_KEY) !== "off"; } catch (_) {}
+  let actx = null;
+  function tone(f, at, dur, type, vol, f2) {
+    if (!SOUND) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      const t0 = actx.currentTime + at, o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(f, t0);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t0); o.stop(t0 + dur + 0.05);
+    } catch (_) {}
+  }
+  const SFX = {
+    tap: () => tone(560, 0, 0.06, "sine", 0.06),
+    clue: () => { tone(784, 0, 0.09, "triangle", 0.14); tone(1175, 0.07, 0.15, "triangle", 0.12); },
+    right: () => { tone(659, 0, 0.12, "triangle", 0.17); tone(988, 0.1, 0.25, "triangle", 0.17); },
+    wrong: () => { tone(220, 0, 0.16, "square", 0.06, 165); tone(165, 0.14, 0.26, "square", 0.06, 110); },
+    win: () => [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.09, 0.32, "triangle", 0.13)),
+    msg: () => { tone(1047, 0, 0.1, "sine", 0.13); tone(1397, 0.13, 0.2, "sine", 0.13); },
+    level: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.5 + i * 0.07, 0.22, "sawtooth", 0.05))
+  };
+  const vibrate = (ms) => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (_) {} };
+  const calm = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- Confeti y puntos que flotan ----------
+  function confetti(big) {
+    if (calm()) return;
+    const cv = document.createElement("canvas");
+    cv.className = "confetti";
+    document.body.appendChild(cv);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = window.innerWidth, H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    const x = cv.getContext("2d"); x.scale(dpr, dpr);
+    const cols = ["#FFC23D", "#2B37D1", "#E03E3E", "#1E9E6A", "#D6336C", "#1C7ED6", "#E8890C", "#9A2A9E"];
+    const N = big ? 240 : 130, D = big ? 3800 : 2700;
+    const ps = Array.from({ length: N }, (_, i) => {
+      const left = i % 2 === 0;
+      return { x: left ? -10 : W + 10, y: H * (0.5 + Math.random() * 0.35), vx: (left ? 1 : -1) * (3 + Math.random() * 8),
+        vy: -(7 + Math.random() * 10), w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4, c: cols[i % cols.length] };
+    });
+    const t0 = performance.now();
+    (function frame(now) {
+      const el = now - t0;
+      x.clearRect(0, 0, W, H);
+      ps.forEach((p) => {
+        p.vy += 0.3; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        x.save(); x.globalAlpha = Math.max(0, 1 - el / D); x.translate(p.x, p.y); x.rotate(p.r);
+        x.fillStyle = p.c; x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 1.5)) + 2); x.restore();
+      });
+      if (el < D) requestAnimationFrame(frame); else cv.remove();
+    })(t0);
+  }
+  function floatPts(el, text) {
+    if (!el || calm()) return;
+    const r = el.getBoundingClientRect(), s = document.createElement("span");
+    s.className = "floatpts"; s.textContent = text;
+    s.style.left = r.left + r.width / 2 + "px"; s.style.top = r.top + "px";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1200);
+  }
 
   // ---------- Estado ----------
   const fresh = () => ({
-    screen: "welcome", pre: [0, 0, 0], post: [0, 0, 0], points: 0,
-    progress: {}, current: null, sel: null, fb: null, sheet: false, toast: "", confirm: null, banner: null
+    screen: "welcome", prevScreen: null, pre: [0, 0, 0], post: [0, 0, 0], points: 0, streak: 0,
+    progress: {}, current: null, banner: null, shareTone: "warm", shareDraft: null,
+    sheet: null, toast: "", confirm: null, welcomeBack: false
   });
   let S = fresh();
-  const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dOk: false, aOk: false, earned: 0, done: false, startRank: null });
+  const P = (id) => (S.progress[id] ||= { clues: [], dTries: 0, aTries: 0, dWrong: [], aWrong: [], dOk: false, aOk: false, earned: 0, done: false, startRank: null });
   const firstOpen = () => CASES.find((c) => !P(c.id).done);
   const nextOpen = () => CASES.find((c) => c.id !== S.current && !P(c.id).done);
-  // Hay datos que se perderían si la persona sale de la página
   const hasProgress = () => S.screen !== "welcome" || S.pre.some(Boolean) || S.points > 0;
 
   const t = (k) => T[k];
@@ -678,10 +969,33 @@ p { margin: 0; }
   const rankIndex = (p) => RANK_MIN.reduce((acc, min, i) => (p >= min ? i : acc), 0);
   const solvedCount = () => CASES.filter((c) => P(c.id).done).length;
   const curCase = () => CASES.find((c) => c.id === S.current);
-  const initials = (n) => n.replace("Doña ", "").slice(0, 1);
+  const caseOfRight = (r) => CASES.find((c) => c.right === r);
+
+  // ---------- Guardar el avance en este dispositivo ----------
+  // Si la persona sale o recarga, vuelve a la misma pantalla.
+  let canSave = false;
+  function save() {
+    try {
+      const keep = ["screen", "prevScreen", "pre", "post", "points", "streak", "progress", "current", "banner", "shareTone", "shareDraft"];
+      const data = {}; keep.forEach((k) => (data[k] = S[k]));
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+      canSave = true;
+    } catch (_) { canSave = false; }
+  }
+  function restore() {
+    try {
+      const d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (!d || !d.screen || d.screen === "welcome") return;
+      S = Object.assign(fresh(), d);
+      if (!screens[S.screen]) S.screen = "inbox";
+      if (["clues", "right", "action", "solved"].includes(S.screen) && !curCase()) S.screen = "inbox";
+      if (S.screen === "clues" && P(S.current).clues.length === 3) S.screen = "right";
+      S.welcomeBack = true;
+    } catch (_) { S = fresh(); }
+  }
 
   function go(screen, extra) {
-    Object.assign(S, { screen, sel: null, fb: null, toast: "", banner: null }, extra || {});
+    Object.assign(S, { screen, toast: "", banner: null, sheet: null }, extra || {});
     S.enter = true;
     render();
     S.enter = false;
@@ -689,27 +1003,28 @@ p { margin: 0; }
   }
 
   // ---------- Piezas ----------
-  const shield = `<svg class="shield" viewBox="0 0 22 26" aria-hidden="true"><path d="M11 1 2 4.5v7.2C2 18 6 23 11 25c5-2 9-7 9-13.3V4.5Z" fill="var(--accent)"/><path d="m6.5 13 3.2 3.2L15.8 10" fill="none" stroke="var(--signal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-  function topbar() {
-    const showPts = !["welcome", "pre"].includes(S.screen);
-    return `<header class="topbar">
-      <button class="brand" data-act="go" data-v="inbox" aria-label="${t("brand")}: ir a la bandeja">${shield}<span>${t("brand")}</span></button>
-      ${showPts ? `<span class="chip" aria-label="${S.points} ${t("points")}">★ ${S.points}</span>` : ""}
-      ${S.screen !== "resources" ? `<button class="tbtn" data-act="go" data-v="resources">${t("help")}</button>` : ""}
-      ${["inbox", "clues", "right", "action", "solved"].includes(S.screen) ? crew() : ""}
-    </header>`;
+  function badgeBtn(c, extraCls) {
+    const done = P(c.id).done, r = RIGHTS[c.right];
+    return `<button class="rb ${done ? "on" : ""} ${S.justUnlocked === c.right ? "pop" : ""} ${extraCls || ""}" style="--c:${r.color}" data-act="info" data-v="${c.right}"
+      aria-label="${L(r)}${done ? "" : " (bloqueada)"}" title="${L(r)}">${rIcon(c.right)}</button>`;
   }
 
-  function crew() {
+  function topbar() {
+    const game = !["welcome", "pre"].includes(S.screen);
+    const ri = rankIndex(S.points), nextMin = RANK_MIN[ri + 1];
+    const xp = nextMin ? ((S.points - RANK_MIN[ri]) / (nextMin - RANK_MIN[ri])) * 100 : 100;
     const n = solvedCount();
-    return `<ul class="crew" aria-label="${t("crewLabel")}: ${n} ${t("of")} 7">
-      ${CASES.map((c) => {
-        const cls = P(c.id).done ? "done" : (c.id === S.current && S.screen !== "inbox" ? "now" : "");
-        return `<li class="${cls}" title="${c.name}"><span class="avatar" style="background:${c.color}" aria-hidden="true">${initials(c.name)}</span></li>`;
-      }).join("")}
-      <li class="count" aria-hidden="true">${n}/7 ${t("helped")}</li>
-    </ul>`;
+    return `<header class="topbar">
+      <div class="hud">
+        <button class="brand" data-act="${game ? "go" : "noop"}" data-v="inbox" aria-label="${t("brand")}${game ? ": ir a la bandeja" : ""}">${shieldSvg()}${game ? "" : `<span>${t("brand")}</span>`}</button>
+        ${game ? `<span class="lvl" title="${t("level")}: ${t("ranks")[ri]}">${t("rankIcons")[ri]} Nv ${ri + 1}</span>
+          <span class="chip${S.bump ? " bump" : ""}" aria-label="${S.points} ${t("points")}">★ ${S.points}</span>` : ""}
+        <button class="icon-btn" data-act="sound" aria-pressed="${SOUND}" aria-label="${t("sound")}">${SOUND ? "🔊" : "🔇"}</button>
+        ${S.screen !== "resources" ? `<button class="icon-btn" data-act="go" data-v="resources" aria-label="${t("help")}" title="${t("help")}">❓</button>` : ""}
+      </div>
+      ${game ? `<div class="badges-row" aria-label="${t("myBadges")}: ${n} ${t("of")} 7">${CASES.map((c) => badgeBtn(c)).join("")}<span class="count">${n}/7</span></div>
+        <div class="xp" role="progressbar" aria-label="${t("level")}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(xp)}"><i style="width:${xp}%"></i></div>` : ""}
+    </header>`;
   }
 
   function scaleQ(name, idx, arr) {
@@ -721,25 +1036,26 @@ p { margin: 0; }
     </fieldset>`;
   }
 
-  function stepper(n) {
-    return `<div class="stepper" aria-label="${t("step")} ${n} ${t("of")} 3">${[1, 2, 3].map((i) => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</div>`;
-  }
-
-  function caseHead(n) {
-    return `<div class="case-head"><button class="back" data-act="go" data-v="inbox">${t("back")}</button>${stepper(n)}</div>`;
-  }
-
-  function chat(c) {
-    return `<div class="chat">
-      <div class="bubble">${L(c.msg)}</div>
-      <div class="who"><span class="avatar" style="background:${c.color}">${initials(c.name)}</span>${c.name}, ${c.age}</div>
+  function caseHead(n, c) {
+    return `<div class="case-head">
+      <button class="back" data-act="go" data-v="inbox" aria-label="Volver a la bandeja">←</button>
+      ${avatar(c)}
+      <span class="ch-name"><strong>${c.name}, ${c.age}</strong><small>📍 ${L(c.place)}</small></span>
+      <span class="stepper" aria-label="${t("step")} ${n} ${t("of")} 3">${[1, 2, 3].map((i) => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>
     </div>`;
   }
+
+  function streakTxt() { return S.streak >= 2 ? ` · ${t("streak")(S.streak)}` : ""; }
 
   // ---------- Pantallas ----------
   const screens = {
     welcome() {
-      return `<div class="hero-band">
+      const orbs = CASES.map((c, i) => {
+        const a = (i / CASES.length) * Math.PI * 2 - Math.PI / 2;
+        return `<span class="orb" style="--i:${i};left:${50 + 39 * Math.cos(a)}%;top:${50 + 39 * Math.sin(a)}%">${avatar(c, "happy")}</span>`;
+      }).join("");
+      return `<div class="hero">
+          <div class="orbit">${orbs}<span class="hero-shield">${shieldSvg("100%", "100%")}</span></div>
           <span class="eyebrow">${t("presents")}</span>
           <h1>${t("brand")}</h1>
           <p class="tag">${t("tagline")}</p>
@@ -761,27 +1077,30 @@ p { margin: 0; }
       return `<span class="eyebrow">${t("howEyebrow")}</span>
         <h2>${t("howTitle")}</h2>
         <ol class="steps">
-          ${[1, 2, 3].map((i) => `<li><span class="num">${i}</span><div><h3>${t("s" + i + "t")}</h3><p class="muted">${t("s" + i + "d")}</p></div></li>`).join("")}
+          ${t("steps").map(([ico, ti, d]) => `<li><span class="step-ico">${ico}</span><div><h3>${ti}</h3><p class="muted small">${d}</p></div></li>`).join("")}
         </ol>
         <h3>${t("ranksTitle")}</h3>
-        <div class="ranks">${t("ranks").map((r, i) => `<div class="rank-row"><span>${i + 1}. ${r}</span><span class="pts">${RANK_MIN[i]}+ pts</span></div>`).join("")}</div>
+        <div class="ladder">${t("ranks").map((r, i) => `<div class="rung"><b>${t("rankIcons")[i]}</b><span>${r}</span><span class="pts">${RANK_MIN[i]}+ pts</span></div>`).join("")}</div>
         <p class="note">${t("tipWrong")}</p>
         <button class="btn" data-act="open" data-v="${firstOpen().id}">${t("seeCases")} →</button>`;
     },
     inbox() {
       const n = solvedCount();
-      return `<span class="eyebrow">${t("inboxEyebrow")}</span>
-        <h2>${t("inboxTitle")}</h2>
+      const cur = S.current && !P(S.current).done ? curCase() : null, nx = cur || firstOpen();
+      return `${nx ? `<button class="resume" data-act="open" data-v="${nx.id}">
+            ${avatar(nx)}
+            <span><small>${cur ? t("resumeCase") : t("nextMsg")}</small><strong>${cur ? t("resumeGo")(nx.name) : t("nextGo")(nx.name)}</strong></span>
+            <span class="go">▶</span>
+          </button>` : ""}
         <div class="status"><span><strong>${n}</strong> ${t("of")} 7 ${t("solved")}</span><span class="muted small">${t("level")}: <strong>${t("ranks")[rankIndex(S.points)]}</strong></span></div>
-        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="${n}"><div style="width:${(n / 7) * 100}%"></div></div>
         ${nudge(n)}
         <div class="inbox">
           ${CASES.map((c) => {
             const done = P(c.id).done;
-            return `<button class="msg ${done ? "is-done" : ""}" data-act="open" data-v="${c.id}">
-              <span class="avatar" style="background:${c.color}">${initials(c.name)}</span>
+            return `<button class="msg" data-act="open" data-v="${c.id}">
+              ${avatar(c, done ? "happy" : "")}
               <span class="msg-body"><span class="msg-name">${c.name}</span><span class="msg-prev">${L(c.msg)}</span></span>
-              <span class="pill ${done ? "done" : "new"}">${done ? t("done") : t("new")}</span>
+              ${done ? `<span class="rb on" style="--c:${RIGHTS[c.right].color}" aria-label="${L(RIGHTS[c.right])}">${rIcon(c.right)}</span>` : `<span class="pill">${t("new")}</span>`}
             </button>`;
           }).join("")}
         </div>
@@ -791,94 +1110,98 @@ p { margin: 0; }
         </div>`;
     },
     clues() {
-      const c = curCase(), p = P(c.id);
-      return `${caseHead(1)}
-        ${chat(c)}
-        <h3>🔍 ${t("tapScene")} <span class="muted small">(${p.clues.length} ${t("of")} 3 ${t("found")})</span></h3>
+      const c = curCase(), p = P(c.id), all = p.clues.length === 3;
+      return `${caseHead(1, c)}
+        <div class="bubble">${L(c.msg)}</div>
         <div class="scene" role="group" aria-label="${L(c.place)}">
-          <span class="scene-label">${L(c.place)}</span>
-          <span class="scene-deco" style="left:8%;top:22%">${c.deco[0]}</span>
-          <span class="scene-deco" style="right:10%;top:12%">${c.deco[1]}</span>
-          ${c.clues.map((cl, i) => `<button class="spot ${p.clues.includes(i) ? "found" : ""}" style="left:${cl.x}%;top:${cl.y}%" data-act="clue" data-v="${i}" aria-label="${p.clues.includes(i) ? L(cl) : t("tapScene")}">${cl.icon}</button>`).join("")}
+          ${sceneArt(c)}
+          <span class="scene-tag l">🔍 ${p.clues.length}/3 ${t("found")}</span>
+          ${c.clues.map((cl, i) => `<button class="spot ${p.clues.includes(i) ? "found" : ""} ${S.justClue === i ? "just" : ""}" style="left:${cl.x}%;top:${cl.y}%" data-act="clue" data-v="${i}" aria-label="${p.clues.includes(i) ? L(cl) : t("tapScene")}">${cl.icon}</button>`).join("")}
         </div>
+        ${p.clues.length ? "" : `<p class="tip">👆 ${t("tapScene")}</p>`}
         <ul class="clues" aria-live="polite">
-          ${p.clues.length ? p.clues.map((i) => `<li><span>${c.clues[i].icon}</span><span>${L(c.clues[i])}</span><span class="plus">+10</span></li>`).join("") : `<li class="empty">${t("noClues")}</li>`}
+          ${p.clues.map((i) => `<li class="${S.justClue === i ? "just" : ""}"><span>${c.clues[i].icon}</span><span>${L(c.clues[i])}</span><span class="plus">+10</span></li>`).join("")}
         </ul>
-        ${p.clues.length === 3 ? `<div class="wait" role="status">
-            <p class="toast">${t("allFound")} <span class="muted">${t("goingQ")}</span></p>
+        ${all ? `<div class="wait" role="status">
+            <p>✓ ${t("allFound")} <span class="muted">${t("goingQ")}</span></p>
             <div class="wait-bar" aria-hidden="true"><i style="--wait:${CLUE_WAIT_MS}ms"></i></div>
           </div>` : ""}`;
     },
     right() {
       const c = curCase(), p = P(c.id);
-      return `${caseHead(2)}
-        <h2>${t("whichRight")}</h2>
+      return `${caseHead(2, c)}
+        <div class="bubble mini">${L(c.msg)}</div>
+        <h2 class="q-title">${t("whichRight")}</h2>
         <div class="options">
-          ${c.options.map((r) => {
-            let cls = "";
-            if (p.dOk && r === c.right) cls = "right";
-            else if (S.fb && S.fb.wrong && S.fb.wrong.includes(r)) cls = "wrong";
-            return `<button class="opt ${cls}" data-act="answerRight" data-v="${r}" ${p.dOk || cls === "wrong" ? "disabled" : ""}><span class="dot">${cls === "right" ? "✓" : cls === "wrong" ? "✕" : ""}</span><span>${L(RIGHTS[r])}</span></button>`;
+          ${c.options.map((r, n) => {
+            const wrong = p.dWrong.includes(r), ok = p.dOk && r === c.right;
+            const cls = ok ? "right" : wrong ? "wrong" : "";
+            return `<button class="opt ${cls} ${S.shake === r ? "shake" : ""}" style="--n:${n}" data-act="answerRight" data-v="${r}" ${p.dOk || wrong ? "disabled" : ""}>
+              <span class="opt-ico" style="--c:${RIGHTS[r].color}">${rIcon(r)}</span>
+              <span class="opt-txt"><span>${L(RIGHTS[r])}</span>${wrong ? `<small class="why">${L(c.why[r])}</small>` : ""}</span>
+              <span class="mark">${ok ? "✓" : wrong ? "✕" : ""}</span></button>`;
           }).join("")}
         </div>
-        ${feedbackBox()}
-`;
+        ${p.dWrong.length && !p.dOk ? `<p class="hint">💡 ${L(c.hint)}</p>` : ""}`;
     },
     action() {
-      const c = curCase(), p = P(c.id);
-      return `${caseHead(3)}
-        ${bannerBox()}
-        ${chat(c)}
-        <h2>${t("whatDo")}</h2>
+      const c = curCase(), p = P(c.id), b = S.banner;
+      return `${caseHead(3, c)}
+        ${b ? `<div class="okbar" role="status"><strong>✓ ${b.title}</strong><span>${b.text}</span></div>` : ""}
+        <div class="bubble mini">${L(c.msg)}</div>
+        <h2 class="q-title">${t("whatDo")}</h2>
         <div class="options">
           ${c.actions.map((a, i) => {
-            let cls = "";
-            if (p.aOk && a.ok) cls = "right";
-            else if (S.fb && S.fb.wrong && S.fb.wrong.includes(i)) cls = "wrong";
-            return `<button class="opt ${cls}" data-act="answerAction" data-v="${i}" ${p.aOk || cls === "wrong" ? "disabled" : ""}><span class="dot">${cls === "right" ? "✓" : cls === "wrong" ? "✕" : ""}</span><span>${L(a)}</span></button>`;
+            const wrong = p.aWrong.includes(i), ok = p.aOk && a.ok;
+            const cls = ok ? "right" : wrong ? "wrong" : "";
+            return `<button class="opt ${cls} ${S.shake === i ? "shake" : ""}" style="--n:${i}" data-act="answerAction" data-v="${i}" ${p.aOk || wrong ? "disabled" : ""}>
+              <span class="opt-ico" style="--c:var(--accent)">${"ABC"[i]}</span>
+              <span class="opt-txt"><span>${L(a)}</span>${wrong ? `<small class="why">${L(a.fb)}</small>` : ""}</span>
+              <span class="mark">${ok ? "✓" : wrong ? "✕" : ""}</span></button>`;
           }).join("")}
-        </div>
-        ${feedbackBox()}
-`;
+        </div>`;
     },
     solved() {
-      const c = curCase(), p = P(c.id), r = RIGHTS[c.right];
+      const c = curCase(), p = P(c.id), r = RIGHTS[c.right], b = S.banner;
       const all = solvedCount() === 7, nx = nextOpen(), ri = rankIndex(S.points);
       const up = p.startRank !== null && ri > p.startRank;
-      return `${up ? `<div class="levelup" role="status">${t("levelUp")(t("ranks")[ri])}</div>` : ""}
-        <div class="celebrate">
-          <span class="eyebrow">${L(r)}</span>
-          <h2>${t("caseSolved")} 🎉</h2>
-          <span class="big-pts">+${p.earned}</span>
-          <span class="muted">${t("points")}</span>
-          ${all ? "" : `<span class="muted small">${t("leftCases")(7 - solvedCount())}</span>`}
-        </div>
-        ${bannerBox()}
+      const perfect = p.dTries === 0 && p.aTries === 0;
+      return `<section class="win" style="--c:${r.color}">
+          <div class="win-top">${avatar(c, "happy")}<span class="win-badge">${rIcon(c.right)}</span></div>
+          <span class="eyebrow">🏅 ${t("unlocked")}</span>
+          <h2>${L(r)}</h2>
+          <div class="win-pts"><b>+${p.earned}</b> ${t("points")}</div>
+          ${perfect ? `<div>${t("perfect")}</div>` : ""}
+          ${b ? `<p class="win-story"><strong>${t("whatHappened")}</strong> ${b.text}</p>` : ""}
+        </section>
+        ${up ? `<div class="levelup" role="status">${t("levelUp")(t("rankIcons")[ri] + " " + t("ranks")[ri])}</div>` : ""}
         <div class="keyidea"><span class="eyebrow">${t("keyIdea")}</span><p>${L(c.key)}</p></div>
-        <details class="more">
-          <summary>📚 ${t("learnMore")}</summary>
-          <div class="more-body">
-            ${videoBlock(c.right)}
-            ${learnLinks(c.right)}
-          </div>
-        </details>
-        ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
-          : `<div class="teaser">
-              <span class="eyebrow">💬 ${t("newMsg")}</span>
-              ${chat(nx)}
-              <button class="btn" data-act="open" data-v="${nx.id}">${t("replyTo")} ${nx.name} →</button>
+        <button class="learn-btn" data-act="info" data-v="${c.right}">
+          <span class="play" aria-hidden="true"></span>
+          <span><strong>${t("learnMore")}</strong><small>${t("learnSub")(r.ep)}</small></span>
+          <span class="arrow">→</span>
+        </button>
+        ${all ? `<div class="final"><b>🏆</b><h2>${t("allSeven")}</h2><p>${t("allSevenSub")}</p>
+              <button class="btn signal" data-act="go" data-v="report">${t("seeReport")} →</button></div>`
+          : `<div class="notif" role="status">
+              <span class="notif-dot" aria-hidden="true">${7 - solvedCount()}</span>
+              <div class="notif-head"><span class="ring" aria-hidden="true">📱</span><span>💬 ${t("newMsg")}</span><span class="notif-time">${t("nowTxt")}</span></div>
+              <div class="notif-body">${avatar(nx)}<div><strong>${nx.name}, ${nx.age}</strong><p>${L(nx.msg)}</p></div></div>
+              <button class="btn signal" data-act="open" data-v="${nx.id}">${t("replyTo")} ${nx.name} →</button>
             </div>`}`;
     },
     report() {
       const ri = rankIndex(S.points), n = solvedCount();
       const ready = S.post.every(Boolean);
-      return `<span class="eyebrow">${t("reportEyebrow")}</span>
-        <div class="medal">
-          <span class="eyebrow">${t("reached")}</span>
-          <span style="font-size:2.4rem" aria-hidden="true">🏅</span>
+      return `<div class="medal">
+          <span class="eyebrow">${t("reportEyebrow")} · ${t("reached")}</span>
+          <span class="trophy" aria-hidden="true">${t("rankIcons")[ri]}</span>
           <span class="rank">${t("ranks")[ri]}</span>
           <span class="score">★ ${S.points} / ${MAX_POINTS} · ${n} ${t("casesOf")}</span>
         </div>
+        <h3>${t("myBadges")}</h3>
+        <div class="badge-grid">${CASES.map((c) => `<span class="bg-item">${badgeBtn(c)}<span>${L(RIGHTS[c.right])}</span></span>`).join("")}</div>
+        ${n < 7 ? `<button class="btn ghost" data-act="go" data-v="inbox">← ${t("keepGoing")} (${7 - n})</button>` : ""}
         <h2>${t("afterTitle")}</h2>
         <p class="muted">${t("afterIntro")}</p>
         ${[0, 1, 2].map((i) => scaleQ("post", i, S.post)).join("")}
@@ -886,36 +1209,29 @@ p { margin: 0; }
             <div class="cmp-row"><span>${t("before")}</span><div class="bar"><div style="width:${(S.pre[i] || 0) * 20}%"></div></div><b>${S.pre[i] || "–"}</b></div>
             <div class="cmp-row"><span>${t("now")}</span><div class="bar now"><div style="width:${S.post[i] * 20}%"></div></div><b>${S.post[i]}</b></div>
           </div>`).join("")}</div>` : ""}
-        <button class="btn" data-act="go" data-v="share" ${ready ? "" : "disabled"}>${t("shareRank")} →</button>
-        ${n < 7 ? `<button class="btn ghost" data-act="go" data-v="inbox">← ${t("keepGoing")} (${7 - n})</button>` : ""}
-        <details class="more">
-          <summary>📚 ${t("learnAll")}</summary>
-          <div class="more-body">
-            <div class="links">${Object.entries(RIGHTS).map(([id, r]) => `<a class="link-row" href="${orSeries(LINKS[id].video)}" target="_blank" rel="noopener"><span class="ico">▶</span><span>${t("episode")} ${r.ep} · ${L(r)}</span><span class="arrow">↗</span></a>`).join("")}</div>
-            ${learnLinks(null)}
-          </div>
-        </details>`;
+        <button class="btn" data-act="go" data-v="share" ${ready ? "" : "disabled"}>💌 ${t("shareRank")} →</button>`;
     },
     share() {
-      const txt = t("shareText")(t("ranks")[rankIndex(S.points)], solvedCount(), S.points);
-      const enc = encodeURIComponent(txt), url = encodeURIComponent(SERIES_URL);
+      const txt = S.shareDraft ?? SHARE[S.shareTone](t("ranks")[rankIndex(S.points)], solvedCount(), S.points);
       return `<span class="eyebrow">${t("shareEyebrow")}</span>
         <h2>${t("shareTitle")}</h2>
-        <div class="share-card" id="share-text">${txt}</div>
+        <p class="muted">${t("shareIntro")}</p>
+        <div class="tones">${Object.entries(t("tones")).map(([k, v]) => `<button class="tone" data-act="tone" data-v="${k}" aria-pressed="${S.shareTone === k}">${v}</button>`).join("")}</div>
+        <textarea class="share-card" id="share-text" aria-label="Mensaje para compartir">${txt}</textarea>
         <div class="btn-row">
           <button class="btn" data-act="copy" data-v="text">${t("copyText")}</button>
           <button class="btn ghost" data-act="copy" data-v="link">${t("copyLink")}</button>
         </div>
         <p class="toast" aria-live="polite">${S.toast}</p>
         <div class="socials">
-          <a href="https://wa.me/?text=${enc}%20${url}" target="_blank" rel="noopener">WhatsApp</a>
-          <a href="https://twitter.com/intent/tweet?text=${enc}&url=${url}" target="_blank" rel="noopener">X</a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u=${url}" target="_blank" rel="noopener">Facebook</a>
+          <button data-act="social" data-v="wa" style="background:#1E9E57">WhatsApp</button>
+          <button data-act="social" data-v="fb" style="background:#1877F2">Facebook</button>
+          <button data-act="social" data-v="x" style="background:#151936">X</button>
         </div>
         <button class="btn ghost" data-act="restart">↺ ${t("playAgain")}</button>`;
     },
     resources() {
-      return `<button class="back" data-act="go" data-v="${S.prevScreen && S.prevScreen !== "resources" ? S.prevScreen : "inbox"}">← Volver</button>
+      return `<div class="back-row"><button class="back-txt" data-act="go" data-v="${S.prevScreen && S.prevScreen !== "resources" ? S.prevScreen : "inbox"}">← Volver</button></div>
         <h2>📞 ${t("resTitle")}</h2>
         <p class="note">${t("resNote")}</p>
         ${RESOURCES.map((g) => `<div class="res-group"><h3>${L(g.title)}</h3>
@@ -944,9 +1260,32 @@ p { margin: 0; }
         <h3 id="dlg-t">${d.title}</h3>
         <p class="muted">${d.body}</p>
         <div class="btn-row">
-          <button class="btn" data-act="cancelConfirm" autofocus>${d.stay}</button>
+          <button class="btn" data-act="cancelConfirm">${d.stay}</button>
           <button class="btn ghost" data-act="${d.act}">${d.leave}</button>
         </div>
+      </div>
+    </div>`;
+  }
+
+  // Ficha de un derecho: se abre al tocar su ícono (arriba, en el reporte o en "Aprende más")
+  function rightSheet() {
+    const id = S.sheet;
+    if (!id) return "";
+    const r = RIGHTS[id], c = caseOfRight(id), p = P(c.id);
+    const solvingNow = c.id === S.current && ["clues", "right", "action"].includes(S.screen);
+    const body = p.done
+      ? `<div class="keyidea"><span class="eyebrow">${t("keyIdea")}</span><p>${L(c.key)}</p></div>
+        ${videoBlock(id)}
+        ${learnLinks(id)}`
+      : `<div class="locked"><b>🔒</b><strong>${t("lockedTitle")}</strong><p class="muted small">${solvingNow ? t("lockedNow") : t("lockedBody")}</p></div>`;
+    return `<div class="sheet-wrap" data-act="closeSheet">
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t" style="--c:${r.color}">
+        <div class="sheet-head">
+          <span class="rb ${p.done ? "on" : ""}" style="--c:${r.color}">${rIcon(id)}</span>
+          <div><span class="eyebrow">${t("episode")} ${r.ep}</span><h3 id="sheet-t">${L(r)}</h3></div>
+          <button class="icon-btn" data-act="closeSheet" aria-label="${t("close")}">✕</button>
+        </div>
+        ${body}
       </div>
     </div>`;
   }
@@ -959,53 +1298,42 @@ p { margin: 0; }
       return `<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${yt}?rel=0" title="${label}" loading="lazy"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
     }
-    return `<a class="video" href="${orSeries(url)}" target="_blank" rel="noopener">
-      <span class="thumb"><span class="play"></span><span class="ep">${label.toUpperCase()}</span></span>
-      <span class="cap"><strong>▶ ${t("watch")}</strong>${url ? "" : `<span class="muted small">${t("pendingLink")}</span>`}</span>
-    </a>`;
+    return `<a class="video" href="${orSeries(url)}" target="_blank" rel="noopener"><strong>▶ ${t("watch")}</strong></a>`;
   }
 
-  // id = derecho del caso (su PDF); null = material general de la serie
+  // Material del episodio y "Dónde pedir ayuda"
   function learnLinks(id) {
-    const top = id
-      ? `<a class="link-row" href="${orSeries(LINKS[id].pdf)}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
-      <a class="link-row" href="${orSeries(LINKS[id].book)}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>`
-      : `<a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("allMaterials")}</span><span class="arrow">↗</span></a>`;
     return `<div class="links">
-      ${top}
+      <a class="link-row" href="${orSeries(LINKS[id].pdf)}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
+      <a class="link-row" href="${orSeries(LINKS[id].book)}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
       <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
     </div>`;
   }
 
-  function bannerBox() {
-    const b = S.banner;
-    return b ? `<div class="feedback ok" role="status"><strong>${b.title}</strong><p>${b.text}</p></div>` : "";
-  }
-
-  function feedbackBox() {
-    if (!S.fb) return "";
-    return `<div class="feedback ${S.fb.ok ? "ok" : "no"}" role="status"><strong>${S.fb.title}</strong><p>${S.fb.text}</p></div>`;
-  }
-
-  function sheet() {
-    if (!S.sheet) return "";
-    const ids = ["welcome", "pre", "how", "inbox", "clues", "right", "action", "solved", "report", "share", "resources"];
-    return `<div class="sheet-wrap" data-act="closeSheet">
-      <div class="sheet" role="dialog" aria-modal="true" aria-label="${t("jumpTitle")}">
-        <h3>${t("jumpTitle")}</h3>
-        <p class="muted small">${t("jumpNote")}</p>
-        <div class="sheet-list">${ids.map((id, i) => `<button data-act="jumpTo" data-v="${id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span>${t("screens")[i]}</span></button>`).join("")}</div>
-      </div>
-    </div>`;
+  function welcomeBackBar() {
+    return S.welcomeBack ? `<div class="wb" role="status"><span>👋 ${t("welcomeBack")}</span>
+      <button class="wb-link" data-act="restart">${t("startOver")}</button>
+      <button class="wb-x" data-act="dismissWb" aria-label="${t("close")}">✕</button></div>` : "";
   }
 
   // ---------- Render ----------
   const app = document.getElementById("app");
+  let lastPts = null;
   function render() {
-    document.documentElement.lang = "es";
-    app.innerHTML = topbar() + `<main class="screen${S.enter ? " enter" : ""}">${screens[S.screen]()}</main>` +
-      `<button class="jump" data-act="openSheet">☰ ${t("jump")}</button>` + sheet() + dialog();
+    S.bump = lastPts !== null && S.points !== lastPts;
+    lastPts = S.points;
+    app.innerHTML = topbar() + `<main class="screen${S.enter ? " enter" : ""}">${welcomeBackBar()}${screens[S.screen]()}</main>` + rightSheet() + dialog();
     if (S.confirm) { const b = app.querySelector(".dlg .btn"); if (b) b.focus(); }
+    S.justUnlocked = null; S.justClue = null; S.shake = null;
+    save();
+  }
+
+  // Dirección para invitar: la de esta app si se puede leer; si no, la de la serie
+  function appUrl() {
+    for (const w of [window.top, window.parent]) {
+      try { const u = w.location.href; if (/^https?:/.test(u)) return u.split("#")[0]; } catch (_) {}
+    }
+    return SERIES_URL;
   }
 
   // ---------- Interacciones ----------
@@ -1013,7 +1341,7 @@ p { margin: 0; }
     const el = e.target.closest("[data-act]");
     if (!el) return;
     const act = el.dataset.act, v = el.dataset.v;
-    if (act === "rate") return; // lo maneja "change"
+    if (act === "rate" || act === "noop") return; // "rate" lo maneja "change"
     // Clic en el fondo oscuro cierra; clic dentro de la ventana no
     if ((el.classList.contains("sheet-wrap") || el.classList.contains("dlg-wrap")) && e.target !== el) return;
     const c = curCase();
@@ -1021,15 +1349,26 @@ p { margin: 0; }
     switch (act) {
       case "go":
         if (v === "resources") S.prevScreen = S.screen;
+        SFX.tap();
         go(v);
         break;
       case "open": {
         const p = P(v);
         if (p.startRank === null) p.startRank = rankIndex(S.points);
         const step = p.done ? "solved" : p.dOk ? "action" : p.clues.length === 3 ? "right" : "clues";
-        go(step, { current: v });
+        SFX.tap();
+        go(step, { current: v, welcomeBack: false });
         break;
       }
+      case "info": SFX.tap(); S.sheet = v; render(); break;
+      case "closeSheet": S.sheet = null; render(); break;
+      case "sound":
+        SOUND = !SOUND;
+        try { localStorage.setItem(SOUND_KEY, SOUND ? "on" : "off"); } catch (_) {}
+        render();
+        SFX.tap();
+        break;
+      case "dismissWb": S.welcomeBack = false; render(); break;
       case "finish": {
         const left = 7 - solvedCount();
         if (left === 0) { go("report"); break; }
@@ -1041,16 +1380,18 @@ p { margin: 0; }
       case "cancelConfirm": S.confirm = null; render(); break;
       case "clue": {
         const p = P(c.id), i = +v;
-        if (!p.clues.includes(i)) { p.clues.push(i); p.earned += 10; S.points += 10; }
+        if (p.clues.includes(i)) break;
+        p.clues.push(i); p.earned += 10; S.points += 10;
+        S.justClue = i;
+        SFX.clue();
         render();
-        // Con las 3 pistas, pasa sola a la pregunta
-        // (espera unos segundos para que la persona lea las 3 pistas)
+        floatPts(app.querySelector(`.spot[data-v="${i}"]`), "+10");
+        // Con las 3 pistas, espera unos segundos para leerlas y pasa sola a la pregunta
         if (p.clues.length === 3) {
           const w = app.querySelector(".wait");
-          const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          if (w) w.scrollIntoView({ block: "end", behavior: smooth ? "smooth" : "auto" });
+          if (w) w.scrollIntoView({ block: "end", behavior: calm() ? "auto" : "smooth" });
+          setTimeout(() => { if (S.screen === "clues" && S.current === c.id) go("right"); }, CLUE_WAIT_MS);
         }
-        if (p.clues.length === 3) setTimeout(() => { if (S.screen === "clues" && S.current === c.id) go("right"); }, CLUE_WAIT_MS);
         break;
       }
       case "answerRight": {
@@ -1059,10 +1400,15 @@ p { margin: 0; }
         if (v === c.right) {
           const pts = [50, 20][p.dTries] ?? 10;
           p.dOk = true; p.earned += pts; S.points += pts;
-          go("action", { banner: { title: `${t("correct")} +${pts}`, text: L(c.rightFb) } });
+          S.streak = p.dTries === 0 ? S.streak + 1 : 0;
+          SFX.right();
+          render();
+          floatPts(app.querySelector(".opt.right"), `+${pts}`);
+          const banner = { title: `${t("correct")} +${pts}${streakTxt()}`, text: L(c.rightFb) };
+          setTimeout(() => { if (S.screen === "right" && S.current === c.id) go("action", { banner }); }, NEXT_WAIT_MS);
         } else {
-          p.dTries++;
-          S.fb = { ok: false, title: t("notQuite"), text: L(c.hint), wrong: [...(S.fb?.wrong || []), v] };
+          p.dTries++; p.dWrong.push(v); S.streak = 0; S.shake = v;
+          SFX.wrong(); vibrate(90);
           render();
         }
         break;
@@ -1073,28 +1419,61 @@ p { margin: 0; }
         if (a.ok) {
           const pts = [40, 15][p.aTries] ?? 5;
           p.aOk = true; p.done = true; p.earned += pts; S.points += pts;
-          go("solved", { banner: { title: `${t("good")} +${pts}`, text: L(a.fb) } });
+          S.streak = p.aTries === 0 ? S.streak + 1 : 0;
+          SFX.right();
+          render();
+          floatPts(app.querySelector(".opt.right"), `+${pts}`);
+          const banner = { title: `${t("good")} +${pts}`, text: L(a.fb) };
+          setTimeout(() => {
+            if (S.screen !== "action" || S.current !== c.id) return;
+            const leveled = p.startRank !== null && rankIndex(S.points) > p.startRank;
+            S.justUnlocked = c.right;
+            go("solved", { banner });
+            const all = solvedCount() === 7;
+            confetti(all); SFX.win(); if (leveled) SFX.level();
+            if (!all) {
+              // El nuevo mensaje entra con rebote: suena y se asoma en pantalla
+              setTimeout(() => {
+                if (S.screen !== "solved" || S.current !== c.id) return;
+                SFX.msg(); vibrate([40, 60, 40]);
+                const n = app.querySelector(".notif");
+                if (n) n.scrollIntoView({ block: "nearest", behavior: calm() ? "auto" : "smooth" });
+              }, 1300);
+            }
+          }, NEXT_WAIT_MS);
         } else {
-          p.aTries++;
-          S.fb = { ok: false, title: t("rethink"), text: L(a.fb), wrong: [...(S.fb?.wrong || []), +v] };
+          p.aTries++; p.aWrong.push(+v); S.streak = 0; S.shake = +v;
+          SFX.wrong(); vibrate(90);
           render();
         }
         break;
       }
+      case "tone": S.shareTone = v; S.shareDraft = null; S.toast = ""; render(); break;
       case "copy": {
-        const text = v === "link" ? SERIES_URL : document.getElementById("share-text").textContent;
+        const box = document.getElementById("share-text");
+        const text = v === "link" ? appUrl() : `${box.value.trim()}\n${appUrl()}`;
         const done = (ok) => { S.toast = ok ? t("copied") : t("copyFail"); render(); };
         try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch (_) { done(false); }
+        break;
+      }
+      case "social": {
+        const msg = document.getElementById("share-text").value.trim(), url = appUrl();
+        const enc = encodeURIComponent(msg), u = encodeURIComponent(url);
+        const href = v === "wa" ? `https://wa.me/?text=${enc}%20${u}`
+          : v === "fb" ? `https://www.facebook.com/sharer/sharer.php?u=${u}&quote=${enc}`
+          : `https://twitter.com/intent/tweet?text=${enc}&url=${u}`;
+        window.open(href, "_blank", "noopener");
         break;
       }
       case "restart":
         S.confirm = { title: t("restartTitle"), body: t("restartBody"), stay: t("cancel"), leave: t("restartYes"), act: "restartYes" };
         render();
         break;
-      case "restartYes": { S = fresh(); render(); window.scrollTo(0, 0); break; }
-      case "openSheet": S.sheet = true; render(); break;
-      case "closeSheet": S.sheet = false; render(); break;
-      case "jumpTo": demoJump(v); break;
+      case "restartYes": {
+        try { localStorage.removeItem(STORE_KEY); } catch (_) {}
+        S = fresh(); render(); window.scrollTo(0, 0);
+        break;
+      }
     }
   });
 
@@ -1102,6 +1481,7 @@ p { margin: 0; }
     const el = e.target;
     if (el.dataset.act !== "rate") return;
     S[el.dataset.set][+el.dataset.i] = +el.value;
+    SFX.tap();
     const y = window.scrollY;
     render();
     window.scrollTo(0, y);
@@ -1109,17 +1489,20 @@ p { margin: 0; }
     if (again) again.focus({ preventScroll: true });
   });
 
+  // Lo que la persona escribe en el mensaje para compartir se guarda
+  app.addEventListener("input", (e) => {
+    if (e.target.id === "share-text") { S.shareDraft = e.target.value; save(); }
+  });
+
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     if (S.confirm) { S.confirm = null; render(); }
-    else if (S.sheet) { S.sheet = false; render(); }
+    else if (S.sheet) { S.sheet = null; render(); }
   });
 
-  // ---------- Avisar antes de salir de la página ----------
-  // Nada se guarda: si la persona cierra o recarga, pierde su progreso.
-  // El navegador muestra su propio mensaje ("¿Salir del sitio? Es posible que no se guarden los cambios").
+  // ---------- Avisar antes de salir (solo si el avance NO se puede guardar) ----------
   function warnBeforeLeave(e) {
-    if (!hasProgress()) return;
+    if (canSave || !hasProgress()) return;
     e.preventDefault();
     e.returnValue = "";
     return "";
@@ -1135,22 +1518,11 @@ p { margin: 0; }
     }
   } catch (_) { /* página contenedora de otro origen: basta con el aviso del iframe */ }
 
-  // Salta a cualquier pantalla con datos de ejemplo (caso de Kiara)
-  function demoJump(id) {
-    S.sheet = false;
-    if (["clues", "right", "action", "solved"].includes(id)) {
-      S.current = "kiara";
-      const p = P("kiara");
-      if (id !== "clues" && p.clues.length === 0) { p.clues = [0, 1, 2]; p.earned += 30; S.points += 30; }
-      if (["action", "solved"].includes(id) && !p.dOk) { p.dOk = true; p.earned += 50; S.points += 50; }
-      if (id === "solved" && !p.aOk) { p.aOk = true; p.done = true; p.earned += 40; S.points += 40; }
-    }
-    if (["report", "share"].includes(id) && S.pre.every((x) => !x)) S.pre = [2, 3, 1];
-    if (id === "share" && !S.post.every(Boolean)) S.post = [4, 5, 4];
-    go(id);
-  }
-
+  try { history.scrollRestoration = "manual"; } catch (_) {}
+  restore();
   render();
+  window.scrollTo(0, 0);
+  if (S.welcomeBack) setTimeout(() => { if (S.welcomeBack) { S.welcomeBack = false; const w = app.querySelector(".wb"); if (w) w.remove(); save(); } }, 8000);
 })();
 </script>
 </body>

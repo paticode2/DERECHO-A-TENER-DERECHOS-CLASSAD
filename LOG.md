@@ -70,10 +70,47 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 
 ---
 
+## Rediseño visual tipo juego (5 de noviembre de 2026, segunda parte)
+
+### Look más inmersivo
+- Avatares ilustrados para las 7 personas (dibujados en SVG dentro de la app, sin imágenes externas).
+  Se ven preocupados mientras esperan y contentos cuando se resuelve su caso.
+- Una escena dibujada para cada lugar (oficina, universidad, municipio, égida, apartamento, hospital,
+  centro de salud) detrás de las pistas.
+- Un ícono propio para cada derecho (birrete, balanza, urna, maletín, corazón…).
+- Barra superior con nivel, puntos (que saltan al sumar), barra de experiencia y las 7 insignias.
+- Botones con relieve, entradas animadas y una portada con las 7 personas alrededor del escudo.
+
+### Arreglos de la lista
+- **Cada respuesta incorrecta explica por qué no es** (debajo de la opción misma, sin tener que bajar).
+  Las explicaciones de los derechos están en `why` de cada caso; las de las acciones, en `fb`.
+- **Nuevo mensaje más destacado:** tarjeta oscura que entra con rebote, celular que vibra, brillo amarillo,
+  globito rojo con los casos que faltan y sonido de notificación.
+- **Botón “☰ Pantallas” eliminado.**
+- **Íconos de los derechos** en lugar de la letra del nombre. Arriba se ven en gris y se colorean al ganarlos.
+  No se marca cuál es el del caso actual para no regalar la respuesta.
+- **Íconos de arriba interactivos:** al tocarlos se abre la ficha del derecho (idea clave, video y PDF)
+  sin salir de la pantalla. Si aún no se ha ganado, dice que está bloqueada.
+- **Menos subir y bajar:** el video y los PDF pasaron a la ficha (botón “Aprende más”), la explicación de un
+  error aparece junto a la opción, y cada pantalla de caso cabe casi completa.
+- **Volver es fácil:** el avance se guarda en el dispositivo (`localStorage`). Si la persona sale o recarga,
+  vuelve a la misma pantalla con “¡Qué bueno verte! Seguimos donde lo dejaste” y la opción de empezar de nuevo.
+  La bandeja tiene arriba “Seguir con …”. El aviso del navegador al salir ahora solo sale si no se puede guardar.
+- **Sonidos** (generados en el navegador, sin archivos): pista, correcto, error, caso resuelto, subir de nivel
+  y mensaje nuevo. Botón 🔊/🔇 arriba. En Android también vibra al equivocarse.
+- **Confeti** al resolver cada caso (más grande al terminar los 7), “+10 / +50” que flotan al sumar,
+  sacudida al equivocarse, “⭐ ¡Perfecto!” si se acierta todo a la primera y racha “🔥 3 seguidas”.
+- **Texto para invitar más humano:** tres mensajes para escoger (“De corazón”, “Un reto”, “Lo que aprendí”),
+  que la persona puede editar. Se envía con el enlace de la app.
+
+### Pruebas
+- Se jugaron los 7 casos en un navegador sin interfaz, con respuestas incorrectas incluidas: sin errores.
+- Se probó dentro de Streamlit: al recargar la página vuelve a la misma pantalla.
+
+---
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.
-- Ideas de enganche no hechas aún: certificado para compartir al completar los 7 casos; racha de puntos
-  extra por acertar a la primera.
+- Idea no hecha aún: certificado para compartir al completar los 7 casos.
 - Opcional: quitar el botón “← Bandeja” de los casos si no se quiere volver a la bandeja.
-- El botón “☰ Pantallas” es solo para el prototipo; quitarlo antes de la versión final.
