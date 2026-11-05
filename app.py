@@ -377,6 +377,16 @@ p { margin: 0; }
 .more > summary::after { content: "+"; color: var(--accent); font-size: 1.2rem; line-height: 1; }
 .more[open] > summary::after { content: "–"; }
 .more-body { display: grid; gap: 12px; padding: 0 12px 12px; }
+/* Pausa antes de pasar de las pistas a la pregunta */
+.wait { display: grid; gap: 6px; }
+.wait .toast { margin: 0; }
+.wait-bar { height: 6px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.wait-bar > i { display: block; height: 100%; width: 0; background: var(--ok); animation: fill var(--wait) linear forwards; }
+@keyframes fill { to { width: 100%; } }
+/* Entrada suave de cada pantalla */
+.screen.enter { animation: enter .45s ease-out; }
+@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .screen.enter { animation: none; } }
 /* Confirmación */
 .dlg-wrap { position: fixed; inset: 0; z-index: 40; background: rgba(8, 10, 30, 0.55); display: grid; place-items: center; padding: 16px; }
 .dlg { background: var(--surface); border-radius: 20px; padding: 20px; width: 100%; max-width: 380px; display: grid; gap: 12px; box-shadow: 0 12px 40px rgba(10, 12, 40, 0.35); }
@@ -409,7 +419,7 @@ p { margin: 0; }
       s2t: "Nombra el derecho", s2d: "Escoge qué derecho está en juego.",
       s3t: "Decide qué hacer", s3d: "Recomienda el mejor próximo paso y mira qué pasa.",
       ranksTitle: "Sube de nivel", tipWrong: "Si te equivocas, no pierdes: recibes una pista y lo intentas otra vez, pero ganas menos puntos.",
-      seeCases: "Atender el primer caso", allFound: "¡Encontraste todas las pistas!",
+      seeCases: "Atender el primer caso", allFound: "¡Encontraste todas las pistas!", goingQ: "Pasando a la pregunta…",
       inboxEyebrow: "Bandeja de entrada", inboxTitle: "Te están escribiendo", solved: "resueltos", level: "Nivel",
       new: "Nuevo", done: "Resuelto", finish: "Terminar turno", resources: "Recursos",
       back: "← Bandeja", step: "Paso", of: "de",
@@ -617,6 +627,7 @@ p { margin: 0; }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
+  const CLUE_WAIT_MS = 5000; // tiempo para leer las pistas antes de pasar a la pregunta
   const MAX_POINTS = 120 * CASES.length;
 
   // ---------- Estado ----------
@@ -640,7 +651,9 @@ p { margin: 0; }
 
   function go(screen, extra) {
     Object.assign(S, { screen, sel: null, fb: null, toast: "", banner: null }, extra || {});
+    S.enter = true;
     render();
+    S.enter = false;
     window.scrollTo(0, 0);
   }
 
@@ -760,7 +773,10 @@ p { margin: 0; }
         <ul class="clues" aria-live="polite">
           ${p.clues.length ? p.clues.map((i) => `<li><span>${c.clues[i].icon}</span><span>${L(c.clues[i])}</span><span class="plus">+10</span></li>`).join("") : `<li class="empty">${t("noClues")}</li>`}
         </ul>
-        ${p.clues.length === 3 ? `<p class="toast" role="status">${t("allFound")}</p>` : ""}`;
+        ${p.clues.length === 3 ? `<div class="wait" role="status">
+            <p class="toast">${t("allFound")} <span class="muted">${t("goingQ")}</span></p>
+            <div class="wait-bar" aria-hidden="true"><i style="--wait:${CLUE_WAIT_MS}ms"></i></div>
+          </div>` : ""}`;
     },
     right() {
       const c = curCase(), p = P(c.id);
@@ -941,7 +957,7 @@ p { margin: 0; }
   const app = document.getElementById("app");
   function render() {
     document.documentElement.lang = "es";
-    app.innerHTML = topbar() + `<main class="screen">${screens[S.screen]()}</main>` +
+    app.innerHTML = topbar() + `<main class="screen${S.enter ? " enter" : ""}">${screens[S.screen]()}</main>` +
       `<button class="jump" data-act="openSheet">☰ ${t("jump")}</button>` + sheet() + dialog();
     if (S.confirm) { const b = app.querySelector(".dlg .btn"); if (b) b.focus(); }
   }
@@ -982,7 +998,13 @@ p { margin: 0; }
         if (!p.clues.includes(i)) { p.clues.push(i); p.earned += 10; S.points += 10; }
         render();
         // Con las 3 pistas, pasa sola a la pregunta
-        if (p.clues.length === 3) setTimeout(() => { if (S.screen === "clues" && S.current === c.id) go("right"); }, 1100);
+        // (espera unos segundos para que la persona lea las 3 pistas)
+        if (p.clues.length === 3) {
+          const w = app.querySelector(".wait");
+          const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          if (w) w.scrollIntoView({ block: "end", behavior: smooth ? "smooth" : "auto" });
+        }
+        if (p.clues.length === 3) setTimeout(() => { if (S.screen === "clues" && S.current === c.id) go("right"); }, CLUE_WAIT_MS);
         break;
       }
       case "answerRight": {
