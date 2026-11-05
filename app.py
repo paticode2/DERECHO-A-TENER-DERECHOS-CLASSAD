@@ -70,22 +70,8 @@ PROTOTIPO_HTML = r'''<!doctype html>
   --font-display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light; /* siempre claro, aunque el teléfono esté en modo oscuro */
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0C0E22; --surface: #171A35; --surface-2: #1F2342; --ink: #EEF0FF; --muted: #A7ACD0;
-    --line: #2E3263; --accent: #8A93FF; --accent-ink: #0C0E22; --signal: #FFC23D; --signal-ink: #2A2100;
-    --bubble: #282D5E; --ok: #5AD39A; --ok-bg: #143628; --bad: #FF8593; --bad-bg: #3D1820;
-    --scene-a: #262B5C; --scene-b: #3A3122; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0C0E22; --surface: #171A35; --surface-2: #1F2342; --ink: #EEF0FF; --muted: #A7ACD0;
-  --line: #2E3263; --accent: #8A93FF; --accent-ink: #0C0E22; --signal: #FFC23D; --signal-ink: #2A2100;
-  --bubble: #282D5E; --ok: #5AD39A; --ok-bg: #143628; --bad: #FF8593; --bad-bg: #3D1820;
-  --scene-a: #262B5C; --scene-b: #3A3122; color-scheme: dark;
-}
-
 html, body { min-height: 100%; }
 body {
   background: var(--bg);
