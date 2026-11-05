@@ -824,12 +824,6 @@ p { margin: 0; }
         </div>
         ${bannerBox()}
         <div class="keyidea"><span class="eyebrow">${t("keyIdea")}</span><p>${L(c.key)}</p></div>
-        ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
-          : `<div class="teaser">
-              <span class="eyebrow">💬 ${t("newMsg")}</span>
-              ${chat(nx)}
-              <button class="btn" data-act="open" data-v="${nx.id}">${t("replyTo")} ${nx.name} →</button>
-            </div>`}
         <details class="more">
           <summary>📚 ${t("learnMore")}</summary>
           <div class="more-body">
@@ -839,7 +833,13 @@ p { margin: 0; }
             </a>
             ${learnLinks()}
           </div>
-        </details>`;
+        </details>
+        ${all ? `<button class="btn" data-act="go" data-v="report">${t("seeReport")} →</button>`
+          : `<div class="teaser">
+              <span class="eyebrow">💬 ${t("newMsg")}</span>
+              ${chat(nx)}
+              <button class="btn" data-act="open" data-v="${nx.id}">${t("replyTo")} ${nx.name} →</button>
+            </div>`}`;
     },
     report() {
       const ri = rankIndex(S.points), n = solvedCount();
