@@ -406,20 +406,27 @@ p { margin: 0; }
 (function () {
   const SERIES_URL = "https://espaciosabiertos.org/derecho-a-tener-derechos-2/";
 
-  // ---------- ENLACES REALES: pegar aquí los de espaciosabiertos.org ----------
-  // video: enlace del episodio (si es de YouTube, se reproduce dentro de la app)
-  // pdf:   material educativo de ese episodio
+  // ---------- Enlaces reales (de espaciosabiertos.org/derecho-a-tener-derechos-2/) ----------
+  // video: episodio en YouTube (se reproduce dentro de la app)
+  // pdf:   material educativo · book: formato libro en blanco y negro
   // Si un campo queda vacío (""), el botón abre la página de la serie.
+  const UPLOADS = "https://espaciosabiertos.org/wp-content/uploads/";
   const LINKS = {
-    tener:         { video: "", pdf: "" },  // Episodio 1 · Derecho a tener derechos
-    educacion:     { video: "", pdf: "" },  // Episodio 2 · Educación
-    info:          { video: "", pdf: "" },  // Episodio 3 · Acceso a la información
-    participacion: { video: "", pdf: "" },  // Episodio 4 · Participación política
-    justicia:      { video: "", pdf: "" },  // Episodio 5 · Acceso a la justicia
-    trabajo:       { video: "", pdf: "" },  // Episodio 6 · Trabajo
-    dignidad:      { video: "", pdf: "" }   // Episodio 7 · Dignidad
+    // Episodio 1 · Derecho a tener derechos
+    tener: { video: "https://www.youtube.com/watch?v=rMizWVmnEZA", pdf: UPLOADS + "Derecho-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-01-Derechos-BW.pdf" },
+    // Episodio 2 · Educación
+    educacion: { video: "https://www.youtube.com/watch?v=fMN7G4piQV0", pdf: UPLOADS + "Educacion-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-02-Educacion-BW.pdf" },
+    // Episodio 3 · Acceso a la información
+    info: { video: "https://www.youtube.com/watch?v=1ZD-S44Y36E", pdf: UPLOADS + "Informacion-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-03-Informacion-BW.pdf" },
+    // Episodio 4 · Participación política
+    participacion: { video: "https://www.youtube.com/watch?v=KL3BpPgW2FY", pdf: UPLOADS + "Opinion-Politica-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-04-PartPolitica-BW.pdf" },
+    // Episodio 5 · Acceso a la justicia
+    justicia: { video: "https://www.youtube.com/watch?v=YurWptHGE5M", pdf: UPLOADS + "Acceso-Justicia-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-05-Justicia-BW.pdf" },
+    // Episodio 6 · Trabajo
+    trabajo: { video: "https://www.youtube.com/watch?v=p4gJn6G36VM", pdf: UPLOADS + "Trabajo-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-06-Trabajo-BW.pdf" },
+    // Episodio 7 · Dignidad
+    dignidad: { video: "https://www.youtube.com/watch?v=yTGCsf9OpmA", pdf: UPLOADS + "Dignidad-FINAL.pdf", book: UPLOADS + "EA-DERECHOS-07-Dignidad-BW.pdf" }
   };
-  const BOOK_BW_PDF = "";  // Libro en blanco y negro (PDF), uno para toda la serie
   const orSeries = (u) => u || SERIES_URL;
 
   // Saca el código de un video de YouTube (youtube.com/watch?v=, youtu.be/, /embed/, /shorts/)
@@ -453,7 +460,7 @@ p { margin: 0; }
       whatDo: "¿Qué le recomiendas?", decide: "Decidir", good: "Buena jugada", rethink: "Piénsalo otra vez",
       caseSolved: "¡Caso resuelto!", points: "puntos", keyIdea: "Idea clave",
       episode: "Episodio", watch: "Ver el episodio", pendingLink: "Enlace al video pendiente: por ahora abre la página de la serie",
-      material: "Material educativo (PDF)", bookBW: "Libro en blanco y negro (PDF)", whereHelp: "Dónde pedir ayuda",
+      material: "Material educativo (PDF)", bookBW: "Libro en blanco y negro (PDF)", allMaterials: "Material educativo y libros de los 7 episodios", whereHelp: "Dónde pedir ayuda",
       backInbox: "Volver a la bandeja", seeReport: "Ver mi reporte",
       reportEyebrow: "Reporte de turno", reached: "Llegaste a", casesOf: "casos de 7",
       afterTitle: "¿Y ahora cómo te sientes?", afterIntro: "Contesta otra vez para comparar.",
@@ -960,10 +967,12 @@ p { margin: 0; }
 
   // id = derecho del caso (su PDF); null = material general de la serie
   function learnLinks(id) {
-    const pdf = id ? LINKS[id].pdf : "";
+    const top = id
+      ? `<a class="link-row" href="${orSeries(LINKS[id].pdf)}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
+      <a class="link-row" href="${orSeries(LINKS[id].book)}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>`
+      : `<a class="link-row" href="${SERIES_URL}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("allMaterials")}</span><span class="arrow">↗</span></a>`;
     return `<div class="links">
-      <a class="link-row" href="${orSeries(pdf)}" target="_blank" rel="noopener"><span class="ico">📄</span><span>${t("material")}</span><span class="arrow">↗</span></a>
-      <a class="link-row" href="${orSeries(BOOK_BW_PDF)}" target="_blank" rel="noopener"><span class="ico">📖</span><span>${t("bookBW")}</span><span class="arrow">↗</span></a>
+      ${top}
       <button class="link-row" data-act="go" data-v="resources"><span class="ico">📞</span><span>${t("whereHelp")}</span><span class="arrow">→</span></button>
     </div>`;
   }
