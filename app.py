@@ -400,7 +400,7 @@ p { margin: 0; }
       s2t: "Nombra el derecho", s2d: "Escoge qué derecho está en juego.",
       s3t: "Decide qué hacer", s3d: "Recomienda el mejor próximo paso y mira qué pasa.",
       ranksTitle: "Sube de nivel", tipWrong: "Si te equivocas, no pierdes: recibes una pista y lo intentas otra vez, pero ganas menos puntos.",
-      seeCases: "Atender el primer caso", allFound: "¡Encontraste todas las pistas!", skipClues: "Seguir sin más pistas",
+      seeCases: "Atender el primer caso", allFound: "¡Encontraste todas las pistas!",
       inboxEyebrow: "Bandeja de entrada", inboxTitle: "Te están escribiendo", solved: "resueltos", level: "Nivel",
       new: "Nuevo", done: "Resuelto", finish: "Terminar turno", resources: "Recursos",
       back: "← Bandeja", step: "Paso", of: "de",
@@ -737,8 +737,7 @@ p { margin: 0; }
         <ul class="clues" aria-live="polite">
           ${p.clues.length ? p.clues.map((i) => `<li><span>${c.clues[i].icon}</span><span>${L(c.clues[i])}</span><span class="plus">+10</span></li>`).join("") : `<li class="empty">${t("noClues")}</li>`}
         </ul>
-        ${p.clues.length === 3 ? `<p class="toast">${t("allFound")}</p>` : ""}
-        <button class="btn ${p.clues.length === 3 ? "" : "ghost"}" data-act="go" data-v="right">${p.clues.length === 3 ? t("next") : t("skipClues")} →</button>`;
+        ${p.clues.length === 3 ? `<p class="toast" role="status">${t("allFound")}</p>` : ""}`;
     },
     right() {
       const c = curCase(), p = P(c.id);
@@ -753,7 +752,7 @@ p { margin: 0; }
           }).join("")}
         </div>
         ${feedbackBox()}
-        ${p.dOk ? `<button class="btn" data-act="go" data-v="action">${t("next")} →</button>` : ""}`;
+`;
     },
     action() {
       const c = curCase(), p = P(c.id);
@@ -770,7 +769,7 @@ p { margin: 0; }
           }).join("")}
         </div>
         ${feedbackBox()}
-        ${p.aOk ? `<button class="btn" data-act="go" data-v="solved">${t("next")} →</button>` : ""}`;
+`;
     },
     solved() {
       const c = curCase(), p = P(c.id), r = RIGHTS[c.right];
@@ -922,7 +921,8 @@ p { margin: 0; }
       case "open": {
         const p = P(v);
         if (p.startRank === null) p.startRank = rankIndex(S.points);
-        go(p.done ? "solved" : "clues", { current: v });
+        const step = p.done ? "solved" : p.dOk ? "action" : p.clues.length === 3 ? "right" : "clues";
+        go(step, { current: v });
         break;
       }
       case "finish": {
