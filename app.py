@@ -922,7 +922,6 @@ p { margin: 0; }
       { name: "Oficina del Procurador de las Personas de Edad Avanzada (OPPEA)", note: "Defiende los derechos de las personas de 60 años o más.",
         tel: ["787-721-6121"], web: "https://www.oppea.pr.gov" } ] },
     { tab: "Emergencias", icon: "🚨", title: "Emergencias", urgent: true, items: [
-      { name: "Emergencias", note: "Si estás en peligro ahora mismo.", tel: ["911"] },
       { name: "Línea PAS (salud mental)", note: "Gratis, confidencial, 24 horas, todos los días. También por el 988.", tel: ["1-800-981-0023", "988"] } ] }
   ];
 
