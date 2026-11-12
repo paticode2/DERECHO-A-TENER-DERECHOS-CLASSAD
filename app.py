@@ -1568,7 +1568,15 @@ p { margin: 0; }
   // Dirección para invitar: la de esta app si se puede leer; si no, la de la serie
   function appUrl() {
     for (const w of [window.top, window.parent]) {
-      try { const u = w.location.href; if (/^https?:/.test(u)) return u.split("#")[0]; } catch (_) {}
+      try {
+        const u = w.location.href;
+        if (/^https?:/.test(u)) {
+          // En Streamlit Cloud se comparte la versión ?embed=true: sin los botones de Streamlit encima de la app
+          const url = new URL(u.split("#")[0]);
+          if (/\.streamlit\.app$/.test(url.hostname)) { url.pathname = "/"; url.search = "?embed=true"; }
+          return url.toString();
+        }
+      } catch (_) {}
     }
     return SERIES_URL;
   }
