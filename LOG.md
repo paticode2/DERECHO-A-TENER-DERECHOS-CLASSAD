@@ -138,6 +138,9 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - El logo completo de Espacios Abiertos está arriba en todas las pantallas (también durante el juego).
 - En "¿Qué derecho está en juego?" salen los 7 derechos, cada incorrecto con su explicación (se escribieron 21 explicaciones nuevas).
 
+## Pistas: botón "Siguiente"
+- Al encontrar las 3 pistas ya no pasa sola a la pregunta: aparece un botón "Siguiente" para avanzar cuando la persona termine de leer.
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.

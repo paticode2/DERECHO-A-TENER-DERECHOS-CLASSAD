@@ -320,8 +320,6 @@ p { margin: 0; }
 .clues .plus { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ok); }
 .wait { display: grid; gap: 6px; }
 .wait p { color: var(--ok); font-weight: 700; font-size: 0.95rem; }
-.wait-bar { height: 7px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
-.wait-bar > i { display: block; height: 100%; width: 0; background: var(--ok); animation: fill var(--wait) linear forwards; }
 @keyframes fill { to { width: 100%; } }
 
 .q-title { font-size: 1.35rem; }
@@ -554,7 +552,7 @@ p { margin: 0; }
     ],
     ranksTitle: "Sube de nivel y gana insignias",
     tipWrong: "Si te equivocas, no pierdes: te explicamos por qué y lo intentas otra vez (con menos puntos).",
-    seeCases: "Atender el primer caso", allFound: "¡Encontraste las 3 pistas!", goingQ: "Lee con calma… ahora viene la pregunta.",
+    seeCases: "Atender el primer caso", allFound: "¡Encontraste las 3 pistas!", goingQ: "Léelas con calma y, cuando quieras, sigue a la pregunta.", nextQ: "Siguiente",
     inboxEyebrow: "Bandeja de entrada", inboxTitle: "Te están escribiendo", solved: "resueltos", level: "Nivel",
     new: "Nuevo", finish: "Terminar turno", resources: "Dónde pedir ayuda",
     step: "Paso", of: "de",
@@ -869,7 +867,6 @@ p { margin: 0; }
 
   const RANK_MIN = [0, 250, 500, 700];
   const INTRO_MS = 6200;       // mini escena entre las dos partes al abrir el caso
-  const CLUE_WAIT_MS = 5000;   // tiempo para leer las 3 pistas antes de pasar a la pregunta
   const NEXT_WAIT_MS = 1000;   // pausa para ver la respuesta correcta en verde antes de seguir
   const MAX_POINTS = 120 * CASES.length;
   const STORE_KEY = "lineaDefensa.v2";
@@ -1237,7 +1234,7 @@ p { margin: 0; }
         </ul>
         ${all ? `<div class="wait" role="status">
             <p>✓ ${t("allFound")} <span class="muted">${t("goingQ")}</span></p>
-            <div class="wait-bar" aria-hidden="true"><i style="--wait:${CLUE_WAIT_MS}ms"></i></div>
+            <button class="btn" data-act="go" data-v="right">${t("nextQ")} →</button>
           </div>` : ""}`;
     },
     right() {
@@ -1520,11 +1517,10 @@ p { margin: 0; }
         SFX.clue();
         render();
         floatPts(app.querySelector(`.spot[data-v="${i}"]`), "+10");
-        // Con las 3 pistas, espera unos segundos para leerlas y pasa sola a la pregunta
+        // Con las 3 pistas aparece el botón "Siguiente" (no pasa sola)
         if (p.clues.length === 3) {
           const w = app.querySelector(".wait");
           if (w) w.scrollIntoView({ block: "end", behavior: calm() ? "auto" : "smooth" });
-          setTimeout(() => { if (S.screen === "clues" && S.current === c.id) go("right"); }, CLUE_WAIT_MS);
         }
         break;
       }
