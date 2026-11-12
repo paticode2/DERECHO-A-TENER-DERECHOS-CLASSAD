@@ -159,6 +159,9 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - La página de Streamlit Cloud que envuelve la app es del mismo sitio, así que la app la ajusta: ocupa toda la pantalla y se esconden la insignia roja, la foto de perfil, "Manage app" y la barra de "Fullscreen" (también si aparecen después). Se comparte el enlace normal, sin ?embed=true.
 - Nota: como dueña, "Manage app" ya no sale sobre la app; se administra desde share.streamlit.io.
 
+## Duración final de la mini escena
+- 9 segundos en total: la otra parte habla al segundo, la persona contesta a los 4 s, y a los 8,5 s la escena se desvanece y aparecen las pistas.
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos de “Dónde pedir ayuda”: hacer llamadas de prueba (sobre todo Unidad Antidiscrimen 787-754-5806).
