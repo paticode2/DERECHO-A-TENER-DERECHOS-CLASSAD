@@ -133,6 +133,11 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 
 ---
 
+## Ajustes: burbujas, logo y las 7 opciones
+- Las burbujas de la mini escena van arriba, una a cada lado, y los personajes abajo: no se tapan (verificado en 340, 390, 768 y 1024 px, los 7 casos). El botón "Saltar" va abajo al centro.
+- El logo completo de Espacios Abiertos está arriba en todas las pantallas (también durante el juego).
+- En "¿Qué derecho está en juego?" salen los 7 derechos, cada incorrecto con su explicación (se escribieron 21 explicaciones nuevas).
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.
