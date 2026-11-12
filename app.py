@@ -298,7 +298,7 @@ p { margin: 0; }
 .scene.spots-in .spot:nth-of-type(3) { animation-delay: 0.24s; }
 .scene-tag.replay { border: 0; font: inherit; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; }
 .intro { position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, rgba(6, 13, 32, 0.15), rgba(6, 13, 32, 0.45));
-  animation: intro-out 0.5s ease-in calc(8.5s - var(--el)) forwards; }
+  animation: intro-out 0.5s ease-in calc(7.5s - var(--el)) forwards; }
 @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
 .scene { container-type: inline-size; }
 .scene.playing .scene-tag { visibility: hidden; }
@@ -309,7 +309,7 @@ p { margin: 0; }
 @keyframes in-l { from { transform: translateX(-140%); } }
 @keyframes in-r { from { transform: translateX(140%); } }
 .actor.r .ava { animation: talk 0.2s ease-in-out calc(0.9s - var(--el)) 8 alternate; }
-.actor.l .ava { animation: talk 0.2s ease-in-out calc(4.1s - var(--el)) 8 alternate; }
+.actor.l .ava { animation: talk 0.2s ease-in-out calc(3.6s - var(--el)) 8 alternate; }
 @keyframes talk { to { transform: translateY(-5%) rotate(-3deg); } }
 .say {
   position: absolute; top: 4%; width: max-content; max-width: 46%; margin: 0; background: #fff; color: #151936; border-radius: 14px; padding: 7px 11px;
@@ -320,7 +320,7 @@ p { margin: 0; }
 .say::after { content: ""; position: absolute; bottom: -8px; border: 8px solid transparent; border-bottom: 0; border-top-color: inherit; }
 .say.r { right: 3%; border-bottom-right-radius: 3px; animation-delay: calc(0.8s - var(--el)); }
 .say.r::after { right: 12%; border-top-color: #fff; }
-.say.l { left: 3%; background: #FFE0F0; border-bottom-left-radius: 3px; animation-delay: calc(4s - var(--el)); }
+.say.l { left: 3%; background: #FFE0F0; border-bottom-left-radius: 3px; animation-delay: calc(3.5s - var(--el)); }
 .say.l::after { left: 12%; border-top-color: #FFE0F0; }
 @keyframes say-in { from { opacity: 0; transform: scale(0.3) translateY(12px); } }
 .skip {
@@ -926,7 +926,7 @@ p { margin: 0; }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
-  const INTRO_MS = 9000;       // mini escena entre las dos partes al abrir el caso
+  const INTRO_MS = 8000;       // mini escena entre las dos partes al abrir el caso
   const NOTIF_WAIT_MS = 4000;  // tiempo para leer el logro antes de que llegue el mensaje del caso nuevo
   const NEXT_WAIT_MS = 1000;   // pausa para ver la respuesta correcta en verde antes de seguir
   const MAX_POINTS = 120 * CASES.length;
@@ -1584,7 +1584,7 @@ p { margin: 0; }
     stopIntro();
     introFor = c.id; introStart = Date.now();
     introTimers.push(setTimeout(() => SFX.talk(false), 900));
-    introTimers.push(setTimeout(() => SFX.talk(true), 4100));
+    introTimers.push(setTimeout(() => SFX.talk(true), 3600));
     introTimers.push(setTimeout(() => {
       stopIntro();
       P(c.id).introSeen = true;

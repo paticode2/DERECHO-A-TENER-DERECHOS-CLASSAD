@@ -160,7 +160,7 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - Nota: como dueña, "Manage app" ya no sale sobre la app; se administra desde share.streamlit.io.
 
 ## Duración final de la mini escena
-- 9 segundos en total: la otra parte habla al segundo, la persona contesta a los 4 s, y a los 8,5 s la escena se desvanece y aparecen las pistas.
+- 8 segundos en total: la otra parte habla al segundo, la persona contesta a los 3,5 s, y a los 7,5 s la escena se desvanece y aparecen las pistas.
 
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
