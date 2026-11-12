@@ -23,6 +23,13 @@ st.markdown(
         }
         header[data-testid="stHeader"] { display: none; }
         footer { display: none; }
+        /* Botones y avisos de Streamlit que viven dentro de la app: ocultos.
+           (El botón rojo "Hosted with Streamlit" y "Manage app" de Streamlit Cloud
+           están en la página de afuera y no se pueden ocultar desde aquí.) */
+        #MainMenu, [data-testid="stToolbar"], [data-testid="stDecoration"],
+        [data-testid="stStatusWidget"], [data-testid="stAppDeployButton"],
+        [data-testid="manage-app-button"], [class*="viewerBadge"],
+        [class*="ViewerBadge"], [class*="profileContainer"] { display: none !important; }
     </style>
     """,
     unsafe_allow_html=True
@@ -153,6 +160,9 @@ p { margin: 0; }
 
 /* ---------- Pantalla ---------- */
 .screen { flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 18px 16px 48px; }
+/* En teléfonos, Streamlit Cloud pone sus botones en la esquina de abajo a la derecha:
+   dejamos espacio al final para que nunca tapen un botón de la app. */
+@media (max-width: 700px) { .screen { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } }
 .screen.enter { animation: enter 0.42s ease-out; }
 @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
