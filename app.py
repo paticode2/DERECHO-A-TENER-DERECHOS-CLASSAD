@@ -1165,6 +1165,47 @@ p { margin: 0; }
       pw.__lineaDefensaFitFn = fitFrame; // siempre la versión de este recuadro
       pw.scrollTo(0, 0);
     } catch (_) { /* página contenedora de otro origen: queda como recuadro normal */ }
+    fitCloud();
+  }
+
+  // Streamlit Cloud envuelve la app en otra página (del mismo sitio) que pone sus botones
+  // abajo a la derecha (insignia roja, foto de perfil, "Manage app", barra de "Fullscreen").
+  // Desde aquí hacemos que la app ocupe toda la pantalla y escondemos esos botones.
+  function fitCloud() {
+    try {
+      const tw = window.top, pw = window.parent;
+      if (!tw || tw === window || tw === pw) return; // no estamos dentro de Streamlit Cloud
+      const td = tw.document;
+      const appFrame = [...td.querySelectorAll("iframe")].find((f) => f.contentWindow === pw);
+      if (!appFrame) return;
+      appFrame.setAttribute("data-linea-defensa", "1");
+      if (!td.getElementById("ld-cloud-style")) {
+        const st = td.createElement("style");
+        st.id = "ld-cloud-style";
+        st.textContent = `html, body { background: #060D20 !important; overflow: hidden !important; margin: 0 !important; }
+          iframe[data-linea-defensa] { position: fixed !important; inset: 0 !important; width: 100% !important; height: 100% !important;
+            max-width: none !important; border: 0 !important; margin: 0 !important; padding: 0 !important; z-index: 2147483646 !important; }
+          [class*="viewerBadge"], [class*="profileContainer"], [class*="manageApp"], [data-testid="manage-app-button"] { display: none !important; }`;
+        td.head.appendChild(st);
+      }
+      // Todo lo demás que flote encima (barras, botones): fuera
+      const clean = () => {
+        td.querySelectorAll("body *").forEach((el) => {
+          if (el === appFrame || el.contains(appFrame) || el.tagName === "STYLE" || el.tagName === "SCRIPT") return;
+          const pos = tw.getComputedStyle(el).position;
+          if (pos === "fixed" || pos === "absolute" || pos === "sticky") el.style.setProperty("display", "none", "important");
+        });
+      };
+      clean();
+      if (!tw.__lineaDefensaCloud) {
+        tw.__lineaDefensaCloud = true;
+        let t = 0;
+        new tw.MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { tw.__lineaDefensaClean && tw.__lineaDefensaClean(); } catch (_) {} }, 120); })
+          .observe(td.body, { childList: true, subtree: true });
+        [800, 2500, 6000].forEach((ms) => setTimeout(() => { try { tw.__lineaDefensaClean && tw.__lineaDefensaClean(); } catch (_) {} }, ms));
+      }
+      tw.__lineaDefensaClean = clean;
+    } catch (_) { /* otro origen: nada que hacer */ }
   }
 
   // Desplaza solo dentro de la app (scrollIntoView movería también la página de afuera)
@@ -1571,9 +1612,9 @@ p { margin: 0; }
       try {
         const u = w.location.href;
         if (/^https?:/.test(u)) {
-          // En Streamlit Cloud se comparte la versión ?embed=true: sin los botones de Streamlit encima de la app
+          // En Streamlit Cloud se comparte el enlace limpio de la app (la app ya esconde los botones de Streamlit)
           const url = new URL(u.split("#")[0]);
-          if (/\.streamlit\.app$/.test(url.hostname)) { url.pathname = "/"; url.search = "?embed=true"; }
+          if (/\.streamlit\.app$/.test(url.hostname)) { url.pathname = "/"; url.search = ""; }
           return url.toString();
         }
       } catch (_) {}
