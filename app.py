@@ -467,7 +467,21 @@ p { margin: 0; }
 .res-group { display: grid; gap: 8px; }
 .res { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; background: var(--surface-2); }
 .res .name { font-weight: 700; }
-.res .tbd { font-family: var(--font-mono); font-size: 0.75rem; color: var(--bad); }
+.res .what { font-size: 0.92rem; color: var(--muted); line-height: 1.4; }
+.res .hours { font-size: 0.85rem; color: var(--muted); }
+.res-group { gap: 10px; scroll-margin-top: 120px; }
+.res-group h3 { display: flex; align-items: center; gap: 10px; margin: 6px 0 0; font-size: 1.05rem; line-height: 1.25; }
+.res-group h3 small { display: block; font-weight: 500; font-size: 0.82rem; color: var(--muted); }
+.res-ico { --c: var(--accent); flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font-size: 20px;
+  background: color-mix(in srgb, var(--c) 35%, var(--surface)); color: color-mix(in srgb, var(--c) 35%, #fff); }
+.res-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.res-acts a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 999px; font-weight: 700; font-size: 0.92rem;
+  text-decoration: none; border: 1px solid var(--line); color: var(--ink); background: var(--surface); word-break: break-all; }
+.res-acts a.call { background: var(--accent); border-color: var(--accent); color: #fff; font-family: var(--font-mono); letter-spacing: 0.02em; }
+.res-group.urgent .res { border-color: #7A2A3C; background: color-mix(in srgb, var(--bad) 12%, var(--surface-2)); }
+.res-jump { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.res-jump button { flex: none; font: inherit; font-size: 0.82rem; font-weight: 700; min-height: 38px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; white-space: nowrap; }
 .credits { font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
 .back-row { display: flex; }
 .back-txt { font: inherit; font-weight: 700; color: var(--link); background: none; border: 0; padding: 6px 0; cursor: pointer; min-height: 40px; }
@@ -572,8 +586,8 @@ p { margin: 0; }
     shareIntro: "Escoge un mensaje, cámbialo a tu manera y envíalo.",
     tones: { warm: "💛 De corazón", dare: "😉 Un reto", learn: "✍️ Lo que aprendí" },
     copyText: "Copiar mensaje", copyLink: "Copiar enlace", copied: "¡Copiado! Ya lo puedes pegar donde quieras.", copyFail: "No se pudo copiar. Selecciona el texto y cópialo.",
-    resTitle: "Dónde pedir ayuda", resNote: "Prototipo: los teléfonos y enlaces se añadirán después de verificarlos en las fuentes oficiales de cada organización.",
-    tbd: "Teléfono por verificar", aboutSeries: "Sobre la serie",
+    resTitle: "Dónde pedir ayuda", resNote: "Toca un número para llamar. Datos verificados en fuentes oficiales (noviembre 2026); si alguno no contesta, prueba el otro número o el sitio web.",
+    aboutSeries: "Sobre la serie",
     credits: "“Derechos. Son tuyos. Defiéndelos.” es una serie de 7 videos de Espacios Abiertos y el Centro de Periodismo Investigativo, con el apoyo de Open Society Foundations y la Fundación Puertorriqueña de las Humanidades. Se presentó por WIPR y recibió un premio Emmy en 2016.",
     openSite: "Abrir la página de la serie",
     proto: "Prototipo · contenido demostrativo",
@@ -850,19 +864,51 @@ p { margin: 0; }
     }
   ];
 
-  // ---------- Recursos (por verificar) ----------
+  // ---------- Recursos: dónde pedir ayuda ----------
+  // Verificados en fuentes oficiales (sitios .pr.gov / .gov y directorio PR.gov) en noviembre de 2026.
+  // Los números pueden cambiar: revisarlos de vez en cuando.
+  // tel: número para marcar · email · web · hours: horario · note: para qué sirve
   const RESOURCES = [
-    { title: { es: "Ayuda legal gratuita" }, items: [
-      { es: "Organización de servicios legales gratuitos" },
-      { es: "Clínica de asistencia legal universitaria" } ] },
-    { title: { es: "Discriminación en el empleo" }, items: [
-      { es: "Agencia que atiende querellas de discriminación laboral" } ] },
-    { title: { es: "Personas de edad avanzada" }, items: [
-      { es: "Oficina que defiende a personas de edad avanzada" } ] },
-    { title: { es: "Elecciones" }, items: [
-      { es: "Comisión Estatal de Elecciones (CEE)" } ] },
-    { title: { es: "Información pública" }, items: [
-      { es: "Espacios Abiertos", url: SERIES_URL } ] }
+    { tab: "Ayuda legal", icon: "⚖️", title: "Orientación legal gratis", sub: "Para cualquier duda sobre tus derechos", items: [
+      { name: "Servicios Legales de Puerto Rico (Teleabogado)", note: "Orientación legal gratis por teléfono: vivienda, familia, empleo, consumidor y más. Para personas de bajos ingresos.",
+        tel: ["1-800-981-5342", "787-728-5070"], hours: "Lunes a viernes, 8:00 a.m. a 5:30 p.m.", web: "https://www.servicioslegales.org" },
+      { name: "Clínica de Asistencia Legal · Escuela de Derecho UPR", note: "Estudiantes de Derecho, supervisados por abogados, orientan y representan gratis.",
+        tel: ["787-999-9545"], web: "https://derecho.uprrp.edu" },
+      { name: "Pro Bono, Inc. (Colegio de Abogados)", note: "Abogados voluntarios que representan gratis a personas sin recursos.", web: "https://www.probonopr.org" } ] },
+    { tab: "Gobierno", icon: "🏛️", right: "tener", title: "Si una agencia de gobierno te trata mal o te niega un servicio", items: [
+      { name: "Oficina del Procurador del Ciudadano (Ombudsman)", note: "Recibe quejas contra agencias del gobierno: maltrato, trámites detenidos o servicios negados.",
+        tel: ["787-724-7373"], email: "ombudsmanpr@opc.pr.gov", web: "https://ombudsman.pr.gov" },
+      { name: "Comisión de Derechos Civiles", note: "Investiga violaciones de derechos civiles y educa sobre ellos.",
+        tel: ["787-764-8686", "1-800-981-4144"], web: "https://cdc.pr.gov" } ] },
+    { tab: "Información", icon: "📄", right: "info", title: "Si te niegan información pública", items: [
+      { name: "Pide el documento por escrito", note: "La Ley 141-2019 (Ley de Transparencia) te da derecho a pedir documentos públicos. Escribe al Oficial de Información de la agencia y guarda copia. Si no te contestan, llama al Ombudsman (787-724-7373)." },
+      { name: "Espacios Abiertos", note: "Organización que promueve la transparencia y el acceso a la información.", web: SERIES_URL } ] },
+    { tab: "Votar", icon: "🗳️", right: "participacion", title: "Para votar", items: [
+      { name: "Comisión Estatal de Elecciones (CEE)", note: "Inscripción, voto adelantado y voto en el hogar para personas que no pueden llegar al colegio.",
+        tel: ["787-777-8682"], web: "https://www.ceepur.org" } ] },
+    { tab: "Educación", icon: "🎓", right: "educacion", title: "En la escuela o la universidad", items: [
+      { name: "Oficina de Protección y Defensa de las Personas con Impedimentos (OPDPI)", note: "Defiende los derechos de las personas con impedimentos, incluido el acceso a la educación.",
+        tel: ["787-665-2120"], email: "info@opdpi.pr.gov", web: "https://www.opdpi.pr.gov" },
+      { name: "Oficina de Derechos Civiles · Departamento de Educación federal", note: "Quejas por discrimen en escuelas y universidades que reciben fondos federales.",
+        tel: ["1-800-421-3481"], email: "OCR@ed.gov" } ] },
+    { tab: "Trabajo", icon: "💼", right: "trabajo", title: "En el trabajo", items: [
+      { name: "Unidad Antidiscrimen · Departamento del Trabajo (DTRH)", note: "Querellas por discrimen en el empleo (sexo, edad, origen, impedimento y otros). Hay que presentarla dentro de un año.",
+        tel: ["787-754-5806"], web: "https://www.trabajo.pr.gov/unidad_anti_discrimen.asp" },
+      { name: "EEOC · Comisión federal de Igualdad de Oportunidades en el Empleo", note: "Oficina de San Juan, en Plaza Las Américas.",
+        tel: ["1-800-669-4000"], web: "https://www.eeoc.gov/es" } ] },
+    { tab: "Vivienda", icon: "🏠", right: "justicia", title: "Vivienda y desahucios", items: [
+      { name: "Servicios Legales de Puerto Rico", note: "Nadie te puede sacar de tu casa sin una orden del tribunal. Pide orientación gratis antes de irte.",
+        tel: ["1-800-981-5342"], web: "https://www.servicioslegales.org" },
+      { name: "HUD · Línea de discrimen en la vivienda", note: "Si te niegan una vivienda por tu origen, sexo, impedimento u otra razón. Atienden en español.",
+        tel: ["1-800-669-9777"], web: "https://www.hud.gov/espanol" } ] },
+    { tab: "Salud", icon: "❤️", right: "dignidad", title: "Salud y personas mayores", items: [
+      { name: "Oficina del Procurador del Paciente", note: "Quejas sobre servicios de salud, planes médicos y trato en hospitales o centros de salud.",
+        tel: ["1-800-981-0031", "787-977-0909"], email: "info@opp.pr.gov", web: "https://www.opp.pr.gov" },
+      { name: "Oficina del Procurador de las Personas de Edad Avanzada (OPPEA)", note: "Defiende los derechos de las personas de 60 años o más.",
+        tel: ["787-721-6121"], web: "https://www.oppea.pr.gov" } ] },
+    { tab: "Emergencias", icon: "🚨", title: "Emergencias", urgent: true, items: [
+      { name: "Emergencias", note: "Si estás en peligro ahora mismo.", tel: ["911"] },
+      { name: "Línea PAS (salud mental)", note: "Gratis, confidencial, 24 horas, todos los días. También por el 988.", tel: ["1-800-981-0023", "988"] } ] }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
@@ -1378,11 +1424,20 @@ p { margin: 0; }
       return `<div class="back-row"><button class="back-txt" data-act="go" data-v="${S.prevScreen && S.prevScreen !== "resources" ? S.prevScreen : "inbox"}">← Volver</button></div>
         <h2>📞 ${t("resTitle")}</h2>
         <p class="note">${t("resNote")}</p>
-        ${RESOURCES.map((g) => `<div class="res-group"><h3>${L(g.title)}</h3>
-          ${g.items.map((it) => it.url
-            ? `<a class="link-row" href="${it.url}" target="_blank" rel="noopener"><span class="ico">🔗</span><span>${L(it)}</span><span class="arrow">↗</span></a>`
-            : `<div class="res"><span class="name">${L(it)}</span><span class="tbd">${t("tbd")}</span></div>`).join("")}
-        </div>`).join("")}
+        <nav class="res-jump" aria-label="Temas">${RESOURCES.map((g, n) => `<button data-act="resJump" data-v="${n}">${g.icon} ${g.tab}</button>`).join("")}</nav>
+        ${RESOURCES.map((g, n) => `<section class="res-group${g.urgent ? " urgent" : ""}" id="res-${n}">
+          <h3><span class="res-ico" ${g.right ? `style="--c:${RIGHTS[g.right].color}"` : ""}>${g.right ? rIcon(g.right) : g.icon}</span><span>${g.title}${g.sub ? `<small>${g.sub}</small>` : ""}</span></h3>
+          ${g.items.map((it) => `<div class="res">
+            <span class="name">${it.name}</span>
+            <span class="what">${it.note}</span>
+            ${it.hours ? `<span class="hours">🕘 ${it.hours}</span>` : ""}
+            <div class="res-acts">
+              ${(it.tel || []).map((n) => `<a class="call" href="tel:${n.replace(/[^0-9]/g, "")}" target="_blank" rel="noopener" aria-label="Llamar al ${n}">📞 ${n}</a>`).join("")}
+              ${it.email ? `<a class="mail" href="mailto:${it.email}" target="_blank" rel="noopener">✉️ ${it.email}</a>` : ""}
+              ${it.web ? `<a class="web" href="${it.web}" target="_blank" rel="noopener">🌐 Sitio web ↗</a>` : ""}
+            </div>
+          </div>`).join("")}
+        </section>`).join("")}
         <div class="credits"><h3>${t("aboutSeries")}</h3><p>${t("credits")}</p></div>
         <a class="btn ghost" href="${SERIES_URL}" target="_blank" rel="noopener">${t("openSite")} ↗</a>`;
     }
@@ -1524,6 +1579,7 @@ p { margin: 0; }
         break;
       }
       case "info": SFX.tap(); S.sheet = v; render(); break;
+      case "resJump": { const sec = app.querySelector("#res-" + v); if (sec) { const top = app.querySelector(".topbar"); window.scrollBy({ top: sec.getBoundingClientRect().top - (top ? top.offsetHeight : 0) - 10, behavior: calm() ? "auto" : "smooth" }); } break; }
       case "skipIntro": stopIntro(); P(c.id).introSeen = true; S.spotsIn = true; render(); break;
       case "replay": stopIntro(); P(c.id).introSeen = false; render(); break;
       case "closeSheet": S.sheet = null; render(); break;

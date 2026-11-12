@@ -146,6 +146,11 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - La mini escena dura ~10 s: la otra parte habla al segundo y la persona contesta a los 4,5 s.
 - El mensaje del caso nuevo llega 4 s después de resolver el caso, para leer primero el logro.
 
+## Dónde pedir ayuda: contactos reales
+- Teléfonos, correos y sitios verificados en fuentes oficiales (sitios .pr.gov/.gov, directorio PR.gov) en noviembre de 2026, organizados por tema: ayuda legal, gobierno, información, votar, educación, trabajo, vivienda, salud y emergencias.
+- Los números se pueden tocar para llamar; los correos abren el correo. Fila de botones arriba para saltar a cada tema.
+- Notas: Pro Bono, Inc. se dejó solo con sitio web (sus teléfonos no coinciden entre fuentes). OPPEA, CEE y DTRH no publican correo general. Conviene revisar los números cada cierto tiempo.
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.
