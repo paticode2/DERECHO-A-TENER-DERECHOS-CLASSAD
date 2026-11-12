@@ -482,6 +482,9 @@ p { margin: 0; }
 .res-jump { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
 .res-jump button { flex: none; font: inherit; font-size: 0.82rem; font-weight: 700; min-height: 38px; padding: 6px 12px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.restart-mini { justify-self: center; font: inherit; font-size: 0.82rem; color: var(--muted); background: none; border: 0; padding: 8px 12px; min-height: 40px;
+  cursor: pointer; text-decoration: underline; text-underline-offset: 3px; opacity: 0.85; }
+.restart-mini:hover { color: var(--ink); }
 .credits { font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
 .back-row { display: flex; }
 .back-txt { font: inherit; font-weight: 700; color: var(--link); background: none; border: 0; padding: 6px 0; cursor: pointer; min-height: 40px; }
@@ -1296,7 +1299,8 @@ p { margin: 0; }
         <div class="btn-row">
           <button class="btn ghost" data-act="go" data-v="resources">${t("resources")}</button>
           <button class="btn ${n === 7 ? "" : "ghost"}" data-act="finish">${n === 7 ? t("seeReport") : t("finish")}</button>
-        </div>`;
+        </div>
+        <button class="restart-mini" data-act="restart">↺ ${t("startOver")}</button>`;
     },
     clues() {
       const c = curCase(), p = P(c.id), all = p.clues.length === 3;
@@ -1439,7 +1443,8 @@ p { margin: 0; }
           </div>`).join("")}
         </section>`).join("")}
         <div class="credits"><h3>${t("aboutSeries")}</h3><p>${t("credits")}</p></div>
-        <a class="btn ghost" href="${SERIES_URL}" target="_blank" rel="noopener">${t("openSite")} ↗</a>`;
+        <a class="btn ghost" href="${SERIES_URL}" target="_blank" rel="noopener">${t("openSite")} ↗</a>
+        <button class="restart-mini" data-act="restart">↺ ${t("startOver")}</button>`;
     }
   };
 

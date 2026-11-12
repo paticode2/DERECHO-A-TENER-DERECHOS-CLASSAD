@@ -151,6 +151,9 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - Los números se pueden tocar para llamar; los correos abren el correo. Fila de botones arriba para saltar a cada tema.
 - Notas: Pro Bono, Inc. se dejó solo con sitio web (sus teléfonos no coinciden entre fuentes). OPPEA, CEE y DTRH no publican correo general. Conviene revisar los números cada cierto tiempo.
 
+## Empezar de nuevo
+- Enlace pequeño "↺ Empezar de nuevo" al final de la bandeja y de "Dónde pedir ayuda". Pide confirmación antes de borrar puntos, insignias y respuestas.
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.
