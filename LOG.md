@@ -141,6 +141,11 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 ## Pistas: botón "Siguiente"
 - Al encontrar las 3 pistas ya no pasa sola a la pregunta: aparece un botón "Siguiente" para avanzar cuando la persona termine de leer.
 
+## Desplazamiento, diálogo y mensaje nuevo
+- Causa del "sube y baja": había dos barras de desplazamiento (la página de Streamlit y el recuadro de 900 px de la app) y el dedo movía una u otra. Ahora el recuadro ocupa exactamente la pantalla y la página de afuera queda fija: solo se desplaza la app (verificado en iPad vertical, iPad horizontal y teléfono dentro de Streamlit).
+- La mini escena dura ~10 s: la otra parte habla al segundo y la persona contesta a los 4,5 s.
+- El mensaje del caso nuevo llega 4 s después de resolver el caso, para leer primero el logro.
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
 - Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.

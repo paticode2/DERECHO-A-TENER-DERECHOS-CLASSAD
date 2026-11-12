@@ -283,7 +283,7 @@ p { margin: 0; }
 .scene.spots-in .spot:nth-of-type(3) { animation-delay: 0.24s; }
 .scene-tag.replay { border: 0; font: inherit; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; }
 .intro { position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, rgba(6, 13, 32, 0.15), rgba(6, 13, 32, 0.45));
-  animation: intro-out 0.5s ease-in calc(5.6s - var(--el)) forwards; }
+  animation: intro-out 0.5s ease-in calc(9.4s - var(--el)) forwards; }
 @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
 .scene { container-type: inline-size; }
 .scene.playing .scene-tag { visibility: hidden; }
@@ -294,7 +294,7 @@ p { margin: 0; }
 @keyframes in-l { from { transform: translateX(-140%); } }
 @keyframes in-r { from { transform: translateX(140%); } }
 .actor.r .ava { animation: talk 0.2s ease-in-out calc(0.9s - var(--el)) 8 alternate; }
-.actor.l .ava { animation: talk 0.2s ease-in-out calc(2.9s - var(--el)) 8 alternate; }
+.actor.l .ava { animation: talk 0.2s ease-in-out calc(4.6s - var(--el)) 8 alternate; }
 @keyframes talk { to { transform: translateY(-5%) rotate(-3deg); } }
 .say {
   position: absolute; top: 4%; width: max-content; max-width: 46%; margin: 0; background: #fff; color: #151936; border-radius: 14px; padding: 7px 11px;
@@ -305,7 +305,7 @@ p { margin: 0; }
 .say::after { content: ""; position: absolute; bottom: -8px; border: 8px solid transparent; border-bottom: 0; border-top-color: inherit; }
 .say.r { right: 3%; border-bottom-right-radius: 3px; animation-delay: calc(0.8s - var(--el)); }
 .say.r::after { right: 12%; border-top-color: #fff; }
-.say.l { left: 3%; background: #FFE0F0; border-bottom-left-radius: 3px; animation-delay: calc(2.8s - var(--el)); }
+.say.l { left: 3%; background: #FFE0F0; border-bottom-left-radius: 3px; animation-delay: calc(4.5s - var(--el)); }
 .say.l::after { left: 12%; border-top-color: #FFE0F0; }
 @keyframes say-in { from { opacity: 0; transform: scale(0.3) translateY(12px); } }
 .skip {
@@ -390,10 +390,10 @@ p { margin: 0; }
 /* Nuevo mensaje: entra con rebote, suena y brilla */
 .notif {
   background: linear-gradient(150deg, #E6007E 0%, #8E1C9E 100%); color: #fff; border-radius: 24px; padding: 14px; display: grid; gap: 12px; position: relative;
-  animation: notif-in 0.75s cubic-bezier(0.2, 1.5, 0.4, 1) 1s both, glow 1.6s ease-out 1.7s 3;
+  animation: notif-in 0.75s cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--notif-wait) - var(--el, 0ms)) both, glow 1.6s ease-out calc(var(--notif-wait) + 0.7s - var(--el, 0ms)) 3;
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
 }
-@keyframes notif-in { from { opacity: 0; transform: translateY(46px) scale(0.9); } to { opacity: 1; transform: none; } }
+@keyframes notif-in { from { opacity: 0; visibility: hidden; transform: translateY(46px) scale(0.9); } to { opacity: 1; transform: none; } }
 @keyframes glow {
   0% { box-shadow: 0 14px 30px rgba(21, 25, 54, 0.35), 0 0 0 0 rgba(255, 194, 61, 0.8); }
   100% { box-shadow: 0 14px 30px rgba(21, 25, 54, 0.35), 0 0 0 18px rgba(255, 194, 61, 0); }
@@ -866,7 +866,8 @@ p { margin: 0; }
   ];
 
   const RANK_MIN = [0, 250, 500, 700];
-  const INTRO_MS = 6200;       // mini escena entre las dos partes al abrir el caso
+  const INTRO_MS = 9900;       // mini escena entre las dos partes al abrir el caso
+  const NOTIF_WAIT_MS = 4000;  // tiempo para leer el logro antes de que llegue el mensaje del caso nuevo
   const NEXT_WAIT_MS = 1000;   // pausa para ver la respuesta correcta en verde antes de seguir
   const MAX_POINTS = 120 * CASES.length;
   const STORE_KEY = "lineaDefensa.v2";
@@ -1080,13 +1081,46 @@ p { margin: 0; }
     } catch (_) { S = fresh(); }
   }
 
-  // Sube al inicio de la pantalla. La app vive dentro de un recuadro (iframe) de Streamlit:
-  // hay que subir el recuadro por dentro y también la página que lo contiene.
+  // La app vive dentro de un recuadro (iframe) de Streamlit. Si el recuadro es más alto o más
+  // bajo que la pantalla, hay DOS barras de desplazamiento (la de la página y la del recuadro)
+  // y el dedo mueve una u otra: eso causaba el "sube y baja". Solución: el recuadro ocupa
+  // exactamente la pantalla y la página de afuera no se mueve; solo se desplaza la app.
+  function fitFrame() {
+    try {
+      const fe = window.frameElement, pw = window.parent;
+      if (!fe || !pw || pw === window) return;
+      const h = Math.round((pw.visualViewport && pw.visualViewport.height) || pw.innerHeight);
+      Object.assign(fe.style, { position: "fixed", top: "0", left: "0", width: "100%", height: h + "px",
+        maxWidth: "none", border: "0", margin: "0", zIndex: "999990", background: "#060D20" });
+      const pd = pw.document;
+      pd.documentElement.style.overflow = "hidden"; pd.body.style.overflow = "hidden";
+      pd.querySelectorAll('[data-testid="stMain"], [data-testid="stAppViewContainer"], section.main').forEach((e) => { e.style.overflow = "hidden"; });
+      pd.documentElement.style.background = pd.body.style.background = "#060D20";
+      if (!pw.__lineaDefensaFit) {
+        pw.__lineaDefensaFit = true;
+        pw.addEventListener("resize", () => { try { pw.__lineaDefensaFitFn && pw.__lineaDefensaFitFn(); } catch (_) {} });
+        if (pw.visualViewport) pw.visualViewport.addEventListener("resize", () => { try { pw.__lineaDefensaFitFn && pw.__lineaDefensaFitFn(); } catch (_) {} });
+      }
+      pw.__lineaDefensaFitFn = fitFrame; // siempre la versión de este recuadro
+      pw.scrollTo(0, 0);
+    } catch (_) { /* página contenedora de otro origen: queda como recuadro normal */ }
+  }
+
+  // Desplaza solo dentro de la app (scrollIntoView movería también la página de afuera)
+  function innerScroll(el, block) {
+    const r = el.getBoundingClientRect(), vh = window.innerHeight, pad = 12;
+    let dy = 0;
+    if (block === "end" || r.bottom > vh - pad) dy = r.bottom - vh + pad;
+    if (r.top + (dy) < pad) dy = r.top - pad;
+    if (Math.abs(dy) > 1) window.scrollBy({ top: dy, behavior: calm() ? "auto" : "smooth" });
+  }
+
+  // Sube al inicio de la pantalla (dentro de la app; la página de afuera ya no se mueve).
   function toTop() {
     window.scrollTo(0, 0);
     try {
       const fe = window.frameElement;
-      if (fe && fe.getBoundingClientRect().top < 0) fe.scrollIntoView({ block: "start" });
+      if (fe && fe.style.position !== "fixed" && fe.getBoundingClientRect().top < 0) fe.scrollIntoView({ block: "start" });
     } catch (_) { /* página contenedora de otro origen */ }
   }
 
@@ -1293,7 +1327,7 @@ p { margin: 0; }
         </button>
         ${all ? `<div class="final"><b>🏆</b><h2>${t("allSeven")}</h2><p>${t("allSevenSub")}</p>
               <button class="btn signal" data-act="go" data-v="report">${t("seeReport")} →</button></div>`
-          : `<div class="notif" role="status">
+          : `<div class="notif" role="status" style="--notif-wait:${NOTIF_WAIT_MS}ms;--el:${S.solvedAt ? Date.now() - S.solvedAt : 99999}ms">
               <span class="notif-dot" aria-hidden="true">${7 - solvedCount()}</span>
               <div class="notif-head"><span class="ring" aria-hidden="true">📱</span><span>💬 ${t("newMsg")}</span><span class="notif-time">${t("nowTxt")}</span></div>
               <div class="notif-body">${avatar(nx)}<div><strong>${nx.name}, ${nx.age}</strong><p>${L(nx.msg)}</p></div></div>
@@ -1436,7 +1470,7 @@ p { margin: 0; }
     stopIntro();
     introFor = c.id; introStart = Date.now();
     introTimers.push(setTimeout(() => SFX.talk(false), 900));
-    introTimers.push(setTimeout(() => SFX.talk(true), 2900));
+    introTimers.push(setTimeout(() => SFX.talk(true), 4600));
     introTimers.push(setTimeout(() => {
       stopIntro();
       P(c.id).introSeen = true;
@@ -1520,7 +1554,7 @@ p { margin: 0; }
         // Con las 3 pistas aparece el botón "Siguiente" (no pasa sola)
         if (p.clues.length === 3) {
           const w = app.querySelector(".wait");
-          if (w) w.scrollIntoView({ block: "end", behavior: calm() ? "auto" : "smooth" });
+          if (w) innerScroll(w, "end");
         }
         break;
       }
@@ -1558,7 +1592,7 @@ p { margin: 0; }
             if (S.screen !== "action" || S.current !== c.id) return;
             const leveled = p.startRank !== null && rankIndex(S.points) > p.startRank;
             S.justUnlocked = c.right;
-            go("solved", { banner });
+            go("solved", { banner, solvedAt: Date.now() });
             const all = solvedCount() === 7;
             confetti(all); SFX.win(); if (leveled) SFX.level();
             if (!all) {
@@ -1567,8 +1601,8 @@ p { margin: 0; }
                 if (S.screen !== "solved" || S.current !== c.id) return;
                 SFX.msg(); vibrate([40, 60, 40]);
                 const n = app.querySelector(".notif");
-                if (n) n.scrollIntoView({ block: "nearest", behavior: calm() ? "auto" : "smooth" });
-              }, 1300);
+                if (n) innerScroll(n, "nearest");
+              }, NOTIF_WAIT_MS + 300);
             }
           }, NEXT_WAIT_MS);
         } else {
@@ -1649,6 +1683,7 @@ p { margin: 0; }
   } catch (_) { /* página contenedora de otro origen: basta con el aviso del iframe */ }
 
   try { history.scrollRestoration = "manual"; } catch (_) {}
+  fitFrame();
   restore();
   render();
   window.scrollTo(0, 0);
