@@ -154,8 +154,13 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 ## Empezar de nuevo
 - Al tocar el logo de EA arriba sale un menú pequeño: "Ir a mis casos" (si no estás en la bandeja) y "↺ Empezar de nuevo". Empezar de nuevo pide confirmación antes de borrar puntos, insignias y respuestas. En la pantalla de bienvenida el logo no hace nada.
 
+## App a pantalla completa, sin botones de Streamlit
+- App publicada: https://derecho-a-tener-derechos-classad-rdv3keh4mtvyenpyzj2i8l.streamlit.app/
+- La página de Streamlit Cloud que envuelve la app es del mismo sitio, así que la app la ajusta: ocupa toda la pantalla y se esconden la insignia roja, la foto de perfil, "Manage app" y la barra de "Fullscreen" (también si aparecen después). Se comparte el enlace normal, sin ?embed=true.
+- Nota: como dueña, "Manage app" ya no sale sobre la app; se administra desde share.streamlit.io.
+
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
-- Teléfonos y enlaces de “Dónde pedir ayuda”: siguen “por verificar” en fuentes oficiales.
+- Teléfonos de “Dónde pedir ayuda”: hacer llamadas de prueba (sobre todo Unidad Antidiscrimen 787-754-5806).
 - Idea no hecha aún: certificado para compartir al completar los 7 casos.
 - Opcional: quitar el botón “← Bandeja” de los casos si no se quiere volver a la bandeja.
