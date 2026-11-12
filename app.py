@@ -118,6 +118,11 @@ p { margin: 0; }
 }
 .shield { width: 24px; height: 28px; flex: none; }
 .ea-logo { height: 28px; width: auto; display: block; }
+.logo-menu { position: absolute; top: 52px; left: 12px; z-index: 20; display: grid; min-width: 210px; padding: 6px; border-radius: 16px;
+  background: var(--surface-2); border: 1px solid var(--line); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); animation: menu-in 0.18s ease-out both; }
+.logo-menu button { font: inherit; font-weight: 700; text-align: left; color: var(--ink); background: none; border: 0; border-radius: 11px; padding: 10px 12px; min-height: 46px; cursor: pointer; }
+.logo-menu button:hover { background: var(--surface-3); }
+@keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } }
 .lvl { font-family: var(--font-mono); font-size: 0.74rem; background: var(--surface-3); color: var(--ink); border-radius: 8px; padding: 4px 8px; white-space: nowrap; }
 .chip {
   font-family: var(--font-mono); font-size: 0.86rem; font-variant-numeric: tabular-nums; background: var(--signal); color: var(--signal-ink);
@@ -482,9 +487,6 @@ p { margin: 0; }
 .res-jump { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
 .res-jump button { flex: none; font: inherit; font-size: 0.82rem; font-weight: 700; min-height: 38px; padding: 6px 12px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor: pointer; white-space: nowrap; }
-.restart-mini { justify-self: center; font: inherit; font-size: 0.82rem; color: var(--muted); background: none; border: 0; padding: 8px 12px; min-height: 40px;
-  cursor: pointer; text-decoration: underline; text-underline-offset: 3px; opacity: 0.85; }
-.restart-mini:hover { color: var(--ink); }
 .credits { font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
 .back-row { display: flex; }
 .back-txt { font: inherit; font-weight: 700; color: var(--link); background: none; border: 0; padding: 6px 0; cursor: pointer; min-height: 40px; }
@@ -608,7 +610,7 @@ p { margin: 0; }
     lockedTitle: "Todavía está bloqueada", lockedBody: "Resuelve el caso de este derecho y aquí verás su video y su material educativo.",
     lockedNow: "¡Lo estás resolviendo ahora mismo! Termina el caso para desbloquear esta ficha.",
     close: "Cerrar", sound: "Sonido",
-    welcomeBack: "¡Qué bueno verte! Seguimos donde lo dejaste.", startOver: "Empezar de nuevo",
+    welcomeBack: "¡Qué bueno verte! Seguimos donde lo dejaste.", startOver: "Empezar de nuevo", toInbox: "Ir a mis casos",
     finishTitle: "¿Terminar el turno ya?",
     finishBody: (n) => `Todavía ${n === 1 ? "hay 1 persona" : `hay ${n} personas`} esperando ayuda. Cada caso te da hasta 120 puntos.`,
     finishAnyway: "Terminar de todos modos",
@@ -1174,7 +1176,7 @@ p { margin: 0; }
   }
 
   function go(screen, extra) {
-    Object.assign(S, { screen, toast: "", banner: null, sheet: null }, extra || {});
+    Object.assign(S, { screen, toast: "", banner: null, sheet: null, logoMenu: false }, extra || {});
     S.enter = true;
     render();
     S.enter = false;
@@ -1195,7 +1197,7 @@ p { margin: 0; }
     const n = solvedCount();
     return `<header class="topbar">
       <div class="hud">
-        <button class="brand" data-act="${game ? "go" : "noop"}" data-v="inbox" aria-label="Espacios Abiertos · ${t("brand")}${game ? ": ir a la bandeja" : ""}"><img class="ea-logo" src="${EA_LOGO}" alt=""></button>
+        <button class="brand" data-act="${S.screen === "welcome" ? "noop" : "logoMenu"}" aria-haspopup="menu" aria-expanded="${!!S.logoMenu}" aria-label="Espacios Abiertos · ${t("brand")}${S.screen === "welcome" ? "" : ": menú"}"><img class="ea-logo" src="${EA_LOGO}" alt=""></button>
         ${game ? `<span class="lvl" title="${t("level")}: ${t("ranks")[ri]}">${t("rankIcons")[ri]} Nv ${ri + 1}</span>
           <span class="chip${S.bump ? " bump" : ""}" aria-label="${S.points} ${t("points")}">★ ${S.points}</span>` : ""}
         <button class="icon-btn" data-act="sound" aria-pressed="${SOUND}" aria-label="${t("sound")}">${SOUND ? "🔊" : "🔇"}</button>
@@ -1203,6 +1205,10 @@ p { margin: 0; }
       </div>
       ${game ? `<div class="badges-row" aria-label="${t("myBadges")}: ${n} ${t("of")} 7">${CASES.map((c) => badgeBtn(c)).join("")}<span class="count">${n}/7</span></div>
         <div class="xp" role="progressbar" aria-label="${t("level")}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(xp)}"><i style="width:${xp}%"></i></div>` : ""}
+      ${S.logoMenu ? `<div class="logo-menu" role="menu">
+        ${game && S.screen !== "inbox" ? `<button role="menuitem" data-act="go" data-v="inbox">📬 ${t("toInbox")}</button>` : ""}
+        <button role="menuitem" data-act="restart">↺ ${t("startOver")}</button>
+      </div>` : ""}
     </header>`;
   }
 
@@ -1299,8 +1305,7 @@ p { margin: 0; }
         <div class="btn-row">
           <button class="btn ghost" data-act="go" data-v="resources">${t("resources")}</button>
           <button class="btn ${n === 7 ? "" : "ghost"}" data-act="finish">${n === 7 ? t("seeReport") : t("finish")}</button>
-        </div>
-        <button class="restart-mini" data-act="restart">↺ ${t("startOver")}</button>`;
+        </div>`;
     },
     clues() {
       const c = curCase(), p = P(c.id), all = p.clues.length === 3;
@@ -1443,8 +1448,7 @@ p { margin: 0; }
           </div>`).join("")}
         </section>`).join("")}
         <div class="credits"><h3>${t("aboutSeries")}</h3><p>${t("credits")}</p></div>
-        <a class="btn ghost" href="${SERIES_URL}" target="_blank" rel="noopener">${t("openSite")} ↗</a>
-        <button class="restart-mini" data-act="restart">↺ ${t("startOver")}</button>`;
+        <a class="btn ghost" href="${SERIES_URL}" target="_blank" rel="noopener">${t("openSite")} ↗</a>`;
     }
   };
 
@@ -1562,6 +1566,8 @@ p { margin: 0; }
   // ---------- Interacciones ----------
   app.addEventListener("click", (e) => {
     const el = e.target.closest("[data-act]");
+    // El menú del logo se cierra con cualquier toque fuera de él
+    if (S.logoMenu && (!el || el.dataset.act !== "logoMenu")) { S.logoMenu = false; if (!el) { render(); return; } }
     if (!el) return;
     const act = el.dataset.act, v = el.dataset.v;
     if (act === "rate" || act === "noop") return; // "rate" lo maneja "change"
@@ -1587,6 +1593,7 @@ p { margin: 0; }
       case "resJump": { const sec = app.querySelector("#res-" + v); if (sec) { const top = app.querySelector(".topbar"); window.scrollBy({ top: sec.getBoundingClientRect().top - (top ? top.offsetHeight : 0) - 10, behavior: calm() ? "auto" : "smooth" }); } break; }
       case "skipIntro": stopIntro(); P(c.id).introSeen = true; S.spotsIn = true; render(); break;
       case "replay": stopIntro(); P(c.id).introSeen = false; render(); break;
+      case "logoMenu": SFX.tap(); S.logoMenu = !S.logoMenu; render(); break;
       case "closeSheet": S.sheet = null; render(); break;
       case "sound":
         SOUND = !SOUND;

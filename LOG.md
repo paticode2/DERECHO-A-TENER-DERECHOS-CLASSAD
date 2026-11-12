@@ -152,7 +152,7 @@ PDF en `https://espaciosabiertos.org/wp-content/uploads/`.
 - Notas: Pro Bono, Inc. se dejó solo con sitio web (sus teléfonos no coinciden entre fuentes). OPPEA, CEE y DTRH no publican correo general. Conviene revisar los números cada cierto tiempo.
 
 ## Empezar de nuevo
-- Enlace pequeño "↺ Empezar de nuevo" al final de la bandeja y de "Dónde pedir ayuda". Pide confirmación antes de borrar puntos, insignias y respuestas.
+- Al tocar el logo de EA arriba sale un menú pequeño: "Ir a mis casos" (si no estás en la bandeja) y "↺ Empezar de nuevo". Empezar de nuevo pide confirmación antes de borrar puntos, insignias y respuestas. En la pantalla de bienvenida el logo no hace nada.
 
 ## Pendiente / ideas
 - Comprobar videos y PDF en la app publicada.
